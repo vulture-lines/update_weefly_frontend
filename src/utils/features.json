@@ -1,0 +1,5258 @@
+[
+    {
+        "$": {
+            "Type": "HoldBag"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "0",
+                    "Currency": "CVE",
+                    "Value": "9489.50"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard, Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2, U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxQuantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxWeight",
+                            "Value": "15 Kg"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "1",
+                    "Currency": "CVE",
+                    "Value": "11496.06"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard, Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2, U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxQuantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxWeight",
+                            "Value": "23 Kg"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "2",
+                    "Currency": "CVE",
+                    "Value": "12499.33"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2, U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxWeight",
+                            "Value": "38 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxQuantity",
+                            "Value": "2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive, Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerBooking"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "3",
+                    "Currency": "CVE",
+                    "Value": "12036.28"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2, U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxWeight",
+                            "Value": "38 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxQuantity",
+                            "Value": "2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus, Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerBooking"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "4",
+                    "Currency": "CVE",
+                    "Value": "14505.91"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2, U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxWeight",
+                            "Value": "46 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxQuantity",
+                            "Value": "2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus, Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerBooking"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "5",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2, U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxWeight",
+                            "Value": "23 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxQuantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus, Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "6",
+                    "Currency": "CVE",
+                    "Value": "15123.31"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2, U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxWeight",
+                            "Value": "46 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxQuantity",
+                            "Value": "2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive, Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerBooking"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "7",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2, U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxWeight",
+                            "Value": "23 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxQuantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive, Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "Cancellation"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "8",
+                    "Currency": "CVE",
+                    "Value": "7563.19"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeAfterBooking",
+                            "Value": "1440"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "9",
+                    "Usable": "N"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online,CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeAfterBooking",
+                            "Value": "1440"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "10",
+                    "Currency": "CVE",
+                    "Value": "8489.31"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeAfterBooking",
+                            "Value": "1440"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "11",
+                    "Currency": "CVE",
+                    "Value": "7563.19"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeAfterBooking",
+                            "Value": "1440"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "12",
+                    "Currency": "CVE",
+                    "Value": "7563.19"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeAfterBooking",
+                            "Value": "1440"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "13",
+                    "Usable": "N"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online,CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeAfterBooking",
+                            "Value": "1440"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "14",
+                    "Usable": "N"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online,CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeAfterBooking",
+                            "Value": "1440"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "15",
+                    "Currency": "CVE",
+                    "Value": "8489.31"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeAfterBooking",
+                            "Value": "1440"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "16",
+                    "Currency": "CVE",
+                    "Value": "8489.31"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeAfterBooking",
+                            "Value": "1440"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "FlightChange"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "17",
+                    "Currency": "CVE",
+                    "Value": "4630.53"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "18",
+                    "Currency": "CVE",
+                    "Value": "5402.29"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "19",
+                    "Currency": "CVE",
+                    "Value": "4630.53"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "20",
+                    "Currency": "CVE",
+                    "Value": "5402.29"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "21",
+                    "Currency": "CVE",
+                    "Value": "7563.19"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "22",
+                    "Currency": "CVE",
+                    "Value": "8334.95"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "23",
+                    "Currency": "CVE",
+                    "Value": "7563.19"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "24",
+                    "Currency": "CVE",
+                    "Value": "8334.95"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "25",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online,CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeBeforeDeparture",
+                            "Value": "1440"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeAfterDeparture",
+                            "Value": "1440"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "26",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online,CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeBeforeDeparture",
+                            "Value": "1440"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeAfterDeparture",
+                            "Value": "1440"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "27",
+                    "Currency": "CVE",
+                    "Value": "4630.53"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "28",
+                    "Currency": "CVE",
+                    "Value": "5402.29"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "29",
+                    "Currency": "CVE",
+                    "Value": "4630.53"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "30",
+                    "Currency": "CVE",
+                    "Value": "5402.29"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "31",
+                    "Currency": "CVE",
+                    "Value": "7563.19"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "32",
+                    "Currency": "CVE",
+                    "Value": "8334.95"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "33",
+                    "Currency": "CVE",
+                    "Value": "7563.19"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "34",
+                    "Currency": "CVE",
+                    "Value": "8334.95"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MaxTimeBeforeDeparture",
+                            "Value": "86400"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "NameChange"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "35",
+                    "Currency": "GBP",
+                    "Value": "60.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "36",
+                    "Currency": "GBP",
+                    "Value": "65.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "37",
+                    "Currency": "GBP",
+                    "Value": "60.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "38",
+                    "Currency": "GBP",
+                    "Value": "65.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "39",
+                    "Currency": "GBP",
+                    "Value": "60.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "40",
+                    "Currency": "GBP",
+                    "Value": "60.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "41",
+                    "Currency": "GBP",
+                    "Value": "65.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "42",
+                    "Currency": "GBP",
+                    "Value": "65.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "43",
+                    "Currency": "GBP",
+                    "Value": "60.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "44",
+                    "Currency": "GBP",
+                    "Value": "60.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "45",
+                    "Currency": "GBP",
+                    "Value": "65.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "46",
+                    "Currency": "GBP",
+                    "Value": "65.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "Product",
+            "Label": "nameCorrection"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "47",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online,CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "48",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online,CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "49",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online,CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "50",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online,CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "51",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online,CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "52",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online,CallCentre"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "MinTimeBeforeDeparture",
+                            "Value": "120"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "Seat",
+            "Label": "Standard Seat"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "53",
+                    "Currency": "CVE",
+                    "MinValue": "152.81"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "54",
+                    "Currency": "CVE",
+                    "MinValue": "152.81"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "55",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "56",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "57",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "58",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "Seat",
+            "Label": "First row Seat"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "59",
+                    "Currency": "CVE",
+                    "MinValue": "2005.01"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "60",
+                    "Currency": "CVE",
+                    "MinValue": "2005.01"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "61",
+                    "Currency": "CVE",
+                    "MinValue": "2005.01"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "62",
+                    "Currency": "CVE",
+                    "MinValue": "2005.01"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "63",
+                    "Currency": "CVE",
+                    "MinValue": "2005.01"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "64",
+                    "Currency": "CVE",
+                    "MinValue": "2005.01"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "Seat",
+            "Label": "Up Front / Overwing Seat"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "65",
+                    "Currency": "CVE",
+                    "MinValue": "1233.27"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "66",
+                    "Currency": "CVE",
+                    "MinValue": "1233.27"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "67",
+                    "Currency": "CVE",
+                    "MinValue": "1233.27"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "68",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "69",
+                    "Currency": "CVE",
+                    "MinValue": "1233.27"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "70",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "SmallCabinBag"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "71",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Weight",
+                            "Value": "15 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "72",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Weight",
+                            "Value": "15 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "73",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "INF"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "74",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "INF"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Standard"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "75",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Weight",
+                            "Value": "15 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "76",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Weight",
+                            "Value": "15 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "77",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Weight",
+                            "Value": "15 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "78",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Weight",
+                            "Value": "15 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "79",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "INF"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "80",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "INF"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "81",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "INF"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "82",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "INF"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "45 x 36 x 20 cm"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "LargeCabinBag"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "83",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Weight",
+                            "Value": "15 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "56 x 45 x 25 cm"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "84",
+                    "Currency": "CVE",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Quantity",
+                            "Value": "1"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Weight",
+                            "Value": "15 Kg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Dimensions",
+                            "Value": "56 x 45 x 25 cm"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "SpeedyBoarding"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "85",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "86",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerLeg"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "Meal",
+            "Label": "Meal deal"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "87",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "88",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "$": {
+            "Type": "PriorityLane"
+        },
+        "Option": [
+            {
+                "$": {
+                    "Id": "89",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Inbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            },
+            {
+                "$": {
+                    "Id": "90",
+                    "Currency": "GBP",
+                    "Value": "0.00"
+                },
+                "Condition": [
+                    {
+                        "$": {
+                            "Type": "Provision",
+                            "Value": "Bundled"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Phase",
+                            "Value": "PreBooking"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Channel",
+                            "Value": "Online"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "ChargeModel",
+                            "Value": "PerPassenger,PerSegment"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "TravellerType",
+                            "Value": "ADT,YTH,CHD"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "SupplierClass",
+                            "Value": "Inclusive Plus"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "Direction",
+                            "Value": "Outbound"
+                        }
+                    },
+                    {
+                        "$": {
+                            "Type": "OperatorCode",
+                            "Value": "U2"
+                        }
+                    }
+                ]
+            }
+        ]
+    }
+]

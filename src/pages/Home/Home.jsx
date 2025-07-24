@@ -8,10 +8,10 @@ import PaymentOptionSection from "./PaymentOption_Section";
 import ServiceOfferedSection from "./ServiceOffered_Section";
 import SocialMediawidget from "./SocialMediawidget";
 
-function Home() {
+function Home({country}) {
   return (
     <div>
-      <HeroSection />
+      <HeroSection country={country} />
       <ServiceOfferedSection />
       <PaymentOptionSection />
       <div className="" id="newsSection">

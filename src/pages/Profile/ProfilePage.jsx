@@ -244,7 +244,7 @@ const SearchBox = ({
     setDestination(to);
     setSearchCount((prev) => prev + 1);
   };
-  const backendUrl = import.meta.env.VITE_BACKEND_URL;
+  const backendUrl = import.meta.env.VITE_FLIGHT_BACKEND_URL ;
   // Fetch flights based on the search parameters
   useEffect(() => {
     const fetchFlights = async () => {

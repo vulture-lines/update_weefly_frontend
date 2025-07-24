@@ -1,100 +1,104 @@
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme {
-  --font-jakarta: "Plus Jakarta Sans", sans-serif;
-  --font-sans: "Lato", sans-serif;
-  --color-primary: #ee5128;
+	--font-jakarta: 'Plus Jakarta Sans', sans-serif;
+	--font-sans: 'Lato', sans-serif;
+	--color-primary: #ee5128;
 }
 
 html,
 body {
-  scroll-behavior: smooth;
+	scroll-behavior: smooth;
+}
+
+input {
+	font-family: inherit;
 }
 
 .no-calendar-icon::-webkit-calendar-picker-indicator {
-  display: none;
-  -webkit-appearance: none;
+	display: none;
+	-webkit-appearance: none;
 }
 s .no-calendar-icon {
-  position: relative;
+	position: relative;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
-  .ipad-big-map {
-    max-width: 500px;
-    padding-top: 2.5rem; /* pt-10 */
-  }
+	.ipad-big-map {
+		max-width: 500px;
+		padding-top: 2.5rem; /* pt-10 */
+	}
 
-  .ipad-move-select {
-    margin-top: 0.5rem;
-  }
+	.ipad-move-select {
+		margin-top: 0.5rem;
+	}
 
-  .ipad-slider-wide {
-    max-width: 900px;
-  }
+	.ipad-slider-wide {
+		max-width: 900px;
+	}
 }
 
 @keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(-360deg);
-  }
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(-360deg);
+	}
 }
 
 @keyframes scrollReverse {
-  0% {
-    transform: translateX(-50%);
-  }
-  100% {
-    transform: translateX(0%);
-  }
+	0% {
+		transform: translateX(-50%);
+	}
+	100% {
+		transform: translateX(0%);
+	}
 }
 
 .animate-rotate {
-  animation: rotate 25s linear infinite; /* 🔥 corrected */
+	animation: rotate 25s linear infinite; /* 🔥 corrected */
 }
 
 .animate-scroll-reverse {
-  animation: scrollReverse 25s linear infinite;
+	animation: scrollReverse 25s linear infinite;
 }
 
 @keyframes scroll {
-  0% {
-    transform: translateX(0%);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+	0% {
+		transform: translateX(0%);
+	}
+	100% {
+		transform: translateX(-50%);
+	}
 }
 
 @keyframes scrollReverse {
-  0% {
-    transform: translateX(-50%);
-  }
-  100% {
-    transform: translateX(0%);
-  }
+	0% {
+		transform: translateX(-50%);
+	}
+	100% {
+		transform: translateX(0%);
+	}
 }
 
 .animate-scroll {
-  animation: scroll 25s linear infinite;
+	animation: scroll 25s linear infinite;
 }
 
 .animate-scroll-reverse {
-  animation: scrollReverse 25s linear infinite;
+	animation: scrollReverse 25s linear infinite;
 }
 
 .no-scrollbar::-webkit-scrollbar {
-  display: none;
+	display: none;
 }
 .no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+	-ms-overflow-style: none;
+	scrollbar-width: none;
 }
 
 /* .react-tel-input .form-control {

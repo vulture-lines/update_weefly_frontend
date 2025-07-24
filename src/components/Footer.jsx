@@ -8,6 +8,18 @@ import { useState, useEffect, useRef } from "react";
 import WeeFlyLogo from "../assets/images/footer/weefly-logo.png";
 import { useTranslation } from "react-i18next";
 
+import Brand1 from "../assets/images/PaymentBrands/brand1.png";
+import Brand2 from "../assets/images/PaymentBrands/brand2.png";
+import Brand3 from "../assets/images/PaymentBrands/brand3.png";
+import Brand4 from "../assets/images/PaymentBrands/brand4.png";
+import Brand5 from "../assets/images/PaymentBrands/brand5.png";
+import Brand6 from "../assets/images/PaymentBrands/brand6.png";
+import Brand7 from "../assets/images/PaymentBrands/brand7.png";
+import Brand8 from "../assets/images/PaymentBrands/brand8.png";
+import Brand9 from "../assets/images/PaymentBrands/brand9.png";
+import Brand10 from "../assets/images/PaymentBrands/brand10.png";
+import Brand11 from "../assets/images/PaymentBrands/brand11.png";
+
 export default function Footer() {
   const { t } = useTranslation();
   const [openIndex, setOpenIndex] = useState(null);
@@ -210,14 +222,12 @@ export default function Footer() {
               {t("footer.mobile")}
             </h4>
             <p className="text-[15px] text-[#444] font-lato mb-5">
-              +(1) 123 456 7890
+              +238 959 23 88
             </p>
             <h4 className="text-lg font-bold font-jakarta mb-2">
               {t("footer.email")}
             </h4>
-            <p className="text-[15px] text-[#444] font-lato">
-              weefly@gmail.com
-            </p>
+            <p className="text-[15px] text-[#444] font-lato">info@weefly.cv</p>
           </div>
 
           <div className="flex flex-col items-start text-left">
@@ -237,6 +247,22 @@ export default function Footer() {
               <a href="#">
                 <FaInstagram />
               </a>
+            </div>
+            <h4 className="text-lg font-bold font-jakarta my-3 mt-6">
+              Supported Cards
+            </h4>
+            <div className="grid items-center gap-5 text-[#0A0A23] text-xl grid-cols-4">
+              <img src={Brand1} alt="brand" height={24} width={24} />
+              <img src={Brand2} alt="brand" height={24} width={24} />
+              <img src={Brand3} alt="brand" height={24} width={24} />
+              <img src={Brand4} alt="brand" height={24} width={24} />
+              <img src={Brand5} alt="brand" height={24} width={24} />
+              <img src={Brand6} alt="brand" height={24} width={24} />
+              <img src={Brand7} alt="brand" height={24} width={24} />
+              <img src={Brand8} alt="brand" height={24} width={24} />
+              <img src={Brand9} alt="brand" height={24} width={24} />
+              <img src={Brand10} alt="brand" height={24} width={24} />
+              <img src={Brand11} alt="brand" height={24} width={24} />
             </div>
           </div>
         </div>

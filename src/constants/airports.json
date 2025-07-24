@@ -1,0 +1,170 @@
+[
+	{
+		"iata": "JNB",
+		"name": "O. R. Tambo International Airport",
+		"city": "Johannesburg",
+		"state": "Gauteng",
+		"country": "ZA",
+		"countryName": "South Africa"
+	},
+	{
+		"iata": "CPT",
+		"name": "Cape Town International Airport",
+		"city": "Cape Town",
+		"state": "Western Cape",
+		"country": "ZA",
+		"countryName": "South Africa"
+	},
+	{
+		"iata": "DUR",
+		"name": "King Shaka International Airport",
+		"city": "Durban",
+		"state": "KwaZulu-Natal",
+		"country": "ZA",
+		"countryName": "South Africa"
+	},
+	{
+		"iata": "HLA",
+		"name": "Lanseria International Airport",
+		"city": "Johannesburg",
+		"state": "Gauteng",
+		"country": "ZA",
+		"countryName": "South Africa"
+	},
+	{
+		"iata": "PLZ",
+		"name": "Chief Dawid Stuurman International Airport",
+		"city": "Gqeberha",
+		"state": "Eastern Cape",
+		"country": "ZA",
+		"countryName": "South Africa"
+	},
+	{
+		"iata": "ATL",
+		"name": "Hartsfield–Jackson Atlanta International Airport",
+		"city": "Atlanta",
+		"state": "Georgia",
+		"country": "US",
+		"countryName": "United States"
+	},
+	{
+		"iata": "LAX",
+		"name": "Los Angeles International Airport",
+		"city": "Los Angeles",
+		"state": "California",
+		"country": "US",
+		"countryName": "United States"
+	},
+	{
+		"iata": "ORD",
+		"name": "O'Hare International Airport",
+		"city": "Chicago",
+		"state": "Illinois",
+		"country": "US",
+		"countryName": "United States"
+	},
+	{
+		"iata": "DFW",
+		"name": "Dallas/Fort Worth International Airport",
+		"city": "Dallas–Fort Worth",
+		"state": "Texas",
+		"country": "US",
+		"countryName": "United States"
+	},
+	{
+		"iata": "DEN",
+		"name": "Denver International Airport",
+		"city": "Denver",
+		"state": "Colorado",
+		"country": "US",
+		"countryName": "United States"
+	},
+	{
+		"iata": "JFK",
+		"name": "John F. Kennedy International Airport",
+		"city": "New York",
+		"state": "New York",
+		"country": "US",
+		"countryName": "United States"
+	},
+	{
+		"iata": "SFO",
+		"name": "San Francisco International Airport",
+		"city": "San Francisco",
+		"state": "California",
+		"country": "US",
+		"countryName": "United States"
+	},
+	{
+		"iata": "DEL",
+		"name": "Indira Gandhi International Airport",
+		"city": "New Delhi",
+		"state": "Delhi",
+		"country": "IN",
+		"countryName": "India"
+	},
+	{
+		"iata": "BOM",
+		"name": "Chhatrapati Shivaji Maharaj International Airport",
+		"city": "Mumbai",
+		"state": "Maharashtra",
+		"country": "IN",
+		"countryName": "India"
+	},
+	{
+		"iata": "BLR",
+		"name": "Kempegowda International Airport",
+		"city": "Bengaluru",
+		"state": "Karnataka",
+		"country": "IN",
+		"countryName": "India"
+	},
+	{
+		"iata": "MAA",
+		"name": "Chennai International Airport",
+		"city": "Chennai",
+		"state": "Tamil Nadu",
+		"country": "IN",
+		"countryName": "India"
+	},
+	{
+		"iata": "CCU",
+		"name": "Netaji Subhas Chandra Bose International Airport",
+		"city": "Kolkata",
+		"state": "West Bengal",
+		"country": "IN",
+		"countryName": "India"
+	},
+	{
+		"iata": "RAI",
+		"name": "Nelson Mandela International Airport",
+		"city": "Praia",
+		"state": "Santiago",
+		"country": "CV",
+		"countryName": "Cape Verde"
+	},
+	{
+		"iata": "SID",
+		"name": "Amílcar Cabral International Airport",
+		"city": "Espargos",
+		"state": "Sal",
+		"country": "CV",
+		"countryName": "Cape Verde"
+	},
+	{
+		"iata": "VXE",
+		"name": "São Pedro Airport",
+		"city": "Mindelo",
+		"state": "São Vicente",
+		"country": "CV",
+		"countryName": "Cape Verde"
+	},
+	{
+		"iata": "BVC",
+		"name": "Aristides Pereira International Airport",
+		"city": "Boa Vista",
+		"state": "Boa Vista",
+		"country": "CV",
+		"countryName": "Cape Verde"
+	}
+]

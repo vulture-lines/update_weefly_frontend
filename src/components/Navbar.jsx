@@ -428,7 +428,7 @@ const Navbar = () => {
 
       {/* Mobile sidebar */}
       <div
-        className={`h-screen transition-all duration-300 origin-right fixed lg:hidden right-0 top-0 z-50 overflow-hidden ${
+        className={`h-screen transition-all duration-300 origin-right fixed lg:hidden right-0 top-0 z-[999] overflow-hidden ${
           isMenuOpen ? "w-full" : "w-0"
         }`}
       >
@@ -498,11 +498,12 @@ const Navbar = () => {
             <div className="flex flex-col justify-between p-4 gap-8 text-white">
               <div className="flex flex-col gap-4">
                 <div className="flex gap-4">
-                  <Phone /> +(1) 123 456 7890
+                  <Phone />
+                  +238 959 23 88
                 </div>
                 <div className="flex gap-4">
                   <Mail />
-                  weefly@gmail.com
+                  info@weefly.cv
                 </div>
               </div>
               <div className="flex gap-8">

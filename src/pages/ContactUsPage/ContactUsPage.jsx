@@ -130,7 +130,7 @@ const GetInTouch = () => {
                 {`${t("contactus-page.support.contact")}`}
               </label>
               <p className="font-sans text-[17px] font-normal">
-                +(1) 123 456 7890
+                +238 959 23 88
               </p>
             </div>
           </div>
@@ -150,11 +150,11 @@ const GetInTouch = () => {
                 {`${t("contactus-page.support.email")}`}
               </label>
               <p className="font-sans text-[17px] font-normal">
-                werfly@gmail.com
+                info@weefly.cv
               </p>
             </div>
           </div>
-          <div className="flex gap-[11px] items-start">
+          {/* <div className="flex gap-[11px] items-start">
             <div className="bg-[#EE5128] flex items-center justify-center p-[18px]">
               <img
                 src={LocationPinIcon}
@@ -173,7 +173,7 @@ const GetInTouch = () => {
                 loremipsum <br /> loreispumloreiosdisnmfds
               </p>
             </div>
-          </div>
+          </div> */}
         </div>
 
         <div className="flex gap-[20px] mt-[50px]">
