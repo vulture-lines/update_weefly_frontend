@@ -2891,6 +2891,7 @@ import {
   fetchExchangeRates,
   convertToRequestedCurrency,
 } from "../../utils/Currencyconverter";
+import axios from "axios";
 
 function FlightList({ country }) {
   const { t } = useTranslation();
@@ -2909,6 +2910,7 @@ function FlightList({ country }) {
   const [flightsData, setFlightsData] = useState(initialFlights);
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
+  const [isSearchLocked, setIsSearchLocked] = useState(true);
   const [searchData, setSearchdata] = useState({
     from: "",
     to: "",
@@ -2920,6 +2922,8 @@ function FlightList({ country }) {
   const [TripType, setTripType] = useState("");
 
   const [travalers, setTravalers] = useState(FightSearchData?.travellers || []);
+
+  const [newRouteId, setnewRouteId] = useState("");
 
   console.log("travalers", FightSearchData?.travellers);
 
@@ -3007,6 +3011,8 @@ function FlightList({ country }) {
         To={destination}
         SearchProps={FightSearchData} // Pass the complete search data
         country={country}
+        locked={isSearchLocked}
+        setnewRouteId={setnewRouteId}
       />
       <div
         className={`min-h-screen px-4 ${
@@ -3041,6 +3047,7 @@ function FlightList({ country }) {
               searchData={searchData}
               SearchProps={SearchProps} // ✅ Make sure this line exists
               // selectOutWard={selectOutWard}
+              newRouteId={newRouteId}
             />
           )}
 
@@ -3054,6 +3061,7 @@ function FlightList({ country }) {
               TripType={TripType}
               travalers={travalers}
               SearchProps={SearchProps} // ✅ Make sure this line exists
+              newRouteId={newRouteId}
             />
           )}
         </div>
@@ -3070,19 +3078,893 @@ export default FlightList;
 //
 // ////////////////////////////////////////////////
 
+// const SearchBox = ({
+//   setFlightsData,
+//   TripType,
+//   setTripType,
+//   From,
+//   To,
+//   SearchProps,
+//   country,
+// }) => {
+//   const { t } = useTranslation();
+//   const [isDirectFlight, setIsDirectFlight] = useState(false);
+//   const [from, setFrom] = useState("");
+//   const [to, setTo] = useState("");
+//   const [flightDepatureDate, setflightDepatureDate] = useState(new Date());
+//   const [flightReturnDate, setflightReturnDate] = useState(null);
+//   const [showDropdown, setShowDropdown] = useState(false);
+//   const dropdownRef = useRef(null);
+//   const [adults, setAdults] = useState(1);
+//   const [children, setChildren] = useState(0);
+//   const [travelClass, setTravelClass] = useState("Economy");
+//   const [travellers, setTravellers] = useState([30]);
+//   const [routeId, setRouteId] = useState("");
+//   const [searchCount, setSearchCount] = useState(0);
+//   const [commissionDetails, setcommissionDetails] = useState([]);
+//   const travelFusionBackendUrl = import.meta.env.VITE_FLIGHT_BACKEND_URL;
+//   /*const listSupplierRoute = async () => {
+//     try {
+//       const response = await fetch(
+//         `${travelFusionBackendUrl}/get-supplierroute`
+//       );
+
+//       if (!response.ok) {
+//         throw new Error(`HTTP error! Status: ${response.status}`);
+//       }
+
+//       const data = await response.json(); // Convert the response body to JSON
+//       const iata = data.suppliers[0].airportRoutes;
+//       console.log("Supplier route data:", iata); // Log the parsed data
+//     } catch (error) {
+//       console.error("Failed to fetch supplier route:", error);
+//     }
+//   };*/
+//   const transactionUrl = import.meta.env.VITE_TRANSACTION_URL;
+//   const getcommission = async () => {
+//     try {
+//       const res = await fetch(`${transactionUrl}/getcommissiondetails`);
+//       const result = await res.json();
+//       console.log(result.commissionDetail);
+//       const commission = result.commissionDetail;
+//       setcommissionDetails(commission);
+//     } catch (error) {
+//       console.error("Failed to fetch supplier route:", error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     getcommission();
+//     // listSupplierRoute();
+//   }, []);
+//   // Fix: Properly set initial values from previous search
+//   useEffect(() => {
+//     if (SearchProps) {
+//       // Set values from SearchProps if available
+//       setFrom(SearchProps.origin?.descriptor || SearchProps.from || "");
+//       setTo(SearchProps.destination?.descriptor || SearchProps.to || "");
+
+//       // Set dates if available
+//       if (SearchProps.dateOfSearch) {
+//         // Parse the date string back to Date object
+//         const depDate = SearchProps.dateOfSearch.split("-")[0]; // Get date part before time
+//         const [day, month, year] = depDate.split("/");
+//         setflightDepatureDate(new Date(year, month - 1, day));
+//       }
+
+//       if (SearchProps.returnDateOfSearch) {
+//         const retDate = SearchProps.returnDateOfSearch.split("-")[0];
+//         const [day, month, year] = retDate.split("/");
+//         setflightReturnDate(new Date(year, month - 1, day));
+//       }
+
+//       // Set travelers if available
+//       if (SearchProps.travellers && SearchProps.travellers.length > 0) {
+//         const adultCount = SearchProps.travellers.filter(
+//           (age) => age >= 18
+//         ).length;
+//         const childCount = SearchProps.travellers.filter(
+//           (age) => age < 18
+//         ).length;
+//         setAdults(adultCount || 1);
+//         setChildren(childCount || 0);
+//       }
+//     } else {
+//       // Fallback to From/To props
+//       setFrom(From || "");
+//       setTo(To || "");
+//     }
+//   }, [SearchProps, From, To]); // Add proper dependencies
+
+//   const handleTravelFusionDate = (newDate) => {
+//     if (!newDate) {
+//       return;
+//     } // Handle null or invalid date
+//     else {
+//       // Ensure newDate is a Date object
+//       const selectedDate = new Date(newDate);
+
+//       const year = selectedDate.getFullYear();
+//       const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
+//       const day = String(selectedDate.getDate()).padStart(2, "0");
+
+//       const formattedDate = `${day}/${month}/${year}`;
+//       return formattedDate;
+//     }
+//   };
+
+//   const handleTravelfusionSearch = (e) => {
+//     console.log(from);
+//     e.preventDefault();
+
+//     const formattedFlightDepatureDate =
+//       handleTravelFusionDate(flightDepatureDate) + "-00:01";
+
+//     console.log({
+//       from,
+//       to,
+//       flightDepatureDate,
+//       flightReturnDate,
+//       travelClass,
+//     });
+//     if (flightReturnDate !== null && TripType == "Round Trip") {
+//       const formattedFlightReturnDate =
+//         handleTravelFusionDate(flightReturnDate) + "-23:59";
+//     } else {
+//       setflightReturnDate(null);
+//     }
+//     console.log(adults);
+//     setFrom(from);
+//     setTo(to);
+//     setSearchCount((prev) => prev + 1);
+//   };
+
+//   useEffect(() => {
+//     // make an array of N adults
+//     const adult = Array(adults).fill(30);
+//     // make an array of N children
+//     const child = Array(children).fill(7);
+//     // combine them
+//     setTravellers([...adult, ...child]);
+//   }, [adults, children]);
+
+//   // Fetch flights based on the search parameters
+//   useEffect(() => {
+//     const fetchFlights = async () => {
+//       console.log("Travelfusion routing API Call");
+//       console.log("country flightlist", country);
+//       try {
+//         const requestBody = {
+//           mode: "plane",
+//           origin: {
+//             descriptor: from,
+//           },
+//           destination: {
+//             descriptor: to,
+//           },
+//           dateOfSearch: handleTravelFusionDate(flightDepatureDate) + "-00:01",
+//           travellers: travellers,
+//           incrementalResults: true,
+//           // this will **conditionally add** returnDateOfSearch if flightReturnDate exists
+//           ...(flightReturnDate && {
+//             returnDateOfSearch:
+//               handleTravelFusionDate(flightReturnDate) + "-23:59",
+//           }),
+//           countryCode: country,
+//         };
+
+//         console.log(requestBody);
+
+//         const response = await fetch(
+//           `${travelFusionBackendUrl}/start-routing`,
+//           {
+//             method: "POST",
+//             headers: {
+//               "Content-Type": "application/json",
+//             },
+//             body: JSON.stringify(requestBody),
+//           }
+//         );
+
+//         if (!response.ok) {
+//           throw new Error("Failed to fetch flight data");
+//         }
+
+//         const data = await response.json();
+//         console.log(data);
+//         setRouteId(data.routingId);
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     };
+
+//     if (searchCount > 0) {
+//       fetchFlights();
+//     }
+//   }, [searchCount]);
+
+//   const getCommissionDetail = async (tfPrice) => {
+//     try {
+//       if (!commissionDetails) {
+//         return console.log("Error");
+//       } else {
+//         const Commission = commissionDetails.Commission;
+//         if (Commission) {
+//           console.log(Commission);
+//           if (commissionDetails.CommissionType.toLowerCase() === "percentage") {
+//             const commissionAmount = (tfPrice * Commission) / 100;
+//             const totalAmount = tfPrice + commissionAmount;
+//             return totalAmount.toFixed(2);
+//           } else if (
+//             commissionDetails.CommissionType.toLowerCase() === "amount"
+//           ) {
+//             const totalAmount = tfPrice + Commission;
+//             return totalAmount.toFixed(2);
+//           }
+//         }
+//       }
+//     } catch (error) {
+//       console.error(error);
+//     }
+//   };
+
+//   useEffect(() => {
+//     const fetchFlights = async () => {
+//       console.log("Travelfusion Search API Call");
+//       try {
+//         const response = await fetch(
+//           `${travelFusionBackendUrl}/check-routing`,
+//           {
+//             method: "POST",
+//             headers: {
+//               "Content-Type": "application/json",
+//             },
+//             body: JSON.stringify({
+//               routingId: routeId,
+//             }),
+//           }
+//         );
+
+//         if (!response.ok) {
+//           throw new Error("Failed to fetch flight data");
+//         }
+
+//         const data = await response.json();
+//         console.log("API Response:", data);
+
+//         // Add defensive checks for data structure
+//         if (
+//           !data ||
+//           !data.flightList ||
+//           !Array.isArray(data.flightList) ||
+//           data.flightList.length === 0
+//         ) {
+//           console.log("No flight data available");
+//           setFlightsData([]);
+//           return;
+//         }
+
+//         const firstFlight = data.flightList[0];
+//         if (
+//           !firstFlight ||
+//           !firstFlight.Router ||
+//           !Array.isArray(firstFlight.Router)
+//         ) {
+//           console.log("No router data available");
+//           setFlightsData([]);
+//           return;
+//         }
+
+//         // *** CURRENCY CONVERSION: Fetch exchange rates ***
+//         const rates = await fetchExchangeRates("CVE"); // CVE as base currency
+//         const routerList = firstFlight.Router;
+
+//         // Step 1: Collect all raw flight data
+//         const allFlightPromises = [];
+
+//         for (const supplier of routerList) {
+//           if (!supplier?.GroupList || !Array.isArray(supplier.GroupList))
+//             continue;
+
+//           for (const groupContainer of supplier.GroupList) {
+//             if (!groupContainer?.Group || !Array.isArray(groupContainer.Group))
+//               continue;
+
+//             for (const group of groupContainer.Group) {
+//               if (
+//                 !group?.OutwardList ||
+//                 !Array.isArray(group.OutwardList) ||
+//                 group.OutwardList.length === 0
+//               )
+//                 continue;
+
+//               const outwardList = group.OutwardList[0]?.Outward || [];
+//               console.log(outwardList);
+//               for (const flight of outwardList) {
+//                 allFlightPromises.push(
+//                   (async () => {
+//                     try {
+//                       if (!flight?.SegmentList?.[0]?.Segment?.[0]) return null;
+
+//                       const segment = flight.SegmentList[0].Segment[0];
+//                       const origin = Array.isArray(segment.Origin)
+//                         ? segment.Origin[0]
+//                         : null;
+//                       const destination = Array.isArray(segment.Destination)
+//                         ? segment.Destination[0]
+//                         : null;
+
+//                       const operatorName =
+//                         segment.Operator?.[0]?.Name?.[0] || "Unknown Airline";
+
+//                       const logo = operatorName.toLowerCase();
+//                       const flightId =
+//                         segment.FlightId?.[0]?.Code?.[0] || "N/A";
+//                       const travelClass =
+//                         segment.TravelClass?.[0]?.TfClass?.[0] || "Economy";
+//                       const departureTime =
+//                         segment.DepartDate?.[0]?.split("-")[1] || "N/A";
+//                       const arrivalTime =
+//                         segment.ArriveDate?.[0]?.split("-")[1] || "N/A";
+//                       const departureDate = segment.DepartDate?.[0];
+//                       const arrivalDate = segment.ArriveDate?.[0];
+//                       const duration = segment.Duration?.[0]
+//                         ? Math.round(Number(segment.Duration[0]) / 60) + "hr"
+//                         : "N/A";
+
+//                       const originalPrice = parseFloat(
+//                         flight.Price?.[0]?.Amount?.[0] || "0"
+//                       );
+//                       const originalCurrency =
+//                         flight.Price?.[0]?.Currency?.[0] || "N/A";
+
+//                       return {
+//                         id: flight.Id?.[0] || "N/A",
+//                         airline: operatorName,
+//                         logo: `http://www.travelfusion.com/images/logos/${logo}.gif`,
+//                         flightNumber: flightId,
+//                         class: travelClass,
+//                         departureDate,
+//                         departureTime,
+//                         departureCity: origin?.Code?.[0] || "N/A",
+//                         arrivalDate,
+//                         arrivalTime,
+//                         arrivalCity: destination?.Code?.[0] || "N/A",
+//                         duration,
+//                         originalPrice,
+//                         originalCurrency,
+//                       };
+//                     } catch (e) {
+//                       console.error("Flight parse error:", e);
+//                       return null;
+//                     }
+//                   })()
+//                 );
+//               }
+//             }
+//           }
+//         }
+
+//         const rawFlights = (await Promise.all(allFlightPromises)).filter(
+//           Boolean
+//         );
+
+//         // Step 2: Convert and cache unique prices
+//         const currencyMap = {}; // key = currency, value = rate to CVE
+//         const priceCommissionMap = {}; // key = original converted price, value = with commission
+
+//         for (const flight of rawFlights) {
+//           const key = `${flight.originalPrice}_${flight.originalCurrency}`;
+
+//           if (!(key in priceCommissionMap)) {
+//             try {
+//               if (!(flight.originalCurrency in currencyMap)) {
+//                 currencyMap[flight.originalCurrency] =
+//                   convertToRequestedCurrency(
+//                     1,
+//                     flight.originalCurrency,
+//                     "CVE",
+//                     rates
+//                   );
+//               }
+
+//               const rate = currencyMap[flight.originalCurrency];
+//               const convertedPrice = parseFloat(
+//                 (flight.originalPrice * rate).toFixed(2)
+//               );
+//               const finalPrice = await getCommissionDetail(convertedPrice);
+//               priceCommissionMap[key] = {
+//                 convertedPrice: finalPrice,
+//                 convertedFrom: flight.originalPrice,
+//                 fromCurrency: flight.originalCurrency,
+//               };
+//             } catch (e) {
+//               console.error("Conversion/commission error:", e);
+//             }
+//           }
+//         }
+
+//         // Step 3: Build final simplified flights
+//         const simplifiedFlights = rawFlights.map((flight) => {
+//           const key = `${flight.originalPrice}_${flight.originalCurrency}`;
+//           const priceInfo = priceCommissionMap[key];
+
+//           return {
+//             ...flight,
+//             price: priceInfo?.convertedPrice || 0,
+//             originalPrice: priceInfo?.convertedPrice || 0,
+//             convertedcurrencyfrom: priceInfo?.fromCurrency || "N/A",
+//             convertedPricefrom: priceInfo?.convertedFrom || 0,
+//             currency: "CVE",
+//           };
+//         });
+
+//         // Step 1: Collect all flight details (without conversion)
+//         const rawFlightDataPromises = [];
+
+//         for (const supplier of routerList) {
+//           if (!Array.isArray(supplier?.GroupList)) continue;
+
+//           for (const groupContainer of supplier.GroupList) {
+//             if (!Array.isArray(groupContainer?.Group)) continue;
+
+//             for (const group of groupContainer.Group) {
+//               const outwardList = group?.OutwardList?.[0]?.Outward ?? [];
+//               const returnList = group?.ReturnList?.[0]?.Return ?? [];
+
+//               const extractFlightInfo = async (flight, type) => {
+//                 try {
+//                   const segment = flight?.SegmentList?.[0]?.Segment?.[0];
+//                   if (!segment) return null;
+
+//                   const origin = segment.Origin?.[0] ?? {};
+//                   const destination = segment.Destination?.[0] ?? {};
+//                   const operatorName =
+//                     segment.Operator?.[0]?.Name?.[0] ?? "Unknown Airline";
+//                   const logo = operatorName.toLowerCase();
+//                   const flightId = segment.FlightId?.[0]?.Code?.[0] ?? "N/A";
+//                   const travelClass =
+//                     segment.TravelClass?.[0]?.SupplierClass?.[0] ?? "Economy";
+
+//                   const departureTime =
+//                     segment.DepartDate?.[0]?.split("-")[1] ?? "N/A";
+//                   const arrivalTime =
+//                     segment.ArriveDate?.[0]?.split("-")[1] ?? "N/A";
+//                   const duration = segment.Duration?.[0]
+//                     ? Math.round(Number(segment.Duration[0]) / 60) + "hr"
+//                     : "N/A";
+
+//                   const originalPrice = parseFloat(
+//                     flight?.Price?.[0]?.Amount?.[0] ?? "0"
+//                   );
+//                   const originalCurrency =
+//                     flight?.Price?.[0]?.Currency?.[0] ?? "N/A";
+//                   const departureDate = segment.DepartDate?.[0];
+//                   const arrivalDate = segment.ArriveDate?.[0];
+//                   return {
+//                     id: flight.Id?.[0] ?? "N/A",
+//                     airline: operatorName,
+//                     logo: `http://www.travelfusion.com/images/logos/${logo}.gif`,
+//                     flightNumber: flightId,
+//                     class: travelClass,
+//                     departureDate,
+//                     departureTime,
+//                     departureCity: origin.Code?.[0] ?? "N/A",
+//                     arrivalDate,
+//                     arrivalTime,
+//                     arrivalCity: destination.Code?.[0] ?? "N/A",
+//                     duration,
+//                     originalPrice,
+//                     originalCurrency,
+//                     type,
+//                   };
+//                 } catch (err) {
+//                   console.error(`Error parsing ${type} flight:`, err);
+//                   return null;
+//                 }
+//               };
+
+//               for (const flight of outwardList) {
+//                 rawFlightDataPromises.push(
+//                   extractFlightInfo(flight, "outward")
+//                 );
+//               }
+
+//               for (const flight of returnList) {
+//                 rawFlightDataPromises.push(extractFlightInfo(flight, "return"));
+//               }
+//             }
+//           }
+//         }
+
+//         const rawFlightData = (await Promise.all(rawFlightDataPromises)).filter(
+//           Boolean
+//         );
+
+//         // Step 2: Convert/calculate commission only once per unique price+currency
+//         const currencyRateCache = {};
+//         const commissionCache = {};
+
+//         for (const flight of rawFlightData) {
+//           const key = `${flight.originalPrice}_${flight.originalCurrency}`;
+//           if (!commissionCache[key]) {
+//             try {
+//               if (!currencyRateCache[flight.originalCurrency]) {
+//                 currencyRateCache[flight.originalCurrency] =
+//                   convertToRequestedCurrency(
+//                     1,
+//                     flight.originalCurrency,
+//                     "CVE",
+//                     rates
+//                   );
+//               }
+
+//               const rate = currencyRateCache[flight.originalCurrency];
+//               const converted = parseFloat(
+//                 (flight.originalPrice * rate).toFixed(2)
+//               );
+//               const finalPrice = await getCommissionDetail(converted);
+
+//               commissionCache[key] = {
+//                 convertedPrice: finalPrice,
+//                 convertedFrom: flight.originalPrice,
+//                 fromCurrency: flight.originalCurrency,
+//               };
+//             } catch (e) {
+//               console.error("Conversion or commission failed:", e);
+//               commissionCache[key] = null;
+//             }
+//           }
+//         }
+
+//         // Step 3: Final flight object with price info attached
+//         const simplifiedFlightsGroup = rawFlightData
+//           .map((flight) => {
+//             const key = `${flight.originalPrice}_${flight.originalCurrency}`;
+//             const priceInfo = commissionCache[key];
+
+//             if (!priceInfo) return null;
+
+//             return {
+//               ...flight,
+//               price: priceInfo.convertedPrice,
+//               originalPrice: priceInfo.convertedPrice,
+//               convertedcurrencyfrom: priceInfo.fromCurrency,
+//               convertedPricefrom: priceInfo.convertedFrom,
+//               currency: "CVE",
+//             };
+//           })
+//           .filter(Boolean);
+
+//         console.log("simplifiedflightgroup", simplifiedFlightsGroup);
+//         console.log(TripType);
+//         if (TripType === "One Way") {
+//           setFlightsData(simplifiedFlights);
+//         } else if (TripType === "Round Trip") {
+//           setFlightsData(simplifiedFlightsGroup);
+//         }
+//       } catch (error) {
+//         console.error(error);
+//       }
+//     };
+
+//     if (routeId) {
+//       fetchFlights();
+//     }
+//   }, [routeId]);
+
+//   useEffect(() => {
+//     const handleClickOutside = (event) => {
+//       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+//         setShowDropdown(false);
+//       }
+//     };
+//     document.addEventListener("mousedown", handleClickOutside);
+//     return () => document.removeEventListener("mousedown", handleClickOutside);
+//   }, []);
+
+//   return (
+//     <div className="flex justify-center items-center">
+//       <form className="w-full max-w-6xl bg-white rounded-xl px-4 py-1 z-10 min-h-[168px] mt-5">
+//         {/* Main Inputs Row */}
+//         <div className="w-full flex flex-col md:flex-row gap-1">
+//           {/* From-To Section */}
+//           <div className="flex items-center w-full md:w-[660px] min-h-[90px] rounded-xl border border-gray-200 overflow-hidden relative">
+//             {/* FROM */}
+//             <div className="flex-1 px-4 py-3">
+//               <label className="text-xs text-gray-500">From</label>
+//               <input
+//                 type="text"
+//                 value={from}
+//                 onChange={(e) => setFrom(e.target.value)}
+//                 placeholder="[HYD] Rajiv Gandhi International Airport"
+//                 className={`text-[18px] font-semibold outline-none w-full bg-transparent ${
+//                   from ? "text-black" : "text-[#64748B]"
+//                 }`}
+//               />
+//             </div>
+
+//             {/* Center Divider */}
+//             <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-gray-200 -translate-x-1/2" />
+
+//             {/* SWAP BUTTON */}
+//             <div className="absolute left-1/2 -translate-x-1/2 z-10">
+//               <button
+//                 type="button"
+//                 onClick={() => {
+//                   const temp = from;
+//                   setFrom(to);
+//                   setTo(temp);
+//                 }}
+//                 className="w-8 h-8 rounded-full border border-gray-300 bg-white hover:bg-gray-100 flex items-center justify-center"
+//               >
+//                 <ArrowLeftRightIcon className="h-4 w-4 text-gray-600" />
+//               </button>
+//             </div>
+
+//             {/* TO */}
+//             <div className="flex-1 pl-12 pr-4 py-3 ml-[1px]">
+//               <label className="text-xs text-gray-500">To</label>
+//               <input
+//                 type="text"
+//                 value={to}
+//                 onChange={(e) => setTo(e.target.value)}
+//                 placeholder="[BOM] Chhatrapati Shivaji International Airport"
+//                 className={`text-[18px] font-semibold outline-none w-full bg-transparent ${
+//                   to ? "text-black" : "text-[#64748B]"
+//                 }`}
+//               />
+//             </div>
+//           </div>
+//           {/* Departure Date */}
+//           <div className="w-full md:w-[180px] h-[90px] px-4 py-3 rounded-xl border border-gray-200">
+//             <p className="text-xs text-gray-500 mb-1 flex items-center justify-between">
+//               Departure Date
+//               <svg
+//                 xmlns="http://www.w3.org/2000/svg"
+//                 className="w-4 h-4 text-[#0F172A]"
+//                 fill="none"
+//                 viewBox="0 0 24 24"
+//                 stroke="currentColor"
+//               >
+//                 <path
+//                   strokeLinecap="round"
+//                   strokeLinejoin="round"
+//                   strokeWidth="2"
+//                   d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+//                 />
+//               </svg>
+//             </p>
+//             <DatePicker
+//               selected={flightDepatureDate}
+//               onChange={setflightDepatureDate}
+//               dateFormat="dd MMM yyyy"
+//               placeholderText="Select Date"
+//               className="text-[16px] font-semibold text-[#0F172A] w-full outline-none bg-transparent "
+//             />
+//             <p className="text-xs text-gray-500 mt-1">
+//               {flightDepatureDate &&
+//                 flightDepatureDate.toLocaleDateString("en-US", {
+//                   weekday: "long",
+//                 })}
+//             </p>
+//           </div>
+
+//           {/* Return Date (Round Trip only) */}
+//           {TripType === "Round Trip" && (
+//             <div className="w-full md:w-[180px] h-[90px] px-4 py-3 rounded-xl border border-gray-200">
+//               <p className="text-xs text-gray-500 mb-1 flex items-center justify-between">
+//                 Return Date
+//                 <svg
+//                   xmlns="http://www.w3.org/2000/svg"
+//                   className="w-4 h-4 text-[#0F172A]"
+//                   fill="none"
+//                   viewBox="0 0 24 24"
+//                   stroke="currentColor"
+//                 >
+//                   <path
+//                     strokeLinecap="round"
+//                     strokeLinejoin="round"
+//                     strokeWidth="2"
+//                     d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+//                   />
+//                 </svg>
+//               </p>
+//               <DatePicker
+//                 selected={flightReturnDate}
+//                 onChange={setflightReturnDate}
+//                 dateFormat="dd MMM yyyy"
+//                 placeholderText="Select Date"
+//                 minDate={flightDepatureDate}
+//                 className="text-[16px] font-semibold text-[#0F172A] w-full outline-none bg-transparent"
+//               />
+//               <p className="text-xs text-gray-500 mt-1">Book a round trip</p>
+//             </div>
+//           )}
+
+//           {/* Traveller & Class */}
+//           <div
+//             className="w-full md:w-[220px] h-[90px] px-4 py-3 rounded-xl border border-gray-200 relative cursor-pointer"
+//             ref={dropdownRef}
+//             onClick={() => setShowDropdown(!showDropdown)}
+//           >
+//             {/* Dropdown content */}
+//             {showDropdown && (
+//               <div className="absolute bottom-full left-0 mb-2 w-full bg-white border border-gray-200 rounded-xl z-50 shadow-md p-3">
+//                 {/* Adult */}
+//                 <div className="flex justify-between items-center mb-2">
+//                   <span className="text-sm text-gray-600">Adults</span>
+//                   <div className="flex items-center gap-3">
+//                     <Minus
+//                       className={`w-4 h-4 cursor-pointer ${
+//                         adults > 1 ? "text-black" : "text-gray-300"
+//                       }`}
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         if (adults > 1) setAdults(adults - 1);
+//                       }}
+//                     />
+//                     <span className="text-sm font-semibold">{adults}</span>
+//                     <Plus
+//                       className="w-4 h-4 cursor-pointer text-black"
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         setAdults(adults + 1);
+//                       }}
+//                     />
+//                   </div>
+//                 </div>
+
+//                 {/* Children */}
+//                 <div className="flex justify-between items-center mb-4">
+//                   <span className="text-sm text-gray-600">Children</span>
+//                   <div className="flex items-center gap-3">
+//                     <Minus
+//                       className={`w-4 h-4 cursor-pointer ${
+//                         children > 0 ? "text-black" : "text-gray-300"
+//                       }`}
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         if (children > 0) setChildren(children - 1);
+//                       }}
+//                     />
+//                     <span className="text-sm font-semibold">{children}</span>
+//                     <Plus
+//                       className="w-4 h-4 cursor-pointer text-black"
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         setChildren(children + 1);
+//                       }}
+//                     />
+//                   </div>
+//                 </div>
+
+//                 {/* Class list */}
+//                 {["Economy", "Premium Economy", "Business", "First Class"].map(
+//                   (cls) => (
+//                     <div
+//                       key={cls}
+//                       className={`py-1 px-2 rounded text-sm cursor-pointer hover:bg-gray-100 ${
+//                         travelClass === cls ? "bg-gray-100 font-semibold" : ""
+//                       }`}
+//                       onClick={(e) => {
+//                         e.stopPropagation();
+//                         setTravelClass(cls);
+//                         setShowDropdown(false);
+//                       }}
+//                     >
+//                       {cls}
+//                     </div>
+//                   )
+//                 )}
+//               </div>
+//             )}
+
+//             {/* Static label + selected value */}
+//             <p className="text-xs text-gray-500 mb-1">Travellers & Class</p>
+//             <div className="flex justify-between items-center font-semibold text-[16px] text-[#0F172A]">
+//               <span>
+//                 {adults + children}{" "}
+//                 <span className="font-normal text-sm">Travellers</span>
+//               </span>
+//             </div>
+//             <p className="text-xs text-gray-500 mt-1">{travelClass}</p>
+//           </div>
+//         </div>
+//         <div className="mt-4 w-full flex flex-col md:flex-row items-center justify-between gap-4">
+//           <div className="flex gap-6">
+//             {["One Way", "Round Trip"].map((type) => (
+//               <label
+//                 key={type}
+//                 className="flex items-center gap-2 cursor-pointer"
+//               >
+//                 <div
+//                   className={`w-4 h-4 rounded-full border-2 flex items-center justify-center  ${
+//                     TripType === type
+//                       ? "bg-[#EE5128] border-[#EE5128] text-white"
+//                       : "bg-gray-300 border-gray-300"
+//                   }`}
+//                 >
+//                   {TripType === type && (
+//                     <span className="text-[10px] font-bold">✓</span>
+//                   )}
+//                 </div>
+//                 <span
+//                   className={`text-sm ${
+//                     TripType === type
+//                       ? "font-semibold text-black"
+//                       : "text-gray-500"
+//                   }`}
+//                 >
+//                   {type}
+//                 </span>
+//                 <input
+//                   type="radio"
+//                   name="tripType"
+//                   className="hidden"
+//                   value={type}
+//                   checked={TripType === type}
+//                   onChange={() => setTripType(type)}
+//                 />
+//               </label>
+//             ))}
+//             <label className="flex items-center gap-2 ml-auto cursor-pointer">
+//               <div
+//                 className={`w-4 h-4 rounded-full border-2 flex items-center justify-center  ${
+//                   isDirectFlight
+//                     ? "bg-[#EE5128] border-[#EE5128] text-white"
+//                     : "bg-gray-300 border-gray-300"
+//                 }`}
+//                 onClick={() => setIsDirectFlight(!isDirectFlight)}
+//               >
+//                 {isDirectFlight && (
+//                   <span className="text-[10px] font-bold">✓</span>
+//                 )}
+//               </div>
+//               <span
+//                 className={`text-sm   ${
+//                   isDirectFlight ? "font-semibold text-black" : "text-gray-500"
+//                 }`}
+//                 onClick={() => setIsDirectFlight(!isDirectFlight)}
+//               >
+//                 Direct flight only
+//               </span>
+//             </label>
+//           </div>
+//           {/* Search Button */}
+//           <div className=" flex justify-center">
+//             <button
+//               className="bg-[#EE5128] hover:bg-[#d64520] text-white text-[18px] font-semibold px-18 py-2 rounded-full transition "
+//               onClick={(e) => handleTravelfusionSearch(e)}
+//             >
+//               {t("hero.search")}
+//             </button>
+//           </div>
+//         </div>
+//       </form>
+//     </div>
+//   );
+// };
+
 const SearchBox = ({
   setFlightsData,
   TripType,
   setTripType,
   From,
   To,
+  FromDisplayText,
+  ToDisplayText,
   SearchProps,
   country,
+  locked = false,
+  setnewRouteId,
 }) => {
   const { t } = useTranslation();
   const [isDirectFlight, setIsDirectFlight] = useState(false);
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
+  const [fromSearchTerm, setFromSearchTerm] = useState("");
+  const [toSearchTerm, setToSearchTerm] = useState("");
   const [flightDepatureDate, setflightDepatureDate] = useState(new Date());
   const [flightReturnDate, setflightReturnDate] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -3094,25 +3976,22 @@ const SearchBox = ({
   const [routeId, setRouteId] = useState("");
   const [searchCount, setSearchCount] = useState(0);
   const [commissionDetails, setcommissionDetails] = useState([]);
+  const [airposts, setAirposts] = useState([]);
+
+  // Dropdown states
+  const [fromDropdownOpen, setFromDropdownOpen] = useState(false);
+  const [toDropdownOpen, setToDropdownOpen] = useState(false);
+  const [filteredFromAirports, setFilteredFromAirports] = useState([]);
+  const [filteredToAirports, setFilteredToAirports] = useState([]);
+  const [fromDropdownSearchTerm, setFromDropdownSearchTerm] = useState("");
+  const [toDropdownSearchTerm, setToDropdownSearchTerm] = useState("");
+
+  const fromDropdownRef = useRef(null);
+  const toDropdownRef = useRef(null);
+
   const travelFusionBackendUrl = import.meta.env.VITE_FLIGHT_BACKEND_URL;
-  /*const listSupplierRoute = async () => {
-    try {
-      const response = await fetch(
-        `${travelFusionBackendUrl}/get-supplierroute`
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json(); // Convert the response body to JSON
-      const iata = data.suppliers[0].airportRoutes;
-      console.log("Supplier route data:", iata); // Log the parsed data
-    } catch (error) {
-      console.error("Failed to fetch supplier route:", error);
-    }
-  };*/
   const transactionUrl = import.meta.env.VITE_TRANSACTION_URL;
+
   const getcommission = async () => {
     try {
       const res = await fetch(`${transactionUrl}/getcommissiondetails`);
@@ -3127,8 +4006,104 @@ const SearchBox = ({
 
   useEffect(() => {
     getcommission();
-    // listSupplierRoute();
   }, []);
+
+  // Load airports data
+  useEffect(() => {
+    let AirportList = [];
+    const fetchAirport = async () => {
+      try {
+        const res = await axios.get(
+          `${travelFusionBackendUrl}/get-airportlist`
+        );
+        AirportList = res.data.Airportdata || [];
+        setAirposts(res.data.Airportdata);
+      } catch (error) {
+        console.error(error);
+      }
+      AirportList.length === 0 ? fetchAirport() : setAirposts(AirportList);
+    };
+    fetchAirport();
+  }, []);
+
+  // Handle dropdown filtering
+  useEffect(() => {
+    if (fromDropdownOpen) {
+      if (fromDropdownSearchTerm.length > 0) {
+        const filtered = airposts
+          .filter(
+            (airport) =>
+              airport.Cityname.toLowerCase().includes(
+                fromDropdownSearchTerm.toLowerCase()
+              ) ||
+              airport.Countryname.toLowerCase().includes(
+                fromDropdownSearchTerm.toLowerCase()
+              ) ||
+              airport.Iata.toLowerCase().includes(
+                fromDropdownSearchTerm.toLowerCase()
+              ) ||
+              airport.Airportname.toLowerCase().includes(
+                fromDropdownSearchTerm.toLowerCase()
+              )
+          )
+          .slice(0, 10);
+        setFilteredFromAirports(filtered);
+      } else {
+        setFilteredFromAirports(airposts.slice(0, 6));
+      }
+    }
+  }, [fromDropdownSearchTerm, airposts, fromDropdownOpen]);
+
+  useEffect(() => {
+    if (toDropdownOpen) {
+      if (toDropdownSearchTerm.length > 0) {
+        const filtered = airposts
+          .filter(
+            (airport) =>
+              airport.Cityname.toLowerCase().includes(
+                toDropdownSearchTerm.toLowerCase()
+              ) ||
+              airport.Countryname.toLowerCase().includes(
+                toDropdownSearchTerm.toLowerCase()
+              ) ||
+              airport.Iata.toLowerCase().includes(
+                toDropdownSearchTerm.toLowerCase()
+              ) ||
+              airport.Airportname.toLowerCase().includes(
+                toDropdownSearchTerm.toLowerCase()
+              )
+          )
+          .slice(0, 10);
+        setFilteredToAirports(filtered);
+      } else {
+        setFilteredToAirports(airposts.slice(0, 6));
+      }
+    }
+  }, [toDropdownSearchTerm, airposts, toDropdownOpen]);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        fromDropdownRef.current &&
+        !fromDropdownRef.current.contains(event.target)
+      ) {
+        setFromDropdownOpen(false);
+      }
+      if (
+        toDropdownRef.current &&
+        !toDropdownRef.current.contains(event.target)
+      ) {
+        setToDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   // Fix: Properly set initial values from previous search
   useEffect(() => {
     if (SearchProps) {
@@ -3166,7 +4141,42 @@ const SearchBox = ({
       setFrom(From || "");
       setTo(To || "");
     }
-  }, [SearchProps, From, To]); // Add proper dependencies
+
+    // FIXED: Set display text from props with proper priority
+    if (FromDisplayText) {
+      console.log("Setting FROM display text:", FromDisplayText);
+      setFromSearchTerm(FromDisplayText);
+    } else if (From) {
+      // Fallback: generate display text from IATA code
+      const airport = airposts.find(
+        (airport) =>
+          airport.Iata && airport.Iata.toLowerCase() === From.toLowerCase()
+      );
+      if (airport) {
+        const displayText = `[${airport.Iata}] ${airport.Airportname}`;
+        setFromSearchTerm(displayText);
+      } else {
+        setFromSearchTerm(From);
+      }
+    }
+
+    if (ToDisplayText) {
+      console.log("Setting TO display text:", ToDisplayText);
+      setToSearchTerm(ToDisplayText);
+    } else if (To) {
+      // Fallback: generate display text from IATA code
+      const airport = airposts.find(
+        (airport) =>
+          airport.Iata && airport.Iata.toLowerCase() === To.toLowerCase()
+      );
+      if (airport) {
+        const displayText = `[${airport.Iata}] ${airport.Airportname}`;
+        setToSearchTerm(displayText);
+      } else {
+        setToSearchTerm(To);
+      }
+    }
+  }, [SearchProps, From, To, FromDisplayText, ToDisplayText, airposts]); // Add airposts as dependency
 
   const handleTravelFusionDate = (newDate) => {
     if (!newDate) {
@@ -3640,6 +4650,8 @@ const SearchBox = ({
       }
     };
 
+    setnewRouteId(routeId);
+
     if (routeId) {
       fetchFlights();
     }
@@ -3657,96 +4669,295 @@ const SearchBox = ({
 
   return (
     <div className="flex justify-center items-center">
-      <form className="w-full max-w-6xl bg-white rounded-xl px-4 py-1 z-10 min-h-[168px] mt-5">
-        {/* Main Inputs Row */}
-        <div className="w-full flex flex-col md:flex-row gap-1">
-          {/* From-To Section */}
-          <div className="flex items-center w-full md:w-[660px] min-h-[90px] rounded-xl border border-gray-200 overflow-hidden relative">
-            {/* FROM */}
-            <div className="flex-1 px-4 py-3">
-              <label className="text-xs text-gray-500">From</label>
-              <input
-                type="text"
-                value={from}
-                onChange={(e) => setFrom(e.target.value)}
-                placeholder="[HYD] Rajiv Gandhi International Airport"
-                className={`text-[18px] font-semibold outline-none w-full bg-transparent ${
-                  from ? "text-black" : "text-[#64748B]"
-                }`}
-              />
-            </div>
+      {/* Wrapper with conditional overlay */}
+      <div className={`relative w-full max-w-6xl `}>
+        {/* Invisible overlay when locked - no text notification */}
+        {/* {locked && (
+          <div className="absolute inset-0 bg-transparent z-50 rounded-xl"></div>
+        )} */}
 
-            {/* Center Divider */}
-            <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-gray-200 -translate-x-1/2" />
-
-            {/* SWAP BUTTON */}
-            <div className="absolute left-1/2 -translate-x-1/2 z-10">
-              <button
-                type="button"
-                onClick={() => {
-                  const temp = from;
-                  setFrom(to);
-                  setTo(temp);
-                }}
-                className="w-8 h-8 rounded-full border border-gray-300 bg-white hover:bg-gray-100 flex items-center justify-center"
-              >
-                <ArrowLeftRightIcon className="h-4 w-4 text-gray-600" />
-              </button>
-            </div>
-
-            {/* TO */}
-            <div className="flex-1 pl-12 pr-4 py-3 ml-[1px]">
-              <label className="text-xs text-gray-500">To</label>
-              <input
-                type="text"
-                value={to}
-                onChange={(e) => setTo(e.target.value)}
-                placeholder="[BOM] Chhatrapati Shivaji International Airport"
-                className={`text-[18px] font-semibold outline-none w-full bg-transparent ${
-                  to ? "text-black" : "text-[#64748B]"
-                }`}
-              />
-            </div>
-          </div>
-          {/* Departure Date */}
-          <div className="w-full md:w-[180px] h-[90px] px-4 py-3 rounded-xl border border-gray-200">
-            <p className="text-xs text-gray-500 mb-1 flex items-center justify-between">
-              Departure Date
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4 text-[#0F172A]"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+        <form
+          className={`w-full bg-white rounded-xl px-4 py-1 z-10 min-h-[168px] mt-5 `}
+        >
+          {/* Main Inputs Row */}
+          <div className="w-full flex flex-col md:flex-row gap-1">
+            {/* From-To Section */}
+            <div className="flex items-center w-full md:w-[660px] min-h-[90px] rounded-xl border border-gray-200 relative overflow-visible z-50">
+              {/* FROM */}
+              <div className="flex-1 px-4 py-3 relative" ref={fromDropdownRef}>
+                <label className="text-xs text-gray-500">From</label>
+                <input
+                  type="text"
+                  value={fromSearchTerm}
+                  readOnly
+                  disabled={locked}
+                  onFocus={() => {
+                    if (!locked) {
+                      console.log("FROM input focused");
+                      setFromDropdownOpen(true);
+                      setToDropdownOpen(false);
+                      setFromDropdownSearchTerm("");
+                    }
+                  }}
+                  placeholder="[HYD] Rajiv Gandhi International Airport"
+                  className={`text-[18px] font-semibold outline-none w-full bg-transparent cursor-pointer text-gray-900 placeholder-gray-400 ${
+                    locked ? "cursor-not-allowed" : ""
+                  }`}
                 />
-              </svg>
-            </p>
-            <DatePicker
-              selected={flightDepatureDate}
-              onChange={setflightDepatureDate}
-              dateFormat="dd MMM yyyy"
-              placeholderText="Select Date"
-              className="text-[16px] font-semibold text-[#0F172A] w-full outline-none bg-transparent "
-            />
-            <p className="text-xs text-gray-500 mt-1">
-              {flightDepatureDate &&
-                flightDepatureDate.toLocaleDateString("en-US", {
-                  weekday: "long",
-                })}
-            </p>
-          </div>
+              </div>
 
-          {/* Return Date (Round Trip only) */}
-          {TripType === "Round Trip" && (
+              {/* Center Divider */}
+              <div className="absolute top-0 bottom-0 left-1/2 w-[1px] bg-gray-200 -translate-x-1/2" />
+
+              {/* SWAP BUTTON */}
+              <div className="absolute left-1/2 -translate-x-1/2 z-10">
+                <button
+                  type="button"
+                  disabled={locked}
+                  onClick={() => {
+                    if (!locked) {
+                      console.log("Swapping values");
+                      const tempIata = from;
+                      const tempSearchTerm = fromSearchTerm;
+                      setFrom(to);
+                      setTo(tempIata);
+                      setFromSearchTerm(toSearchTerm);
+                      setToSearchTerm(tempSearchTerm);
+                    }
+                  }}
+                  className={`w-8 h-8 rounded-full border border-gray-300 bg-white hover:bg-gray-100 flex items-center justify-center ${
+                    locked ? "cursor-not-allowed opacity-50" : ""
+                  }`}
+                >
+                  <ArrowLeftRightIcon className="h-4 w-4 text-gray-600" />
+                </button>
+              </div>
+
+              {/* TO */}
+              <div
+                className="flex-1 pl-40 pr-4 py-3 ml-[1px] relative"
+                ref={toDropdownRef}
+              >
+                <label className="text-xs text-gray-500">To</label>
+                <input
+                  type="text"
+                  value={toSearchTerm}
+                  readOnly
+                  disabled={locked}
+                  onFocus={() => {
+                    if (!locked) {
+                      console.log("TO input focused");
+                      setToDropdownOpen(true);
+                      setFromDropdownOpen(false);
+                      setToDropdownSearchTerm("");
+                    }
+                  }}
+                  placeholder="[BOM] Chhatrapati Shivaji International Airport"
+                  className={`text-[18px] font-semibold outline-none w-full bg-transparent cursor-pointer text-gray-900 placeholder-gray-400 ${
+                    locked ? "cursor-not-allowed" : ""
+                  }`}
+                />
+              </div>
+
+              {/* FROM Dropdown - Positioned on LEFT side */}
+              {fromDropdownOpen && !locked && (
+                <div className="absolute top-10 left-1/2 -translate-x-1/2 lg:left-2 lg:translate-x-0 w-80 bg-white border border-gray-200 rounded-lg shadow-2xl z-[9999] max-h-80 overflow-hidden mt-1">
+                  {/* Search Input Inside Dropdown */}
+                  <div className="p-3 border-b border-gray-200 bg-blue-50">
+                    <div className="flex items-center">
+                      <svg
+                        className="w-4 h-4 text-gray-400 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        ></path>
+                      </svg>
+                      <input
+                        type="text"
+                        value={fromDropdownSearchTerm}
+                        onChange={(e) => {
+                          console.log("FROM dropdown search:", e.target.value);
+                          setFromDropdownSearchTerm(e.target.value);
+                        }}
+                        placeholder="From"
+                        className="text-sm outline-none w-full bg-transparent text-gray-900 placeholder-gray-500"
+                        autoFocus
+                      />
+                    </div>
+                  </div>
+                  {/* Scrollable Results */}
+                  <div className="max-h-64 overflow-y-auto">
+                    {fromDropdownSearchTerm.length === 0 && (
+                      <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
+                        <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                          Popular Cities
+                        </span>
+                      </div>
+                    )}
+
+                    {filteredFromAirports.length > 0 ? (
+                      filteredFromAirports.map((airport, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log("FROM airport clicked:", airport);
+
+                            if (
+                              !airport ||
+                              !airport.Iata ||
+                              !airport.Airportname
+                            ) {
+                              console.error("Invalid airport object:", airport);
+                              return;
+                            }
+
+                            setFrom(airport.Iata);
+                            const displayText = `[${airport.Iata}] ${airport.Airportname}`;
+                            setFromSearchTerm(displayText);
+                            setFromDropdownOpen(false);
+                            setFromDropdownSearchTerm("");
+
+                            console.log(
+                              "FROM updated - IATA:",
+                              airport.Iata,
+                              "Display:",
+                              displayText
+                            );
+                          }}
+                        >
+                          <div className="flex-1">
+                            <div className="font-semibold text-gray-900">
+                              {airport.Cityname}, {airport.Countryname}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {airport.Airportname}
+                            </div>
+                          </div>
+                          <div className="text-lg font-bold text-gray-600 ml-4">
+                            {airport.Iata}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-4 text-gray-500 text-center">
+                        <div className="text-sm">No airports found</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* TO Dropdown - Positioned on RIGHT side */}
+              {toDropdownOpen && !locked && (
+                <div className="absolute top-10 left-1/2 -translate-x-1/2 lg:-right-12 lg:left-auto lg:translate-x-0 w-80 bg-white border border-gray-200 rounded-lg shadow-2xl z-[9999] max-h-80 overflow-hidden mt-1">
+                  {/* Search Input Inside Dropdown */}
+                  <div className="p-3 border-b border-gray-200 bg-blue-50">
+                    <div className="flex items-center">
+                      <svg
+                        className="w-4 h-4 text-gray-400 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        ></path>
+                      </svg>
+                      <input
+                        type="text"
+                        value={toDropdownSearchTerm}
+                        onChange={(e) => {
+                          console.log("TO dropdown search:", e.target.value);
+                          setToDropdownSearchTerm(e.target.value);
+                        }}
+                        placeholder="To"
+                        className="text-sm outline-none w-full bg-transparent text-gray-900 placeholder-gray-500"
+                        autoFocus
+                      />
+                    </div>
+                  </div>
+                  {/* Scrollable Results */}
+                  <div className="max-h-64 overflow-y-auto">
+                    {toDropdownSearchTerm.length === 0 && (
+                      <div className="px-3 py-2 bg-gray-50 border-b border-gray-200">
+                        <span className="text-xs font-semibold text-gray-600 uppercase tracking-wide">
+                          Popular Cities
+                        </span>
+                      </div>
+                    )}
+
+                    {filteredToAirports.length > 0 ? (
+                      filteredToAirports.map((airport, idx) => (
+                        <div
+                          key={idx}
+                          className="flex items-center justify-between p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            console.log("TO airport clicked:", airport);
+
+                            if (
+                              !airport ||
+                              !airport.Iata ||
+                              !airport.Airportname
+                            ) {
+                              console.error("Invalid airport object:", airport);
+                              return;
+                            }
+
+                            setTo(airport.Iata);
+                            const displayText = `[${airport.Iata}] ${airport.Airportname}`;
+                            setToSearchTerm(displayText);
+                            setToDropdownOpen(false);
+                            setToDropdownSearchTerm("");
+
+                            console.log(
+                              "TO updated - IATA:",
+                              airport.Iata,
+                              "Display:",
+                              displayText
+                            );
+                          }}
+                        >
+                          <div className="flex-1">
+                            <div className="font-semibold text-gray-900">
+                              {airport.Cityname}, {airport.Countryname}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {airport.Airportname}
+                            </div>
+                          </div>
+                          <div className="text-lg font-bold text-gray-600 ml-4">
+                            {airport.Iata}
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="p-4 text-gray-500 text-center">
+                        <div className="text-sm">No airports found</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Departure Date */}
             <div className="w-full md:w-[180px] h-[90px] px-4 py-3 rounded-xl border border-gray-200">
               <p className="text-xs text-gray-500 mb-1 flex items-center justify-between">
-                Return Date
+                Departure Date
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="w-4 h-4 text-[#0F172A]"
@@ -3763,77 +4974,128 @@ const SearchBox = ({
                 </svg>
               </p>
               <DatePicker
-                selected={flightReturnDate}
-                onChange={setflightReturnDate}
+                selected={flightDepatureDate}
+                onChange={locked ? () => {} : setflightDepatureDate}
                 dateFormat="dd MMM yyyy"
                 placeholderText="Select Date"
-                minDate={flightDepatureDate}
-                className="text-[16px] font-semibold text-[#0F172A] w-full outline-none bg-transparent"
+                disabled={locked}
+                className={`text-[16px] font-semibold text-[#0F172A] w-full outline-none bg-transparent ${
+                  locked ? "cursor-not-allowed" : ""
+                }`}
               />
-              <p className="text-xs text-gray-500 mt-1">Book a round trip</p>
+              <p className="text-xs text-gray-500 mt-1">
+                {flightDepatureDate &&
+                  flightDepatureDate.toLocaleDateString("en-US", {
+                    weekday: "long",
+                  })}
+              </p>
             </div>
-          )}
 
-          {/* Traveller & Class */}
-          <div
-            className="w-full md:w-[220px] h-[90px] px-4 py-3 rounded-xl border border-gray-200 relative cursor-pointer"
-            ref={dropdownRef}
-            onClick={() => setShowDropdown(!showDropdown)}
-          >
-            {/* Dropdown content */}
-            {showDropdown && (
-              <div className="absolute bottom-full left-0 mb-2 w-full bg-white border border-gray-200 rounded-xl z-50 shadow-md p-3">
-                {/* Adult */}
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-600">Adults</span>
-                  <div className="flex items-center gap-3">
-                    <Minus
-                      className={`w-4 h-4 cursor-pointer ${
-                        adults > 1 ? "text-black" : "text-gray-300"
-                      }`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (adults > 1) setAdults(adults - 1);
-                      }}
+            {/* Return Date (Round Trip only) */}
+            {TripType === "Round Trip" && (
+              <div className="w-full md:w-[180px] h-[90px] px-4 py-3 rounded-xl border border-gray-200">
+                <p className="text-xs text-gray-500 mb-1 flex items-center justify-between">
+                  Return Date
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-4 h-4 text-[#0F172A]"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
-                    <span className="text-sm font-semibold">{adults}</span>
-                    <Plus
-                      className="w-4 h-4 cursor-pointer text-black"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setAdults(adults + 1);
-                      }}
-                    />
+                  </svg>
+                </p>
+                <DatePicker
+                  selected={flightReturnDate}
+                  onChange={locked ? () => {} : setflightReturnDate}
+                  dateFormat="dd MMM yyyy"
+                  placeholderText="Select Date"
+                  minDate={flightDepatureDate}
+                  disabled={locked}
+                  className={`text-[16px] font-semibold text-[#0F172A] w-full outline-none bg-transparent ${
+                    locked ? "cursor-not-allowed" : ""
+                  }`}
+                />
+                <p className="text-xs text-gray-500 mt-1">Book a round trip</p>
+              </div>
+            )}
+
+            {/* Traveller & Class */}
+            <div
+              className={`w-full md:w-[220px] h-[90px] px-4 py-3 rounded-xl border border-gray-200 relative ${
+                locked ? "cursor-not-allowed" : "cursor-pointer"
+              }`}
+              ref={dropdownRef}
+              onClick={() => {
+                if (!locked) {
+                  setShowDropdown(!showDropdown);
+                }
+              }}
+            >
+              {/* Dropdown content */}
+              {showDropdown && !locked && (
+                <div className="absolute bottom-full left-0 mb-2 w-full bg-white border border-gray-200 rounded-xl z-50 shadow-md p-3">
+                  {/* Adult */}
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-sm text-gray-600">Adults</span>
+                    <div className="flex items-center gap-3">
+                      <Minus
+                        className={`w-4 h-4 cursor-pointer ${
+                          adults > 1 ? "text-black" : "text-gray-300"
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (adults > 1) setAdults(adults - 1);
+                        }}
+                      />
+                      <span className="text-sm font-semibold">{adults}</span>
+                      <Plus
+                        className="w-4 h-4 cursor-pointer text-black"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setAdults(adults + 1);
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                {/* Children */}
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-sm text-gray-600">Children</span>
-                  <div className="flex items-center gap-3">
-                    <Minus
-                      className={`w-4 h-4 cursor-pointer ${
-                        children > 0 ? "text-black" : "text-gray-300"
-                      }`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (children > 0) setChildren(children - 1);
-                      }}
-                    />
-                    <span className="text-sm font-semibold">{children}</span>
-                    <Plus
-                      className="w-4 h-4 cursor-pointer text-black"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setChildren(children + 1);
-                      }}
-                    />
+                  {/* Children */}
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="text-sm text-gray-600">Children</span>
+                    <div className="flex items-center gap-3">
+                      <Minus
+                        className={`w-4 h-4 cursor-pointer ${
+                          children > 0 ? "text-black" : "text-gray-300"
+                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (children > 0) setChildren(children - 1);
+                        }}
+                      />
+                      <span className="text-sm font-semibold">{children}</span>
+                      <Plus
+                        className="w-4 h-4 cursor-pointer text-black"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setChildren(children + 1);
+                        }}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                {/* Class list */}
-                {["Economy", "Premium Economy", "Business", "First Class"].map(
-                  (cls) => (
+                  {/* Class list */}
+                  {[
+                    "Economy",
+                    "Premium Economy",
+                    "Business",
+                    "First Class",
+                  ].map((cls) => (
                     <div
                       key={cls}
                       className={`py-1 px-2 rounded text-sm cursor-pointer hover:bg-gray-100 ${
@@ -3847,93 +5109,112 @@ const SearchBox = ({
                     >
                       {cls}
                     </div>
-                  )
-                )}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
 
-            {/* Static label + selected value */}
-            <p className="text-xs text-gray-500 mb-1">Travellers & Class</p>
-            <div className="flex justify-between items-center font-semibold text-[16px] text-[#0F172A]">
-              <span>
-                {adults + children}{" "}
-                <span className="font-normal text-sm">Travellers</span>
-              </span>
+              {/* Static label + selected value */}
+              <p className="text-xs text-gray-500 mb-1">Travellers & Class</p>
+              <div className="flex justify-between items-center font-semibold text-[16px] text-[#0F172A]">
+                <span>
+                  {adults + children}{" "}
+                  <span className="font-normal text-sm">Travellers</span>
+                </span>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">{travelClass}</p>
             </div>
-            <p className="text-xs text-gray-500 mt-1">{travelClass}</p>
           </div>
-        </div>
-        <div className="mt-4 w-full flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex gap-6">
-            {["One Way", "Round Trip"].map((type) => (
-              <label
-                key={type}
-                className="flex items-center gap-2 cursor-pointer"
-              >
-                <div
-                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center  ${
-                    TripType === type
-                      ? "bg-[#EE5128] border-[#EE5128] text-white"
-                      : "bg-gray-300 border-gray-300"
+
+          {/* Bottom section with radio buttons and search button */}
+          <div className="mt-4 w-full flex flex-col md:flex-row items-center justify-between gap-4">
+            <div className="flex gap-6">
+              {["One Way", "Round Trip"].map((type) => (
+                <label
+                  key={type}
+                  className={`flex items-center gap-2 ${
+                    locked ? "cursor-not-allowed" : "cursor-pointer"
                   }`}
                 >
-                  {TripType === type && (
+                  <div
+                    className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                      TripType === type
+                        ? "bg-[#EE5128] border-[#EE5128] text-white"
+                        : "bg-gray-300 border-gray-300"
+                    } ${locked ? "opacity-50" : ""}`}
+                  >
+                    {TripType === type && (
+                      <span className="text-[10px] font-bold">✓</span>
+                    )}
+                  </div>
+                  <span
+                    className={`text-sm ${
+                      TripType === type
+                        ? "font-semibold text-black"
+                        : "text-gray-500"
+                    } ${locked ? "opacity-50" : ""}`}
+                  >
+                    {type}
+                  </span>
+                  <input
+                    type="radio"
+                    name="tripType"
+                    className="hidden"
+                    value={type}
+                    checked={TripType === type}
+                    disabled={locked}
+                    onChange={() => {
+                      if (!locked) setTripType(type);
+                    }}
+                  />
+                </label>
+              ))}
+
+              <label
+                className={`flex items-center gap-2 ml-auto ${
+                  locked ? "cursor-not-allowed" : "cursor-pointer"
+                }`}
+              >
+                <div
+                  className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    isDirectFlight
+                      ? "bg-[#EE5128] border-[#EE5128] text-white"
+                      : "bg-gray-300 border-gray-300"
+                  } ${locked ? "opacity-50" : ""}`}
+                  onClick={() => {
+                    if (!locked) setIsDirectFlight(!isDirectFlight);
+                  }}
+                >
+                  {isDirectFlight && (
                     <span className="text-[10px] font-bold">✓</span>
                   )}
                 </div>
                 <span
                   className={`text-sm ${
-                    TripType === type
+                    isDirectFlight
                       ? "font-semibold text-black"
                       : "text-gray-500"
-                  }`}
+                  } ${locked ? "opacity-50" : ""}`}
+                  onClick={() => {
+                    if (!locked) setIsDirectFlight(!isDirectFlight);
+                  }}
                 >
-                  {type}
+                  Direct flight only
                 </span>
-                <input
-                  type="radio"
-                  name="tripType"
-                  className="hidden"
-                  value={type}
-                  checked={TripType === type}
-                  onChange={() => setTripType(type)}
-                />
               </label>
-            ))}
-            <label className="flex items-center gap-2 ml-auto cursor-pointer">
-              <div
-                className={`w-4 h-4 rounded-full border-2 flex items-center justify-center  ${
-                  isDirectFlight
-                    ? "bg-[#EE5128] border-[#EE5128] text-white"
-                    : "bg-gray-300 border-gray-300"
-                }`}
-                onClick={() => setIsDirectFlight(!isDirectFlight)}
+            </div>
+
+            {/* Search Button */}
+            <div className="flex justify-center cursor-pointer">
+              <button
+                className="bg-[#EE5128] hover:bg-[#d64520] text-white text-[18px] font-semibold px-18 py-2 rounded-full transition cursor-pointer"
+                onClick={(e) => handleTravelfusionSearch(e)}
               >
-                {isDirectFlight && (
-                  <span className="text-[10px] font-bold">✓</span>
-                )}
-              </div>
-              <span
-                className={`text-sm   ${
-                  isDirectFlight ? "font-semibold text-black" : "text-gray-500"
-                }`}
-                onClick={() => setIsDirectFlight(!isDirectFlight)}
-              >
-                Direct flight only
-              </span>
-            </label>
+                {t("hero.search")}
+              </button>
+            </div>
           </div>
-          {/* Search Button */}
-          <div className=" flex justify-center">
-            <button
-              className="bg-[#EE5128] hover:bg-[#d64520] text-white text-[18px] font-semibold px-18 py-2 rounded-full transition "
-              onClick={(e) => handleTravelfusionSearch(e)}
-            >
-              {t("hero.search")}
-            </button>
-          </div>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };
@@ -3949,6 +5230,7 @@ const FlightResults = ({
   searchData,
   SearchProps,
   selectOutWard,
+  newRouteId,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
@@ -4206,7 +5488,7 @@ const FlightResults = ({
                               state: {
                                 outwordTicketId: flight,
                                 // returnTicketId: id || selectReturn,
-                                routingId: routingId,
+                                routingId: newRouteId || routingId,
                                 tripType: TripType,
                                 travalers: travalers,
                                 // Add back navigation data
@@ -4371,6 +5653,7 @@ const RoundTrip = ({
   TripType,
   travalers,
   SearchProps, // ✅ Add this line
+  newRouteId,
 }) => {
   const navigate = useNavigate();
 
@@ -4400,7 +5683,7 @@ const RoundTrip = ({
       state: {
         outwordTicketId: selectOutWard,
         returnTicketId: selectReturn,
-        routingId: routingId,
+        routingId: newRouteId || routingId,
         tripType: TripType,
         travalers: travalers,
 

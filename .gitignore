@@ -11,9 +11,8 @@ node_modules
 dist
 dist-ssr
 *.local
-
+tf-weefly.africa-backup.zip
 weefly.africa-frontend-backup.zip
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

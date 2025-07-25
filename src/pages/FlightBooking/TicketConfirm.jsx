@@ -20,9 +20,9 @@ function TicketConfirm() {
         Your Ticket has <br className="md:hidden" /> confirmed
       </p>
 
-      <h1 className="text-2xl mx-auto text-center'">Ticket ID : {id}</h1>
+      <h1 className="text-2xl mx-auto text-center mt-20">Ticket ID : {id}</h1>
 
-      <div className="mt-[61px]" data-aos="fade-up">
+      {/* <div className="mt-[61px]" data-aos="fade-up">
         <h3 className="bg-[#FFE2DA] rounded-t-[17px] px-[45px] py-[17px] font-jakarta font-semibold text-[26px]">
           Travelers Details
         </h3>
@@ -103,7 +103,7 @@ function TicketConfirm() {
           </div>
           <div className="flex-1 items-center w-full">
             <div className="flex xl:px-[84px]">
-              {/* start time */}
+            
               <div className="px-[20px] lg:px-[44px]">
                 <p className="text-[25px] xl:text-[38px] font-bold">06:00</p>
                 <p className="font-normal text-[13px] lg:text-[20px] text-neutral-500">
@@ -124,12 +124,10 @@ function TicketConfirm() {
                   <p className="font-normal text-[17px] text-neutral-500">
                     16h 12m
                   </p>
-                  {/* <p className="rounded-[5px] bg-[#008905] text-white font-sans text-base font-normal px-[13px] py-[4px]">
-                    Refundable
-                  </p> */}
+                  
                 </div>
               </div>
-              {/* End time */}
+            
               <div className="px-[20px] xl:px-[44px]">
                 <p className="text-[25px] xl:text-[38px] font-bold">19:00</p>
                 <p className="font-normal text-[13px] xl:text-[20px] text-neutral-500">
@@ -150,15 +148,15 @@ function TicketConfirm() {
             </p>
           </div>
         </div>
-      </div>
+      </div> */}
 
       <div className=" max-w-[430px] w-full mx-auto mt-[70px] flex flex-col gap-[37px]">
-        <button
+        {/* <button
           data-aos="fade-up"
           className="font-jakarta font-semibold text-[18px] w-full bg-[#EE5128] py-[14px] rounded-[8px] text-white mt-[20px] drop-shadow-xl drop-shadow-[#FD74014D]"
         >
           Download invoice
-        </button>
+        </button> */}
         <Link
           data-aos="fade-up"
           to={"/"}
