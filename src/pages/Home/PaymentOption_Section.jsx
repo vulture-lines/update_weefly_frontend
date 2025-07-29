@@ -11,6 +11,11 @@ import Brand8 from "../../assets/images/PaymentBrands/brand8.png";
 import Brand9 from "../../assets/images/PaymentBrands/brand9.png";
 import Brand10 from "../../assets/images/PaymentBrands/brand10.png";
 import Brand11 from "../../assets/images/PaymentBrands/brand11.png";
+import Brand23 from "../../assets/images/PaymentBrands/brand23.png";
+import Brand24 from "../../assets/images/PaymentBrands/brand24.png";
+import Brand25 from "../../assets/images/PaymentBrands/brand25.png";
+import Brand26 from "../../assets/images/PaymentBrands/brand26.png";
+import Brand27 from "../../assets/images/PaymentBrands/brand27.jpg";
 
 import BannerBottom from "../../assets/images/banner-bottom.png";
 import { useTranslation } from "react-i18next";
@@ -27,6 +32,11 @@ const PaymentBrands = [
   { id: 9, src: Brand9, alt: "Apple Pay" },
   { id: 10, src: Brand10, alt: "Google Pay" },
   { id: 11, src: Brand11, alt: "Samsung Pay" },
+  { id: 13, src: Brand23, alt: "master card id check" },
+  { id: 13, src: Brand24, alt: "vinti4" },
+  { id: 14, src: Brand25, alt: "Samsung Pay" },
+  { id: 15, src: Brand26, alt: "Samsung Pay" },
+  { id: 16, src: Brand27, alt: "Samsung Pay" },
 ];
 
 export default function PaymentOptionSection() {

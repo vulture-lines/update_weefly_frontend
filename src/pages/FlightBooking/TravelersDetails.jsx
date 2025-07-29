@@ -440,6 +440,10 @@ function TravelersDetails({ country = "" }) {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Supported Card list
+  const supportedCardlist = location.state.SupportedCardList;
+  console.log(supportedCardlist);
+
   const [flight, setFlight] = useState(null);
   const [currentStep, setCurrentStep] = useState(1);
   const [currentTravellerIndex, setCurrentTravellerIndex] = useState(0);
@@ -512,7 +516,270 @@ function TravelersDetails({ country = "" }) {
   });
 
   const [sameAsContact, setSameAsContact] = useState(false);
+  const [showValidationPopup, setShowValidationPopup] = useState(false);
+  const [validationErrors, setValidationErrors] = useState([]);
 
+  // 2. VALIDATION FUNCTIONS (add after state declarations)
+  const validateTravellerDetails = (traveller) => {
+    const errors = [];
+
+    if (!traveller.Name?.Title) {
+      errors.push("Title is required");
+    }
+
+    if (!traveller.Name?.NamePartList?.NamePart?.[0]?.trim()) {
+      errors.push("First Name is required");
+    }
+
+    if (!traveller.Name?.NamePartList?.NamePart?.[2]?.trim()) {
+      errors.push("Last Name is required");
+    }
+
+    if (
+      !traveller.CustomSupplierParameterList?.CustomSupplierParameter?.[0]
+        ?.Value
+    ) {
+      errors.push("Date of Birth is required");
+    }
+
+    if (!traveller.Age) {
+      errors.push("Age is required");
+    }
+
+    return errors;
+  };
+
+  const validateContactDetails = (contact) => {
+    const errors = [];
+
+    // Name validation - ALL fields required
+    if (!contact.Name?.Title) {
+      errors.push("Title is required");
+    }
+
+    if (!contact.Name?.NamePartList?.NamePart?.[0]?.trim()) {
+      errors.push("First Name is required");
+    }
+
+    if (!contact.Name?.NamePartList?.NamePart?.[1]?.trim()) {
+      errors.push("Middle Name is required");
+    }
+
+    if (!contact.Name?.NamePartList?.NamePart?.[2]?.trim()) {
+      errors.push("Last Name is required");
+    }
+
+    // Address validation - ALL fields required
+    if (!contact.Address?.Company?.trim()) {
+      errors.push("Company is required");
+    }
+
+    if (!contact.Address?.Flat?.trim()) {
+      errors.push("Flat/Apartment is required");
+    }
+
+    if (!contact.Address?.BuildingName?.trim()) {
+      errors.push("Building Name is required");
+    }
+
+    if (!contact.Address?.BuildingNumber?.trim()) {
+      errors.push("Building Number is required");
+    }
+
+    if (!contact.Address?.Street?.trim()) {
+      errors.push("Street is required");
+    }
+
+    if (!contact.Address?.Locality?.trim()) {
+      errors.push("Locality is required");
+    }
+
+    if (!contact.Address?.City?.trim()) {
+      errors.push("City is required");
+    }
+
+    if (!contact.Address?.Province?.trim()) {
+      errors.push("Province/State is required");
+    }
+
+    if (!contact.Address?.Postcode?.trim()) {
+      errors.push("Postcode is required");
+    }
+
+    if (!contact.Address?.CountryCode?.trim()) {
+      errors.push("Country Code is required");
+    }
+
+    // Phone validation - ALL fields required
+    if (!contact.MobilePhone?.InternationalCode?.trim()) {
+      errors.push("International Code is required");
+    }
+
+    if (!contact.MobilePhone?.Number?.trim()) {
+      errors.push("Phone Number is required");
+    }
+
+    // Email validation
+    if (!contact.Email?.trim()) {
+      errors.push("Email is required");
+    } else if (!/\S+@\S+\.\S+/.test(contact.Email.trim())) {
+      errors.push("Valid email address is required");
+    }
+
+    return errors;
+  };
+
+  const validateBillingDetails = (billing) => {
+    const errors = [];
+
+    // Name validation - ALL fields required
+    if (!billing.Name?.Title) {
+      errors.push("Billing Title is required");
+    }
+
+    if (!billing.Name?.NamePartList?.NamePart?.[0]?.trim()) {
+      errors.push("Billing First Name is required");
+    }
+
+    if (!billing.Name?.NamePartList?.NamePart?.[1]?.trim()) {
+      errors.push("Billing Middle Name is required");
+    }
+
+    if (!billing.Name?.NamePartList?.NamePart?.[2]?.trim()) {
+      errors.push("Billing Last Name is required");
+    }
+
+    // Address validation - ALL fields required
+    if (!billing.Address?.Company?.trim()) {
+      errors.push("Billing Company is required");
+    }
+
+    if (!billing.Address?.Flat?.trim()) {
+      errors.push("Billing Flat/Apartment is required");
+    }
+
+    if (!billing.Address?.BuildingName?.trim()) {
+      errors.push("Billing Building Name is required");
+    }
+
+    if (!billing.Address?.BuildingNumber?.trim()) {
+      errors.push("Billing Building Number is required");
+    }
+
+    if (!billing.Address?.Street?.trim()) {
+      errors.push("Billing Street is required");
+    }
+
+    if (!billing.Address?.Locality?.trim()) {
+      errors.push("Billing Locality is required");
+    }
+
+    if (!billing.Address?.City?.trim()) {
+      errors.push("Billing City is required");
+    }
+
+    if (!billing.Address?.Province?.trim()) {
+      errors.push("Billing Province/State is required");
+    }
+
+    if (!billing.Address?.Postcode?.trim()) {
+      errors.push("Billing Postcode is required");
+    }
+
+    if (!billing.Address?.CountryCode?.trim()) {
+      errors.push("Billing Country Code is required");
+    }
+
+    // Credit Card validation - ALL fields required
+    if (!billing.CreditCard?.Company?.trim()) {
+      errors.push("Credit Card Company is required");
+    }
+
+    if (!billing.CreditCard?.Number?.trim()) {
+      errors.push("Credit Card Number is required");
+    }
+
+    if (!billing.CreditCard?.SecurityCode?.trim()) {
+      errors.push("Credit Card Security Code is required");
+    }
+
+    if (!billing.CreditCard?.ExpiryDate?.trim()) {
+      errors.push("Credit Card Expiry Date is required");
+    }
+
+    if (!billing.CreditCard?.StartDate?.trim()) {
+      errors.push("Credit Card Start Date is required");
+    }
+
+    if (!billing.CreditCard?.CardType?.trim()) {
+      errors.push("Credit Card Type is required");
+    }
+
+    if (!billing.CreditCard?.IssueNumber?.trim()) {
+      errors.push("Credit Card Issue Number is required");
+    }
+
+    // Card Name validation
+    if (!billing.CreditCard?.NameOnCard?.Title) {
+      errors.push("Name on Card Title is required");
+    }
+
+    if (!billing.CreditCard?.NameOnCard?.NamePartList?.NamePart?.[0]?.trim()) {
+      errors.push("Name on Card First Name is required");
+    }
+
+    if (!billing.CreditCard?.NameOnCard?.NamePartList?.NamePart?.[1]?.trim()) {
+      errors.push("Name on Card Last Name is required");
+    }
+
+    return errors;
+  };
+  const isCurrentStepValid = () => {
+    let errors = [];
+
+    if (currentStep <= totalTravellers) {
+      // Validate current traveller
+      const currentTraveller =
+        travellerList.Traveller[currentTravellerIndex] || {};
+      console.log("Validating traveller:", currentTraveller); // Debug log
+      errors = validateTravellerDetails(currentTraveller);
+    } else if (currentStep === totalTravellers + 1) {
+      // Validate contact details
+      console.log("Validating contact details:", contactDetails); // Debug log
+      errors = validateContactDetails(contactDetails);
+    } else {
+      // Validate billing details
+      console.log("Validating billing details:", billingDetails); // Debug log
+      errors = validateBillingDetails(billingDetails);
+    }
+
+    console.log(
+      "Current step:",
+      currentStep,
+      "Total travellers:",
+      totalTravellers
+    );
+    console.log("Validation errors found:", errors);
+
+    return errors;
+  };
+  //  function to get field validation class
+  const getFieldValidationClass = (fieldValue, isRequired = true) => {
+    const baseClass = "w-full border rounded p-2 text-sm";
+
+    if (!isRequired) {
+      return baseClass + " border-[#CCCCCC]";
+    }
+
+    const isEmpty =
+      !fieldValue || (typeof fieldValue === "string" && !fieldValue.trim());
+
+    if (isEmpty) {
+      return baseClass + " border-red-300 focus:border-red-500";
+    }
+
+    return baseClass + " border-[#CCCCCC] focus:border-blue-500";
+  };
   // 🔁 🔽 ADD THIS BLOCK RIGHT HERE
   useEffect(() => {
     const savedContact = sessionStorage.getItem("traveller_contactDetails");
@@ -821,6 +1088,19 @@ function TravelersDetails({ country = "" }) {
   };
 
   const handleContinue = () => {
+    // Always check validation first
+    const errors = isCurrentStepValid();
+
+    console.log("Validation errors:", errors); // Debug log
+
+    if (errors.length > 0) {
+      console.log("Showing validation popup"); // Debug log
+      setValidationErrors(errors);
+      setShowValidationPopup(true);
+      return; // Stop execution if validation fails
+    }
+
+    // If validation passes, proceed with existing logic
     if (currentStep <= totalTravellers) {
       if (currentStep < totalTravellers) {
         setCurrentStep(currentStep + 1);
@@ -831,20 +1111,7 @@ function TravelersDetails({ country = "" }) {
     } else if (currentStep === totalTravellers + 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // ✅ Filter contactDetails if needed (optional)
-      const filteredContact = {};
-      for (const key in contactDetails) {
-        const value = contactDetails[key];
-        if (
-          value !== "" &&
-          value !== null &&
-          value !== undefined &&
-          !(typeof value === "object" && Object.keys(value).length === 0)
-        ) {
-          filteredContact[key] = value;
-        }
-      }
-
+      // Final step - prepare data and navigate
       const finalData = {
         TravellerList: travellerList,
         ContactDetails: contactDetails,
@@ -852,11 +1119,8 @@ function TravelersDetails({ country = "" }) {
       };
 
       console.log("Final booking data:", JSON.stringify(finalData, null, 2));
-
-      //  Save to session storage
       sessionStorage.setItem("travellerDetails", JSON.stringify(finalData));
 
-      //  Navigate to next page
       navigate("/booking/SeatSelection", {
         state: {
           flight,
@@ -866,6 +1130,10 @@ function TravelersDetails({ country = "" }) {
           routingId: location.state.routingId,
           seatOption: location.state.seatOption,
           luggageOptions: location.state.luggageOptions,
+          outwardLuggage: location.state.outwardLuggage,
+          returnLuggage: location.state.returnLuggage,
+          CardCharges: location.state.CardCharges,
+          SupportedCardList: location.state.SupportedCardList,
         },
       });
     }
@@ -895,6 +1163,169 @@ function TravelersDetails({ country = "" }) {
 
   const stepInfo = getStepInfo();
   const currentTraveller = getCurrentTraveller();
+  // Replace your ValidationPopup component with this professional design:
+
+  const ValidationPopup = ({ isOpen, errors, onClose }) => {
+    if (!isOpen) return null;
+
+    return (
+      <>
+        {/* Professional Blur Backdrop */}
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-6 transition-opacity duration-300"
+          style={{
+            backgroundColor: "rgba(15, 23, 42, 0.4)",
+            backdropFilter: "blur(16px) saturate(180%)",
+            WebkitBackdropFilter: "blur(16px) saturate(180%)",
+          }}
+          onClick={onClose}
+        >
+          {/* Professional Modal Container */}
+          <div
+            className="relative w-full max-w-md transform transition-all duration-300 ease-out"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              animation: "modalSlideIn 0.3s ease-out",
+            }}
+          >
+            {/* Add keyframe animation */}
+            <style jsx>{`
+              @keyframes modalSlideIn {
+                from {
+                  opacity: 0;
+                  transform: translateY(-16px) scale(0.95);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0) scale(1);
+                }
+              }
+            `}</style>
+
+            {/* Professional Card */}
+            <div
+              className="bg-white rounded-lg overflow-hidden"
+              style={{
+                boxShadow:
+                  "0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.05)",
+                border: "1px solid rgba(226, 232, 240, 0.8)",
+              }}
+            >
+              {/* Clean Header */}
+              <div className="px-6 py-5 border-b border-gray-100 bg-gray-50">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    {/* Professional Alert Icon */}
+                    <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+                      <svg
+                        className="w-5 h-5 text-amber-600"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                        />
+                      </svg>
+                    </div>
+
+                    {/* Professional Title */}
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 font-jakarta">
+                        Required Fields Missing
+                      </h3>
+                      <p className="text-sm text-gray-500 mt-0.5">
+                        Please complete all required information
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Clean Close Button */}
+                  <button
+                    onClick={onClose}
+                    className="w-8 h-8 rounded-lg cursor-pointer bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-colors duration-200"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Professional Content */}
+              <div className="px-6 py-5">
+                <div className="max-h-80 overflow-y-auto">
+                  {/* Error Counter */}
+                  <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                    <p className="text-sm text-amber-800 font-medium">
+                      <span className="font-semibold">{errors.length}</span>{" "}
+                      field{errors.length !== 1 ? "s" : ""} require
+                      {errors.length === 1 ? "s" : ""} your attention
+                    </p>
+                  </div>
+
+                  {/* Professional Error List */}
+                  <div className="space-y-3">
+                    {errors.map((error, index) => (
+                      <div
+                        key={index}
+                        className="flex items-start space-x-3 p-3 bg-gray-50 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors duration-150"
+                      >
+                        {/* Clean Error Icon */}
+                        <div className="w-5 h-5 mt-0.5 flex-shrink-0">
+                          <svg
+                            className="w-5 h-5 text-red-500"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </div>
+
+                        {/* Professional Error Text */}
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-gray-700 font-medium leading-relaxed">
+                            {error}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Professional Footer */}
+              <div className="px-6 py-4 bg-gray-50 border-t border-gray-100">
+                <button
+                  onClick={onClose}
+                  className="w-full bg-[#EE5128] hover:bg-[#d64520] cursor-pointer text-white font-semibold py-3 px-4 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-[#EE5128] focus:ring-offset-2 font-jakarta"
+                >
+                  I understand
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
 
   return (
     <div className="font-sans flex justify-center">
@@ -1584,7 +2015,12 @@ function TravelersDetails({ country = "" }) {
               </button>
               <button
                 onClick={handleContinue}
-                className="bg-[#EE5128] text-white px-6 py-2 rounded font-semibold font-jakarta hover:bg-[#d64520] active:bg-[#b83b1c] transition-colors duration-200"
+                className={`px-6 py-2 rounded font-semibold font-jakarta transition-colors duration-200 ${
+                  isCurrentStepValid().length > 0
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-[#EE5128] text-white hover:bg-[#d64520] active:bg-[#b83b1c]"
+                }`}
+                // Remove the disabled attribute to allow clicking for popup
               >
                 {currentStep === totalTravellers + 2
                   ? t("continue-booking")
@@ -1801,6 +2237,12 @@ function TravelersDetails({ country = "" }) {
           </div>
         </div>
       </div>
+      {/* Validation Popup */}
+      <ValidationPopup
+        isOpen={showValidationPopup}
+        errors={validationErrors}
+        onClose={() => setShowValidationPopup(false)}
+      />
     </div>
   );
 }

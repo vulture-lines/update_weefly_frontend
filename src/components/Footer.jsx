@@ -19,6 +19,11 @@ import Brand8 from "../assets/images/PaymentBrands/brand8.png";
 import Brand9 from "../assets/images/PaymentBrands/brand9.png";
 import Brand10 from "../assets/images/PaymentBrands/brand10.png";
 import Brand11 from "../assets/images/PaymentBrands/brand11.png";
+import Brand23 from "../assets/images/PaymentBrands/brand23.png";
+import Brand24 from "../assets/images/PaymentBrands/brand24.png";
+import Brand25 from "../assets/images/PaymentBrands/brand25.png";
+import Brand26 from "../assets/images/PaymentBrands/brand26.png";
+import Brand27 from "../assets/images/PaymentBrands/brand27.jpg";
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -260,16 +265,43 @@ export default function Footer() {
               <img src={Brand6} alt="brand" height={24} width={24} />
               <img src={Brand7} alt="brand" height={24} width={24} />
               <img src={Brand8} alt="brand" height={24} width={24} />
-              <img src={Brand9} alt="brand" height={24} width={24} />
+
               <img src={Brand10} alt="brand" height={24} width={24} />
               <img src={Brand11} alt="brand" height={24} width={24} />
+              <img src={Brand23} alt="brand" height={70} width={70} />
+              <img src={Brand24} alt="brand" height={24} width={24} />
+              <img src={Brand25} alt="brand" height={24} width={24} />
+              <img src={Brand26} alt="brand" height={80} width={80} />
+              <img src={Brand27} alt="brand" height={30} width={30} />
             </div>
           </div>
         </div>
 
         {/* Footer Bottom */}
-        <div className="mt-10 pt-6 border-t border-gray-200 text-center text-[14px] text-[#444] font-lato">
-          Copyright © 2025 weefly. All rights reserved
+        <div className="mt-10 pt-6 border-t border-gray-200 flex flex-col sm:flex-row justify-between items-center text-[14px] text-[#444] font-lato gap-4">
+          <div className="text-center sm:text-left">
+            Copyright © 2025 weefly. All rights reserved
+          </div>
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-6 text-center">
+            <a
+              href="/TermsofService"
+              className="hover:text-orange-600 hover:underline"
+            >
+              Terms of Service
+            </a>
+            <a
+              href="/PrivacyPolicy"
+              className="hover:text-orange-600 hover:underline"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="/RefundPolicy"
+              className="hover:text-orange-600 hover:underline"
+            >
+              Service Delivery and Refund Policy
+            </a>
+          </div>
         </div>
       </div>
     </footer>

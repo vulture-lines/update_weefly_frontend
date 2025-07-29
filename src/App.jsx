@@ -49,6 +49,9 @@ import TicketNotConfirm from "./pages/FlightBooking/TicketNotConfirm";
 import ErrorPage from "./pages/ErrorPage";
 import TicketPendingConfirmation from "./pages/FlightBooking/TicketPendingConfirmation";
 import SupplierError from "./pages/FlightBooking/SupplierError";
+import TermsofService from "./pages/Home/TermsofService";
+import PrivacyPolicy from "./pages/Home/PrivacyPolicy";
+import RefundPolicy from "./pages/Home/RefundPolicy";
 import cookies from "js-cookie";
 const App = () => {
   useEffect(() => {
@@ -113,6 +116,9 @@ const App = () => {
           <Route path="" element={<WebsiteLayout />}>
             <Route index element={<Home country={location} />} />
             <Route path="/List" element={<FlightList country={location} />} />
+            <Route path="/TermsofService" element={<TermsofService />} />
+            <Route path="/PrivacyPolicy" element={<PrivacyPolicy />} />
+            <Route path="/RefundPolicy" element={<RefundPolicy />} />
             <Route path="/Booking" element={<FlightBooking />}>
               <Route path="ReviewYourBooking" element={<ReviewYourBooking />} />
               <Route

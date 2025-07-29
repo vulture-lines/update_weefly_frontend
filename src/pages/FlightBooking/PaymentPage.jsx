@@ -27,11 +27,21 @@ import Brand8 from "../../assets/images/PaymentBrands/brand8.png";
 import Brand9 from "../../assets/images/PaymentBrands/brand9.png";
 import Brand10 from "../../assets/images/PaymentBrands/brand10.png";
 import Brand11 from "../../assets/images/PaymentBrands/brand11.png";
+import Brand23 from "../../assets/images/PaymentBrands/brand23.png";
+import Brand24 from "../../assets/images/PaymentBrands/brand24.png";
+import Brand25 from "../../assets/images/PaymentBrands/brand25.png";
+import Brand26 from "../../assets/images/PaymentBrands/brand26.png";
+import Brand27 from "../../assets/images/PaymentBrands/brand27.jpg";
 
 export default function PaymentPage() {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
+
+  // card charges
+  const cardCharge = location.state.CardCharges;
+  console.log(cardCharge);
+
   const [flight, setFlight] = useState(null);
   const [price, setPrice] = useState(0);
   const [seatCharge, setseatCharge] = useState(0);
@@ -740,6 +750,11 @@ export default function PaymentPage() {
                 <img src={Brand9} alt="brand9" height={50} width={50} />
                 <img src={Brand10} alt="brand10" height={50} width={50} />
                 <img src={Brand11} alt="brand11" height={50} width={50} />
+                <img src={Brand23} alt="brand24" height={80} width={80} />
+                <img src={Brand24} alt="brand24" height={50} width={50} />
+                <img src={Brand25} alt="brand25" height={50} width={50} />
+                <img src={Brand26} alt="brand26" height={80} width={80} />
+                <img src={Brand27} alt="brand27" height={50} width={50} />
               </div>
             </div>
 
