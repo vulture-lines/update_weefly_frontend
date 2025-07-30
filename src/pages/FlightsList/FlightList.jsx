@@ -5643,8 +5643,8 @@ const Pagination = ({ currentPage, totalPages, setCurrentPage }) => {
     </div>
   );
 };
-
 const RoundTrip = ({
+  searchBoxRoutingID,
   flights,
   t,
   routingId,
@@ -5652,16 +5652,17 @@ const RoundTrip = ({
   origin,
   TripType,
   travalers,
-  SearchProps, // ✅ Add this line
-  newRouteId,
+  SearchProps,
 }) => {
   const navigate = useNavigate();
 
   const [isOnWard, setOnWard] = useState(false);
   const [selectOutWard, setselectOutWard] = useState({});
   const [selectReturn, setselectReturn] = useState({});
-  const [selectedFlightId, setSelectedFlightId] = useState(null);
-
+  const [highlightedOutwardId, setHighlightedOutwardId] = useState(null); // For visual selection
+  const [highlightedReturnId, setHighlightedReturnId] = useState(null); // For visual selection
+  const [confirmedOutwardId, setConfirmedOutwardId] = useState(null); // For confirmed selection
+  const [confirmedReturnId, setConfirmedReturnId] = useState(null); // For confirmed selection
   const [showReturnBox, setShowReturnBox] = useState(false);
 
   const OutWordFlights = flights?.filter((flight) => flight.type === "outward");
@@ -5670,12 +5671,41 @@ const RoundTrip = ({
   console.log("selectOutWard", selectOutWard);
   console.log("selectReturn", selectReturn);
 
-  const handleSelectFlight = (id) => {
-    setSelectedFlightId((prevId) => (prevId === id ? null : id));
+  // Handle box click for visual highlighting
+  const handleHighlightOutward = (flightId) => {
+    setHighlightedOutwardId(flightId);
   };
 
-  const handleSelectOnward = ({ id }) => {
-    setselectOutWard(id);
+  const handleHighlightReturn = (flightId) => {
+    setHighlightedReturnId(flightId);
+  };
+
+  // Handle actual selection when Select button is clicked
+  const handleConfirmOutwardSelection = (flight) => {
+    setConfirmedOutwardId(flight.id);
+    setselectOutWard(flight);
+    setOnWard(true);
+    setShowReturnBox(true);
+  };
+
+  const handleConfirmReturnSelection = (flight) => {
+    setConfirmedReturnId(flight.id);
+    setselectReturn(flight);
+  };
+
+  // Add clear selection function
+  const handleClearSelection = (type) => {
+    if (type === "outward") {
+      setselectOutWard({});
+      setConfirmedOutwardId(null);
+      setHighlightedOutwardId(null);
+      setShowReturnBox(false);
+      setOnWard(false);
+    } else if (type === "return") {
+      setselectReturn({});
+      setConfirmedReturnId(null);
+      setHighlightedReturnId(null);
+    }
   };
 
   const handleConfirmSelect = () => {
@@ -5683,11 +5713,9 @@ const RoundTrip = ({
       state: {
         outwordTicketId: selectOutWard,
         returnTicketId: selectReturn,
-        routingId: newRouteId || routingId,
+        routingId: routingId || searchBoxRoutingID,
         tripType: TripType,
         travalers: travalers,
-
-        // Add back navigation data
         origin: origin,
         destination: destination,
         flightsData: flights,
@@ -5705,19 +5733,20 @@ const RoundTrip = ({
           selectReturn={selectReturn}
           handleConfirmSelect={handleConfirmSelect}
           setOnWard={setOnWard}
+          handleClearSelection={handleClearSelection}
+          origin={origin}
+          destination={destination}
         />
       )}
 
       {!isOnWard ? (
         <div className="flex flex-col items-center space-y-6 font-sans relative">
           <div className="w-full flex items-center justify-between">
-            {/* Heading */}
             <h1 className="text-[25.44px] font-[600] leading-[100%] font-jakarta">
               Departure Flights from {origin} to {destination}
             </h1>
           </div>
 
-          {/* Check if no outward flights available */}
           {!OutWordFlights || OutWordFlights.length === 0 ? (
             <NoFlightsAvailable
               origin={origin}
@@ -5729,22 +5758,20 @@ const RoundTrip = ({
             />
           ) : (
             OutWordFlights.map((flight) => {
-              const isSelected =
-                selectedFlightId === flight.id ||
-                selectOutWard.id === flight.id;
-              console.log("outward flight", flight);
+              const isHighlighted = highlightedOutwardId === flight.id;
+              const isConfirmed = confirmedOutwardId === flight.id;
 
               return (
                 <div
                   key={flight.id}
                   className={`w-full min-h-[150.13px] rounded-md cursor-pointer transition duration-300 flex flex-col justify-between ${
-                    isSelected
+                    isHighlighted || isConfirmed
                       ? "border border-[#EE5128] bg-white shadow-sm"
                       : "border border-gray-200 bg-white"
                   }`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSelectFlight(flight.id);
+                    handleHighlightOutward(flight.id); // Just highlight on box click
                   }}
                 >
                   <div className="flex items-center flex-col md:flex-row justify-between px-4 min-h-[60px] pt-6 pb-6 xl:pb-0 gap-[30px]">
@@ -5806,67 +5833,43 @@ const RoundTrip = ({
                           /pax
                         </span>
                       </p>
-                      {/* <p className="text-[13px] text-gray-400 line-through font-normal leading-none font-sans">
-                        {flight.currency}
-                        {flight.originalPrice}
-                      </p> */}
 
                       <div className="mb-4">
-                        {isSelected ? (
+                        {isConfirmed ? (
                           <button
-                            onClick={() => {
-                              handleSelectOnward({
-                                id: flight,
-                              });
-                              setOnWard(true);
-                              setShowReturnBox(true);
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Already confirmed, show "Selected"
+                            }}
+                            className="bg-[#EE5128] text-white px-4 py-1.5 rounded font-jakarta font-semibold transition-colors duration-200"
+                          >
+                            Selected
+                          </button>
+                        ) : isHighlighted ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleConfirmOutwardSelection(flight); // Confirm selection on button click
                             }}
                             className="bg-[#EE5128] text-white px-4 py-1.5 rounded font-jakarta font-semibold hover:bg-[#d64520] active:bg-[#b83b1c] transition-colors duration-200"
                           >
-                            {t("booking-card.book-now")}
+                            Select
                           </button>
                         ) : (
                           <button
-                            onClick={(e) => e.stopPropagation()}
-                            className="bg-gray-300 text-white px-4 py-1.5 rounded font-jakarta font-semibold cursor-not-allowed"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // This will be handled by the box click first
+                            }}
+                            className="bg-gray-300 text-gray-600 px-4 py-1.5 rounded font-jakarta font-semibold cursor-not-allowed"
                             disabled
                           >
-                            {t("booking-card.book-now")}
+                            Select
                           </button>
                         )}
                       </div>
                     </div>
                   </div>
-
-                  {/* <div
-                    className={`border-t px-4 py-[30px] xl:py-[20px] flex items-center justify-between text-sm font-medium ${
-                      isSelected ? "border-[#EE5128]" : "border-gray-200"
-                    }`}
-                  >
-                    <div
-                      className={`flex space-x-14 ${
-                        isSelected ? "text-[#EE5128]" : "text-bold"
-                      } font-sans`}
-                    >
-                      <div className="flex items-center space-x-1 ml-2">
-                        <span>{t("booking-card.Flight-details")}</span>
-                        <ChevronDown size={14} />
-                      </div>
-                      <div className="hidden lg:flex items-center space-x-1">
-                        <span>{t("booking-card.price-details")}</span>
-                        <ChevronDown size={14} />
-                      </div>
-                      <span className="hidden lg:flex">
-                        {t("booking-card.policy")}
-                      </span>
-                      <span className="hidden lg:flex">
-                        {t("booking-card.refund")}
-                      </span>
-                      <span className="hidden lg:flex">
-                        {t("booking-card.reschedule")}
-                      </span>
-                    </div>                   
-                  </div> */}
                 </div>
               );
             })
@@ -5875,13 +5878,11 @@ const RoundTrip = ({
       ) : (
         <div className="flex flex-col items-center space-y-6 font-sans relative">
           <div className="w-full flex items-center justify-between">
-            {/* Heading */}
             <h1 className="text-[25.44px] font-[600] leading-[100%] font-jakarta">
               Return Flights from {destination} to {origin}
             </h1>
           </div>
 
-          {/* Check if no return flights available */}
           {!ReturnFlights || ReturnFlights.length === 0 ? (
             <NoFlightsAvailable
               origin={destination}
@@ -5893,21 +5894,20 @@ const RoundTrip = ({
             />
           ) : (
             ReturnFlights.map((flight) => {
-              const isSelected =
-                selectedFlightId === flight.id || selectReturn.id === flight.id;
-              console.log("return flight", flight);
+              const isHighlighted = highlightedReturnId === flight.id;
+              const isConfirmed = confirmedReturnId === flight.id;
 
               return (
                 <div
                   key={flight.id}
                   className={`w-full min-h-[150.13px] rounded-md cursor-pointer transition duration-300 flex flex-col justify-between ${
-                    isSelected
+                    isHighlighted || isConfirmed
                       ? "border border-[#EE5128] bg-white shadow-sm"
                       : "border border-gray-200 bg-white"
                   }`}
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleSelectFlight(flight.id);
+                    handleHighlightReturn(flight.id); // Just highlight on box click
                   }}
                 >
                   <div className="flex items-center flex-col md:flex-row justify-between px-4 min-h-[60px] pt-6 pb-6 xl:pb-0 gap-[30px]">
@@ -5970,67 +5970,42 @@ const RoundTrip = ({
                           /pax
                         </span>
                       </p>
-                      {/* <p className="text-[13px] text-gray-400 line-through font-normal leading-none font-sans">
-                        {flight.currency}
-                        {flight.originalPrice}
-                      </p> */}
-                      <p className="mb-4">
-                        {isSelected ? (
+                      <div className="mb-4">
+                        {isConfirmed ? (
                           <button
-                            onClick={() => {
-                              // handleConfirmSelect({
-                              //   id: flight,
-                              // });
-                              setselectReturn(flight);
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // Already confirmed, show "Selected"
+                            }}
+                            className="bg-[#EE5128] text-white px-4 py-1.5 rounded font-jakarta font-semibold transition-colors duration-200"
+                          >
+                            Selected
+                          </button>
+                        ) : isHighlighted ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleConfirmReturnSelection(flight); // Confirm selection on button click
                             }}
                             className="bg-[#EE5128] text-white px-4 py-1.5 rounded font-jakarta font-semibold hover:bg-[#d64520] active:bg-[#b83b1c] transition-colors duration-200"
                           >
-                            {t("booking-card.book-now")}
+                            Select
                           </button>
                         ) : (
                           <button
-                            onClick={(e) => e.stopPropagation()}
-                            className="bg-gray-300 text-white px-4 py-1.5 rounded font-jakarta font-semibold cursor-not-allowed"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              // This will be handled by the box click first
+                            }}
+                            className="bg-gray-300 text-gray-600 px-4 py-1.5 rounded font-jakarta font-semibold cursor-not-allowed"
                             disabled
                           >
-                            {t("booking-card.book-now")}
+                            Select
                           </button>
                         )}
-                      </p>
+                      </div>
                     </div>
                   </div>
-
-                  {/* <div
-                    className={`border-t px-4 py-[30px] xl:py-[20px] flex items-center justify-between text-sm font-medium ${
-                      isSelected ? "border-[#EE5128]" : "border-gray-200"
-                    }`}
-                  >
-                    <div
-                      className={`flex space-x-14 ${
-                        isSelected ? "text-[#EE5128]" : "text-bold"
-                      } font-sans`}
-                    >
-                      <div className="flex items-center space-x-1 ml-2">
-                        <span>{t("booking-card.Flight-details")}</span>
-                        <ChevronDown size={14} />
-                      </div>
-                      <div className="hidden lg:flex items-center space-x-1">
-                        <span>{t("booking-card.price-details")}</span>
-                        <ChevronDown size={14} />
-                      </div>
-                      <span className="hidden lg:flex">
-                        {t("booking-card.policy")}
-                      </span>
-                      <span className="hidden lg:flex">
-                        {t("booking-card.refund")}
-                      </span>
-                      <span className="hidden lg:flex">
-                        {t("booking-card.reschedule")}
-                      </span>
-                    </div>
-
-                    
-                  </div> */}
                 </div>
               );
             })
@@ -6046,12 +6021,20 @@ const RoundTripBox = ({
   selectReturn,
   handleConfirmSelect,
   setOnWard,
+  handleClearSelection,
+  origin,
+  destination,
 }) => {
   const [selectedBoth, setSelectedBoth] = useState(false);
+  const [activeBox, setActiveBox] = useState(null); // Track which box is clicked
 
-  // ✅ Automatically enable button when both selections are available
   useEffect(() => {
-    if (selectOutWard && selectReturn) {
+    if (
+      selectOutWard &&
+      Object.keys(selectOutWard).length > 0 &&
+      selectReturn &&
+      Object.keys(selectReturn).length > 0
+    ) {
       setSelectedBoth(true);
     } else {
       setSelectedBoth(false);
@@ -6059,164 +6042,293 @@ const RoundTripBox = ({
   }, [selectOutWard, selectReturn]);
 
   return (
-    <>
-      <div className=" flex bg-white p-6 items-center mb-10 gap-6">
-        <div className="flex flex-col md:flex-row w-full items-center">
-          <div className="w-full">
-            <div
-              className="flex items-center flex-col md:flex-row justify-between h-[60px] xl:pb-0 cursor-pointer"
-              onClick={() => setOnWard(false)}
-            >
-              <div className="flex flex-col justify-start items-center xl:items-start max-w-[170px] relative pb-10 lg:pb-0">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 mb-6">
+      {/* Mobile Layout - Stack vertically */}
+      <div className="flex flex-col lg:flex-row lg:items-center gap-3 lg:gap-4">
+        {/* Outward Flight Card */}
+        <div
+          className={`flex-1 min-w-0 relative ${
+            activeBox === "outward"
+              ? "ring-2 ring-[#EE5128] ring-opacity-50 rounded-lg"
+              : ""
+          }`}
+        >
+          <div
+            className="bg-gray-50 hover:bg-gray-100 rounded-lg p-2 sm:p-3 cursor-pointer transition-colors border border-gray-200"
+            onClick={() => {
+              setActiveBox(activeBox === "outward" ? null : "outward");
+              setOnWard(false);
+            }}
+          >
+            {/* Mobile: Stack vertically, Desktop: Horizontal */}
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 min-h-[60px]">
+              {/* Airline Logo & Info */}
+              <div className="flex items-center space-x-2 min-w-0 flex-shrink-0 justify-center sm:justify-start">
                 <img
                   src={selectOutWard.logo}
                   alt={selectOutWard.airline}
-                  className="size-[40px] object-contain ml-2"
+                  className="w-8 h-8 sm:w-10 sm:h-10 object-contain flex-shrink-0"
+                  onError={(e) => {
+                    e.target.style.display = "none";
+                    e.target.nextSibling.style.display = "flex";
+                  }}
                 />
-                {/* <div className="absolute top-[48px] left-[18px] flex items-center space-x-2">
-                <span className="text-[13px] text-gray-500 leading-none">
-                  {selectOutWard.flightNumber}
-                </span>
-                <span className="text-[12px] bg-[#008905] text-white px-[10px] py-[2px] rounded font-semibold leading-[19px]">
-                  {selectOutWard.class}
-                </span>
-              </div> */}
+                <div
+                  className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 rounded flex items-center justify-center flex-shrink-0"
+                  style={{ display: "none" }}
+                >
+                  <span className="text-orange-600 text-xs font-bold">
+                    {selectOutWard.airline?.substring(0, 2) || "FL"}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <div className="text-xs font-medium text-gray-900 truncate">
+                    {selectOutWard.flightNumber}
+                  </div>
+                  <div className="text-xs text-white bg-green-600 px-2 py-0.5 rounded inline-block">
+                    {selectOutWard.class}
+                  </div>
+                </div>
               </div>
 
-              <div className="flex items-center justify-center gap-[40px]">
-                <div className="text-center">
-                  <p className="text-[22px] font-bold text-black leading-tight">
+              {/* Flight Times - Responsive layout */}
+              <div className="flex items-center justify-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+                <div className="text-center min-w-0">
+                  <div className="text-sm sm:text-lg font-bold text-gray-900">
                     {selectOutWard.departureTime}
-                  </p>
-                  <p className="text-[13px] text-gray-500 leading-tight mt-[2px]">
+                  </div>
+                  <div className="text-xs text-gray-500 truncate">
                     {selectOutWard.departureCity}
-                  </p>
+                  </div>
                 </div>
 
-                <div className="flex flex-col items-center">
-                  <div className="flex items-center">
-                    <span className="w-[6px] h-[6px] bg-gray-300 rounded-full" />
-                    <div className="border-t border-dashed w-8 border-gray-300 mx-2" />
-                    <span className="text-black text-sm">✈</span>
-                    <div className="border-t border-dashed w-8 border-gray-300 mx-2" />
-                    <span className="w-[6px] h-[6px] bg-gray-300 rounded-full" />
+                <div className="flex flex-col items-center space-y-1 flex-shrink-0">
+                  <div className="flex items-center space-x-1">
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    <div className="w-4 sm:w-6 border-t border-dashed border-gray-400"></div>
+                    <span className="text-gray-400 text-xs sm:text-sm">✈</span>
+                    <div className="w-4 sm:w-6 border-t border-dashed border-gray-400"></div>
+                    <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
                   </div>
-                  <span className="text-[12px] text-gray-400 mt-[4px]">
+                  {/* Duration */}
+                  <div className="text-xs text-gray-400">
                     {selectOutWard.duration}
-                  </span>
-                </div>
-
-                <div className="text-center">
-                  <p className="text-[22px] font-bold text-black leading-tight">
-                    {selectOutWard.arrivalTime}
-                  </p>
-                  <p className="text-[13px] text-gray-500 leading-tight mt-[2px]">
-                    {selectOutWard.arrivalCity}
-                  </p>
-                </div>
-              </div>
-
-              {/* <div className="text-right flex flex-col gap-2 items-center lg:items-end space-y-[2px] w-[152px] min-h-[31px]">
-              <p className="text-[#EE5128] text-[26px] font-black leading-none font-sans">
-                <span className="text-[20px] pr-2">
-                  {selectOutWard.currency}
-                </span>
-                {selectOutWard.price}
-                <span className="text-[12px] text-black font-normal">/pax</span>
-              </p>
-           
-            </div> */}
-            </div>
-          </div>
-          <div className="w-full">
-            <div
-              className="flex items-center flex-col md:flex-row justify-between h-[60px] xl:pb-0 cursor-pointer"
-              onClick={() => setOnWard(true)}
-            >
-              <div className="flex flex-col justify-start items-center xl:items-start max-w-[170px] relative pb-10 lg:pb-0">
-                <img
-                  src={selectReturn.logo}
-                  alt={selectReturn.airline}
-                  className="size-[40px] object-contain ml-2"
-                />
-                {/* <div className="absolute top-[48px] left-[18px] flex items-center space-x-2">
-                <span className="text-[13px] text-gray-500 leading-none">
-                  {selectReturn.flightNumber}
-                </span>
-                <span className="text-[12px] bg-[#008905] text-white px-[10px] py-[2px] rounded font-semibold leading-[19px]">
-                  {selectReturn.class}
-                </span>
-              </div> */}
-              </div>
-
-              <div className="flex items-center justify-center gap-[40px]">
-                <div className="text-center">
-                  <p className="text-[22px] font-bold text-black leading-tight">
-                    {selectReturn.departureTime}
-                  </p>
-                  <p className="text-[13px] text-gray-500 leading-tight mt-[2px]">
-                    {selectReturn.departureCity}
-                  </p>
-                </div>
-
-                <div className="flex flex-col items-center">
-                  <div className="flex items-center">
-                    <span className="w-[6px] h-[6px] bg-gray-300 rounded-full" />
-                    <div className="border-t border-dashed w-8 border-gray-300 mx-2" />
-                    <span className="text-black text-sm">✈</span>
-                    <div className="border-t border-dashed w-8 border-gray-300 mx-2" />
-                    <span className="w-[6px] h-[6px] bg-gray-300 rounded-full" />
                   </div>
-                  <span className="text-[12px] text-gray-400 mt-[4px]">
-                    {selectReturn.duration}
-                  </span>
                 </div>
 
-                <div className="text-center">
-                  <p className="text-[22px] font-bold text-black leading-tight">
-                    {selectReturn.arrivalTime}
-                  </p>
-                  <p className="text-[13px] text-gray-500 leading-tight mt-[2px]">
-                    {selectReturn.arrivalCity}
-                  </p>
+                <div className="text-center min-w-0">
+                  <div className="text-sm sm:text-lg font-bold text-gray-900">
+                    {selectOutWard.arrivalTime}
+                  </div>
+                  <div className="text-xs text-gray-500 truncate">
+                    {selectOutWard.arrivalCity}
+                  </div>
                 </div>
               </div>
-
-              {/* <div className="text-right flex flex-col gap-2 items-center lg:items-end space-y-[2px] w-[152px] min-h-[31px]">
-              <p className="text-[#EE5128] text-[26px] font-black leading-none font-sans">
-                <span className="text-[20px] pr-2">
-                  {selectReturn.currency}
-                </span>
-                {selectReturn.price}
-                <span className="text-[12px] text-black font-normal">/pax</span>
-              </p>
-            </div> */}
             </div>
           </div>
+
+          {/* X Button for Outward */}
+          {activeBox === "outward" && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                handleClearSelection("outward");
+                setActiveBox(null);
+              }}
+              className="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-[#EE5128] text-white rounded-full flex items-center justify-center hover:bg-[#d64520] transition-colors text-xs sm:text-sm shadow-lg z-10"
+            >
+              ×
+            </button>
+          )}
         </div>
-        <div className="">
+
+        {/* Connector Arrow - Hide on mobile, show on desktop */}
+        <div className="hidden lg:flex items-center justify-center px-1 flex-shrink-0">
+          <svg
+            className="w-5 h-5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M17 8l4 4m0 0l-4 4m4-4H3"
+            ></path>
+          </svg>
+        </div>
+
+        {/* Mobile Connector - Show only on mobile */}
+        <div className="flex lg:hidden items-center justify-center py-2">
+          <svg
+            className="w-5 h-5 text-gray-400 rotate-90"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M17 8l4 4m0 0l-4 4m4-4H3"
+            ></path>
+          </svg>
+        </div>
+
+        {/* Return Flight Card or Placeholder */}
+        <div
+          className={`flex-1 min-w-0 relative ${
+            activeBox === "return"
+              ? "ring-2 ring-[#EE5128] ring-opacity-50 rounded-lg"
+              : ""
+          }`}
+        >
+          {selectReturn && Object.keys(selectReturn).length > 0 ? (
+            // Selected Return Flight
+            <div
+              className="bg-gray-50 hover:bg-gray-100 rounded-lg p-2 sm:p-3 cursor-pointer transition-colors border border-gray-200"
+              onClick={() => {
+                setActiveBox(activeBox === "return" ? null : "return");
+                setOnWard(true);
+              }}
+            >
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0 min-h-[60px]">
+                {/* Airline Logo & Info */}
+                <div className="flex items-center space-x-2 min-w-0 flex-shrink-0 justify-center sm:justify-start">
+                  <img
+                    src={selectReturn.logo}
+                    alt={selectReturn.airline}
+                    className="w-8 h-8 sm:w-10 sm:h-10 object-contain flex-shrink-0"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                      e.target.nextSibling.style.display = "flex";
+                    }}
+                  />
+                  <div
+                    className="w-8 h-8 sm:w-10 sm:h-10 bg-orange-100 rounded flex items-center justify-center flex-shrink-0"
+                    style={{ display: "none" }}
+                  >
+                    <span className="text-orange-600 text-xs font-bold">
+                      {selectReturn.airline?.substring(0, 2) || "FL"}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="text-xs font-medium text-gray-900 truncate">
+                      {selectReturn.flightNumber}
+                    </div>
+                    <div className="text-xs text-white bg-green-600 px-2 py-0.5 rounded inline-block">
+                      {selectReturn.class}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Flight Times */}
+                <div className="flex items-center justify-center space-x-2 sm:space-x-3 min-w-0 flex-1">
+                  <div className="text-center min-w-0">
+                    <div className="text-sm sm:text-lg font-bold text-gray-900">
+                      {selectReturn.departureTime}
+                    </div>
+                    <div className="text-xs text-gray-500 truncate">
+                      {selectReturn.departureCity}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col items-center space-y-1 flex-shrink-0">
+                    <div className="flex items-center space-x-1">
+                      <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                      <div className="w-4 sm:w-6 border-t border-dashed border-gray-400"></div>
+                      <span className="text-gray-400 text-xs sm:text-sm">
+                        ✈
+                      </span>
+                      <div className="w-4 sm:w-6 border-t border-dashed border-gray-400"></div>
+                      <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
+                    </div>
+                    {/* Duration */}
+                    <div className="text-xs text-gray-400">
+                      {selectReturn.duration}
+                    </div>
+                  </div>
+
+                  <div className="text-center min-w-0">
+                    <div className="text-sm sm:text-lg font-bold text-gray-900">
+                      {selectReturn.arrivalTime}
+                    </div>
+                    <div className="text-xs text-gray-500 truncate">
+                      {selectReturn.arrivalCity}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            // Placeholder for Return Flight
+            <div
+              className="bg-gradient-to-r from-orange-50 to-red-50 hover:from-orange-100 hover:to-red-100 rounded-lg p-2 sm:p-3 cursor-pointer transition-all duration-200 border-2 border-dashed border-orange-200 hover:border-orange-300 min-h-[60px] sm:min-h-[80px]"
+              onClick={() => {
+                setActiveBox("return");
+                setOnWard(true);
+              }}
+            >
+              <div className="flex items-center justify-center h-full min-h-[60px]">
+                <div className="text-center">
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-1">
+                    <span className="text-orange-500 text-xs sm:text-sm">
+                      ✈
+                    </span>
+                  </div>
+                  <div className="text-xs sm:text-sm font-medium text-orange-600">
+                    Select Return
+                  </div>
+                  <div className="text-xs text-orange-400 mt-0.5">
+                    {destination} → {origin}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* X Button for Return */}
+          {activeBox === "return" &&
+            selectReturn &&
+            Object.keys(selectReturn).length > 0 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleClearSelection("return");
+                  setActiveBox(null);
+                }}
+                className="absolute -top-2 -right-2 w-5 h-5 sm:w-6 sm:h-6 bg-[#EE5128] text-white rounded-full flex items-center justify-center hover:bg-[#d64520] transition-colors text-xs sm:text-sm shadow-lg z-10"
+              >
+                ×
+              </button>
+            )}
+        </div>
+
+        {/* Book Button - Full width on mobile, fixed width on desktop */}
+        <div className="flex-shrink-0 w-full lg:w-auto">
           {selectedBoth ? (
             <button
-              className="bg-[#EE5128] text-white px-4 py-1.5 rounded font-jakarta font-semibold hover:bg-[#d64520] active:bg-[#b83b1c] transition-colors duration-200"
+              className="w-full lg:w-auto bg-[#EE5128] text-white px-4 py-2 sm:py-1.5 rounded-lg font-jakarta font-semibold hover:bg-[#d64520] active:bg-[#b83b1c] transition-colors duration-200 shadow-sm text-sm whitespace-nowrap"
               onClick={() => handleConfirmSelect()}
             >
-              Book
+              Book Now
             </button>
           ) : (
             <button
-              // onClick={(e) => e.stopPropagation()}
-              className="bg-gray-300 text-white px-4 py-1.5 rounded font-jakarta font-semibold cursor-not-allowed"
+              className="w-full lg:w-auto bg-gray-300 text-white px-4 py-2 sm:py-1.5 rounded-lg font-jakarta font-semibold cursor-not-allowed text-sm whitespace-nowrap"
               disabled
             >
-              {/* {t("booking-card.book-now")} */}
-              Book
+              Select
             </button>
           )}
         </div>
       </div>
-    </>
+    </div>
   );
 };
+
 // Add this new component after your imports
 const NoFlightsAvailable = ({
   origin,

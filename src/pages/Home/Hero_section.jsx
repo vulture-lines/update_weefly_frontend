@@ -46,13 +46,13 @@ const HeroSection = ({ country }) => {
   const [flightTypeFilter, setFlightTypeFilter] = useState("Domestic");
   const [isDirectFlight, setIsDirectFlight] = useState(false);
   const [flightDepatureDate, setflightDepatureDate] = useState(
-    new Date(2025, 6, 30)
-  ); // July 30, 2025
+    new Date(2025, 7, 15)
+  );
   const [routingId, setRoutingId] = useState("");
   const [searchData, setSearchdata] = useState({
     from: "LGW",
     to: "MAD",
-    flightDepatureDate: new Date(2025, 6, 30),
+    flightDepatureDate: new Date(2025, 7, 15),
     flightReturnDate: new Date(2025, 8, 25),
     travelClass: "Economy",
   });
@@ -827,9 +827,9 @@ const HeroSection = ({ country }) => {
                       </svg>
                     </p>
                     <div className="text-[16px] font-semibold text-gray-700">
-                      30 Jul 2025
+                      15 Aug 2025
                     </div>
-                    <p className="text-xs text-gray-500 mt-1">Wednesday</p>
+                    <p className="text-xs text-gray-500 mt-1">Friday</p>
                   </div>
 
                   {/* Return Date - DISABLED with pre-filled value */}
