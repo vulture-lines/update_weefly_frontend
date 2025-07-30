@@ -876,7 +876,7 @@ const HeroSection = ({ country }) => {
                 <div className="w-full flex justify-center translate-y-2.5 cursor-pointer">
                   <button
                     type="submit"
-                    className="bg-[#EE5128] cursor-pointer  hover:bg-[#d64520] text-white text-[18px] font-semibold px-18 py-2 rounded-full transition"
+                    className="bg-orange-600 cursor-pointer  hover:bg-orange-700 text-white text-[18px] font-semibold px-18 py-2 rounded-full transition"
                   >
                     {t("hero.search")}
                   </button>
