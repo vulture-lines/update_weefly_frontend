@@ -4082,7 +4082,7 @@ function TravelersDetails({ country = "" }) {
                     <div className="sm:col-span-2">
                       <label className="block text-sm font-medium mb-1">
                         Email <span className="text-red-500">*</span>
-                        <span className="text-xs text-gray-500 ml-1">
+                        <span className="text-xs text-orange-500 ml-1">
                           (Where your tickets will be sent.)
                         </span>
                       </label>
@@ -4092,9 +4092,9 @@ function TravelersDetails({ country = "" }) {
                         onChange={(e) =>
                           handleContactChange("email", e.target.value)
                         }
-                        className={getEmailValidationClass(
+                        className={`${getEmailValidationClass(
                           contactDetails.Email
-                        )}
+                        )} placeholder:text-orange-400`}
                         placeholder="Enter the email where you'd like to receive your tickets."
                       />
                       {contactDetails.Email &&
@@ -4474,7 +4474,7 @@ function TravelersDetails({ country = "" }) {
               </div>
             )}
 
-            {/* Save Details Section (only for traveller steps) */}
+            {/* Save Details Section (only for traveller steps)
             {currentStep <= totalTravellers && (
               <div className="w-full bg-white rounded-md p-6 mt-6 font-sans">
                 <h3 className="font-semibold text-black mb-1 font-jakarta">
@@ -4493,7 +4493,7 @@ function TravelersDetails({ country = "" }) {
                   </span>
                 </label>
               </div>
-            )}
+            )} */}
 
             {/* Action Buttons */}
             <div className="mt-6 flex gap-4">
