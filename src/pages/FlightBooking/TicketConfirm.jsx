@@ -1,27 +1,81 @@
+import { Luggage } from "lucide-react";
+
 import tick from "/assets/ticketpage/tick.png";
 import AirIndiaLogo from "../../assets/images/AirIndiaLogo.svg";
 import FlightLogo from "../../assets/images/FlightIcon.svg";
 import { Link, useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { usePDF } from "react-to-pdf";
+
 function TicketConfirm() {
   const { id } = useParams();
+  const [ticketDetails, setTicketDetails] = useState({});
+  const [bookingDetails, setBookingDetails] = useState({});
   console.log(id);
+
+  const getBookingDetail = async (TFBookingReference) => {
+    console.log("TB", TFBookingReference);
+
+    const travelFusionApi = import.meta.env.VITE_FLIGHT_BACKEND_URL;
+    try {
+      const response = await fetch(`${travelFusionApi}/get-bookingdetails`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ TFBookingReference }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setBookingDetails(data);
+      } else {
+        const data = await response.json();
+        console.log(data);
+
+        console.log("Ticket detail Not found");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getTicketDetail = async () => {
+    const transactionService = import.meta.env.VITE_TRANSACTION_URL;
+    try {
+      const response = await fetch(
+        `${transactionService}/getticketdetail/${id}`
+      );
+      if (response.ok) {
+        const data = await response.json();
+        setTicketDetails(data);
+        console.log(data.details.TravelfusionBookingDetails.TFBookingReference);
+        const bookid = data.details.TravelfusionBookingDetails.TFBookingReference;
+        console.log("TBTD", bookid);
+        await getBookingDetail(bookid);
+      } else {
+        console.log("Ticket Not found");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    getTicketDetail();
+  }, []);
+
+  const { toPDF, targetRef } = usePDF({
+    filename: "flight-ticket.pdf",
+    page: {
+      margin: 20,
+      format: "a4",
+      orientation: "portrait",
+    },
+  });
+
   return (
     <div className="py-[30px] px-10 xl:px-40">
-      <img
-        src={tick}
-        alt={"Ticket Confirm Check Mark"}
-        className="size-[60px] xl:size-[133px] mx-auto"
-        data-aos="zoom-out"
-      />
-      <p
-        data-aos="fade-up"
-        className="font-jakarta font-bold text-[24px] xl:text-[40px] text-center mt-[23px] xl:mt-[41px] uppercase"
-      >
-        Your Ticket has <br className="md:hidden" /> confirmed
-      </p>
-
-      <h1 className="text-2xl mx-auto text-center mt-20">Ticket ID : {id}</h1>
-
       {/* <div className="mt-[61px]" data-aos="fade-up">
         <h3 className="bg-[#FFE2DA] rounded-t-[17px] px-[45px] py-[17px] font-jakarta font-semibold text-[26px]">
           Travelers Details
@@ -103,7 +157,6 @@ function TicketConfirm() {
           </div>
           <div className="flex-1 items-center w-full">
             <div className="flex xl:px-[84px]">
-            
               <div className="px-[20px] lg:px-[44px]">
                 <p className="text-[25px] xl:text-[38px] font-bold">06:00</p>
                 <p className="font-normal text-[13px] lg:text-[20px] text-neutral-500">
@@ -124,10 +177,9 @@ function TicketConfirm() {
                   <p className="font-normal text-[17px] text-neutral-500">
                     16h 12m
                   </p>
-                  
                 </div>
               </div>
-            
+
               <div className="px-[20px] xl:px-[44px]">
                 <p className="text-[25px] xl:text-[38px] font-bold">19:00</p>
                 <p className="font-normal text-[13px] xl:text-[20px] text-neutral-500">
@@ -150,13 +202,35 @@ function TicketConfirm() {
         </div>
       </div> */}
 
+      {/* testing */}
+      <div className="mt-10">
+        <div className="">
+          <Recipet
+            id={id}
+            targetRef={targetRef}
+            ticketDetails={ticketDetails}
+            bookingDetails={bookingDetails}
+          />
+        </div>
+      </div>
+
       <div className=" max-w-[430px] w-full mx-auto mt-[70px] flex flex-col gap-[37px]">
-        {/* <button
+        {/* <PDFDownloadLink
+          document={<RecipetPDF />}
+          fileName="ticket-confirmation.pdf"
+          className="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          {({ loading }) =>
+            loading ? "Preparing document..." : "Download Ticket PDF"
+          }
+        </PDFDownloadLink> */}
+        <button
           data-aos="fade-up"
           className="font-jakarta font-semibold text-[18px] w-full bg-[#EE5128] py-[14px] rounded-[8px] text-white mt-[20px] drop-shadow-xl drop-shadow-[#FD74014D]"
+          onClick={() => toPDF()}
         >
           Download invoice
-        </button> */}
+        </button>
         <Link
           data-aos="fade-up"
           to={"/"}
@@ -170,3 +244,554 @@ function TicketConfirm() {
 }
 
 export default TicketConfirm;
+
+const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
+  console.log(ticketDetails.outwardFlight);
+  console.log(bookingDetails);
+
+  const TicketData = ticketDetails.Ticketdetail;
+  const OutWardTicketData = TicketData?.outwardFlight;
+
+  const TravellerData = TicketData?.Travellerdetails?.Traveller;
+  // const TravellerData =
+  //   bookingDetails?.Bookingdetails?.CommandList?.GetBookingDetails?.[0]
+  //     ?.BookingProfile?.[0].TravellerList?.[0]?.Traveller;
+  const Terms =
+    bookingDetails?.Bookingdetails?.CommandList?.GetBookingDetails?.[0]
+      ?.RouterHistory?.[0].TermsRouter?.[0]?.SupplierInfoList[0]?.SupplierInfo;
+
+  console.log(Terms);
+
+  return (
+    <div className="" ref={targetRef} style={{ colorScheme: "light" }}>
+      <div className="">
+        <img
+          src={tick}
+          alt={"Ticket Confirm Check Mark"}
+          className="size-[60px] xl:size-[144px] mx-auto"
+          data-aos="zoom-out"
+        />
+        <p
+          data-aos="fade-up"
+          className="font-jakarta font-bold text-[24px] xl:text-[40px] text-center mt-[23px] xl:mt-[41px] uppercase"
+        >
+          Your Ticket has <br className="md:hidden" /> confirmed
+        </p>
+
+        <h1 className="text-2xl mx-auto text-center mt-10">Ticket ID : {id}</h1>
+      </div>
+      <>
+        {/* outward */}
+        {TicketData?.returnFlight ? (
+          <>
+            <div
+              className=" font-jakarta border-2 rounded-2x mt-10"
+              style={{ borderColor: "#d4d4d4" }}
+            >
+              <div
+                className="p-6 border-b-2 flex flex-col gap-2"
+                style={{ borderBottomColor: "#d4d4d4" }}
+              >
+                <h2 className="text-3xl font-bold">
+                  {" "}
+                  {OutWardTicketData.departureCity}-{" "}
+                  {OutWardTicketData.arrivalCity}
+                </h2>
+                <p>
+                  {OutWardTicketData.departureDate} •{" "}
+                  {OutWardTicketData.duration} duration
+                </p>
+              </div>
+              <div className="flex">
+                <div
+                  className="border-r-2"
+                  style={{ borderRightColor: "#d4d4d4" }}
+                >
+                  <div className="flex items-center p-6">
+                    <img src={OutWardTicketData.logo} alt="air India logo" />
+                    <div className="flex flex-col items-start gap-1">
+                      <p>{OutWardTicketData.airline}</p>
+                      <p
+                        className="font-sans font-normal text-[15px"
+                        style={{ color: "#d4d4d4" }}
+                      >
+                        {OutWardTicketData.flightNumber}
+                      </p>
+                      {/* <p className="rounded-[5px] bg-[#008905] text-white font-sans text-base font-normal px-[13px] py-[4px]">
+                  Business
+                </p> */}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1 ">
+                  <div className="flex-1 items-center w-full p-6">
+                    <div className="flex xl:px-[84px]">
+                      <div className="px-[20px] lg:px-[44px]">
+                        <p className="text-2xl xl:text-3xl font-bold">
+                          {OutWardTicketData.departureCity}{" "}
+                          {OutWardTicketData.departureTime}
+                        </p>
+                        {/* <p
+                          className="font-normal text-[13px] lg:text-[20px]"
+                          style={{ color: "#737373" }}
+                        >
+                          Algeries
+                        </p> */}
+                      </div>
+                      <div className="flex-1 py-[40px] relative ">
+                        <div
+                          className="relative border border-dashed h-px"
+                          style={{ borderColor: "#d4d4d4" }}
+                        >
+                          <div
+                            className="absolute  size-4 rounded-full -left-2 -top-2 border-2"
+                            style={{
+                              borderColor: "#fff",
+                              backgroundColor: "#e5e5e5",
+                            }}
+                          ></div>
+                          <div
+                            className="absolute size-4 rounded-full -right-2 -top-2 border-2"
+                            style={{
+                              borderColor: "#fff",
+                              backgroundColor: "#e5e5e5",
+                            }}
+                          ></div>
+                        </div>
+                        <div className="flex flex-col items-center gap-[8px] absolute top-5 left-1/3">
+                          <img
+                            src={FlightLogo}
+                            alt="Plane"
+                            className="h-[41px] w-[41px]"
+                          />
+                          <p
+                            className="font-normal text-[17px]"
+                            style={{ color: "#737373" }}
+                          >
+                            {OutWardTicketData.duration}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="px-[20px] xl:px-[44px]">
+                        <p className="text-[25px] xl:text-3xl font-bold">
+                          {OutWardTicketData.arrivalTime}{" "}
+                          {OutWardTicketData.arrivalCity}
+                        </p>
+                        {/* <p
+                          className="font-normal text-[13px] xl:text-[20px]"
+                          style={{ borderColor: "#737373" }}
+                        >
+                          Launda
+                        </p> */}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Features */}
+              {/* <div
+                className="border-y-2 p-6"
+                style={{ borderColor: "#d4d4d4" }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Luggage />
+                    <b>Check-in:</b>
+                    <span>25 KG per Adult</span>
+                  </div>
+                  <div className="flex items-center">
+                    
+                    <b>Cabin:</b>
+                    <span>7 KG per Adult</span>
+                  </div>
+                </div>
+              </div> */}
+
+              <div
+                className="border-t-2 "
+                style={{ borderColor: "#d4d4d4" }}
+              ></div>
+
+              {/* Travellers */}
+              <div className="w-full p-6">
+                <table className="w-full">
+                  <thead>
+                    <tr
+                      className="text-left uppercase text-sm "
+                      style={{ color: "#525252" }}
+                    >
+                      <th>traveller</th>
+                      <th>E-TICKET NO</th>
+                    </tr>
+                  </thead>
+                  <tbody className="font-medium">
+                    {TravellerData?.map((travaller, index) => (
+                      <tr key={index}>
+                        <td>
+                          {travaller.Name.Title}.{" "}
+                          {travaller.Name.NamePartList.NamePart.map((n) => n)}{" "}
+                          <span className="" style={{ borderColor: "#737373" }}>
+                            Adult
+                          </span>
+                        </td>
+                        <td>{id}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div
+              className=" font-jakarta border-2 rounded-2x mt-10"
+              style={{ borderColor: "#d4d4d4" }}
+            >
+              <div
+                className="p-6 border-b-2 flex flex-col gap-2"
+                style={{ borderBottomColor: "#d4d4d4" }}
+              >
+                <h2 className="text-3xl font-bold">
+                  {" "}
+                  {TicketData.returnFlight.departureCity} -{" "}
+                  {TicketData.returnFlight.arrivalCity}
+                </h2>
+                <p>
+                  {TicketData.returnFlight.departureDate} •{" "}
+                  {TicketData.returnFlight.duration} duration
+                </p>
+              </div>
+              <div className="flex">
+                <div
+                  className="border-r-2"
+                  style={{ borderRightColor: "#d4d4d4" }}
+                >
+                  <div className="flex items-center p-6">
+                    <img
+                      src={TicketData.returnFlight.logo}
+                      alt="air India logo"
+                    />
+                    <div className="flex flex-col items-start gap-1">
+                      <p>{TicketData.returnFlight.airline}</p>
+                      <p
+                        className="font-sans font-normal text-[15px"
+                        style={{ color: "#d4d4d4" }}
+                      >
+                        {TicketData.returnFlight.flightNumber}
+                      </p>
+                      {/* <p className="rounded-[5px] bg-[#008905] text-white font-sans text-base font-normal px-[13px] py-[4px]">
+                  Business
+                </p> */}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1 ">
+                  <div className="flex-1 items-center w-full p-6">
+                    <div className="flex xl:px-[84px]">
+                      <div className="px-[20px] lg:px-[44px]">
+                        <p className="text-2xl xl:text-3xl font-bold">
+                          {TicketData.returnFlight.departureCity}{" "}
+                          {TicketData.returnFlight.departureTime}
+                        </p>
+                        {/* <p
+                          className="font-normal text-[13px] lg:text-[20px]"
+                          style={{ color: "#737373" }}
+                        >
+                          Algeries
+                        </p> */}
+                      </div>
+                      <div className="flex-1 py-[40px] relative ">
+                        <div
+                          className="relative border border-dashed h-px"
+                          style={{ borderColor: "#d4d4d4" }}
+                        >
+                          <div
+                            className="absolute  size-4 rounded-full -left-2 -top-2 border-2"
+                            style={{
+                              borderColor: "#fff",
+                              backgroundColor: "#e5e5e5",
+                            }}
+                          ></div>
+                          <div
+                            className="absolute size-4 rounded-full -right-2 -top-2 border-2"
+                            style={{
+                              borderColor: "#fff",
+                              backgroundColor: "#e5e5e5",
+                            }}
+                          ></div>
+                        </div>
+                        <div className="flex flex-col items-center gap-[8px] absolute top-5 left-1/3">
+                          <img
+                            src={FlightLogo}
+                            alt="Plane"
+                            className="h-[41px] w-[41px]"
+                          />
+                          <p
+                            className="font-normal text-[17px]"
+                            style={{ color: "#737373" }}
+                          >
+                            {TicketData.returnFlight.duration}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="px-[20px] xl:px-[44px]">
+                        <p className="text-[25px] xl:text-3xl font-bold">
+                          {TicketData.returnFlight.arrivalTime}{" "}
+                          {TicketData.returnFlight.arrivalCity}
+                        </p>
+                        {/* <p
+                          className="font-normal text-[13px] xl:text-[20px]"
+                          style={{ borderColor: "#737373" }}
+                        >
+                          Launda
+                        </p> */}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {/* Features */}
+              {/* <div
+                className="border-y-2 p-6"
+                style={{ borderColor: "#d4d4d4" }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Luggage />
+                    <b>Check-in:</b>
+                    <span>25 KG per Adult</span>
+                  </div>
+                  <div className="flex items-center">
+                    
+                    <b>Cabin:</b>
+                    <span>7 KG per Adult</span>
+                  </div>
+                </div>
+              </div> */}
+              <div
+                className="border-t-2 "
+                style={{ borderColor: "#d4d4d4" }}
+              ></div>
+              {/* Travellers */}
+              <div className="w-full p-6">
+                <table className="w-full">
+                  <thead>
+                    <tr
+                      className="text-left uppercase text-sm "
+                      style={{ color: "#525252" }}
+                    >
+                      <th>traveller</th>
+                      <th>E-TICKET NO</th>
+                    </tr>
+                  </thead>
+                  <tbody className="font-medium">
+                    {TravellerData?.map((travaller, index) => (
+                      <tr key={index}>
+                        <td>
+                          {travaller.Name.Title}.{" "}
+                          {travaller.Name.NamePartList.NamePart.map((n) => n)}{" "}
+                          <span className="" style={{ borderColor: "#737373" }}>
+                            Adult
+                          </span>
+                        </td>
+                        <td>{id}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div
+              className=" font-jakarta border-2 rounded-2x mt-10"
+              style={{ borderColor: "#d4d4d4" }}
+            >
+              <div
+                className="p-6 border-b-2 flex flex-col gap-2"
+                style={{ borderBottomColor: "#d4d4d4" }}
+              >
+                <h2 className="text-3xl font-bold">
+                  {" "}
+                  {OutWardTicketData?.departureCity}-{" "}
+                  {OutWardTicketData?.arrivalCity}
+                </h2>
+                <p>
+                  {OutWardTicketData?.departureDate} •{" "}
+                  {OutWardTicketData?.duration} duration
+                </p>
+              </div>
+              <div className="flex">
+                <div
+                  className="border-r-2"
+                  style={{ borderRightColor: "#d4d4d4" }}
+                >
+                  <div className="flex items-center p-6">
+                    <img src={OutWardTicketData?.logo} alt="air India logo" />
+                    <div className="flex flex-col items-start gap-1">
+                      <p>{OutWardTicketData?.airline}</p>
+                      <p
+                        className="font-sans font-normal text-[15px"
+                        style={{ color: "#d4d4d4" }}
+                      >
+                        {OutWardTicketData?.flightNumber}
+                      </p>
+                      {/* <p className="rounded-[5px] bg-[#008905] text-white font-sans text-base font-normal px-[13px] py-[4px]">
+                  Business
+                </p> */}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex-1 ">
+                  <div className="flex-1 items-center w-full p-6">
+                    <div className="flex xl:px-[84px]">
+                      <div className="px-[20px] lg:px-[44px]">
+                        <p className="text-2xl xl:text-3xl font-bold">
+                          {OutWardTicketData?.departureCity}{" "}
+                          {OutWardTicketData?.departureTime}
+                        </p>
+                        {/* <p
+                          className="font-normal text-[13px] lg:text-[20px]"
+                          style={{ color: "#737373" }}
+                        >
+                          Algeries
+                        </p> */}
+                      </div>
+                      <div className="flex-1 py-[40px] relative ">
+                        <div
+                          className="relative border border-dashed h-px"
+                          style={{ borderColor: "#d4d4d4" }}
+                        >
+                          <div
+                            className="absolute  size-4 rounded-full -left-2 -top-2 border-2"
+                            style={{
+                              borderColor: "#fff",
+                              backgroundColor: "#e5e5e5",
+                            }}
+                          ></div>
+                          <div
+                            className="absolute size-4 rounded-full -right-2 -top-2 border-2"
+                            style={{
+                              borderColor: "#fff",
+                              backgroundColor: "#e5e5e5",
+                            }}
+                          ></div>
+                        </div>
+                        <div className="flex flex-col items-center gap-[8px] absolute top-5 left-1/3">
+                          <img
+                            src={FlightLogo}
+                            alt="Plane"
+                            className="h-[41px] w-[41px]"
+                          />
+                          <p
+                            className="font-normal text-[17px]"
+                            style={{ color: "#737373" }}
+                          >
+                            {OutWardTicketData?.duration}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="px-[20px] xl:px-[44px]">
+                        <p className="text-[25px] xl:text-3xl font-bold">
+                          {OutWardTicketData?.arrivalTime}{" "}
+                          {OutWardTicketData?.arrivalCity}
+                        </p>
+                        {/* <p
+                          className="font-normal text-[13px] xl:text-[20px]"
+                          style={{ borderColor: "#737373" }}
+                        >
+                          Launda
+                        </p> */}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Features */}
+              {/* <div
+                className="border-y-2 p-6"
+                style={{ borderColor: "#d4d4d4" }}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <Luggage />
+                    <b>Check-in:</b>
+                    <span>25 KG per Adult</span>
+                  </div>
+                  <div className="flex items-center">
+                    
+                    <b>Cabin:</b>
+                    <span>7 KG per Adult</span>
+                  </div>
+                </div>
+              </div> */}
+
+              <div
+                className="border-t-2 "
+                style={{ borderColor: "#d4d4d4" }}
+              ></div>
+
+              {/* Travellers */}
+              <div className="w-full p-6">
+                <table className="w-full">
+                  <thead>
+                    <tr
+                      className="text-left uppercase text-sm "
+                      style={{ color: "#525252" }}
+                    >
+                      <th>traveller</th>
+                      <th>E-TICKET NO</th>
+                    </tr>
+                  </thead>
+                  <tbody className="font-medium">
+                    {TravellerData?.map((travaller, index) => (
+                      <tr key={index}>
+                        <td>
+                          {travaller.Name.Title}.{" "}
+                          {travaller.Name.NamePartList.NamePart.map((n) => n)}{" "}
+                          <span className="" style={{ borderColor: "#737373" }}>
+                            Adult
+                          </span>
+                        </td>
+                        <td>{id}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
+      </>
+
+      <ul
+        className="p-6 border-2 mt-10 font-jakarta"
+        style={{ borderColor: "#d4d4d4" }}
+      >
+        <p className="text-center text-2xl font-bold my-10  ">
+          {" "}
+          Terms and Conditions
+        </p>
+        {Terms?.map((term, idx) => (
+          <li key={idx} className="flex flex-col mb-4 ">
+            <p className="font-medium"> • {term.DisplayName[0]}</p>
+
+            <div className="leading-8">
+              {term.InfoType[0] === "url" ? (
+                <Link to={term.Info[0]} className="underline">
+                  {term.Info[0]}
+                </Link>
+              ) : (
+                <p> {term.Info[0]}</p>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
