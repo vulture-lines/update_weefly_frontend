@@ -162,7 +162,7 @@ const Navbar = () => {
                   </div>
                 </form> */}
                 <div className="flex items-center gap-4">
-                  {LoggedIn ? (
+                  {/* {LoggedIn ? (
                     <button
                       className="font-medium text-sm font-jakarta px-3.5 py-2 flex items-center rounded-md gap-2 transition-colors duration-200"
                       onClick={() => navigate("/profile")}
@@ -194,7 +194,7 @@ const Navbar = () => {
                       <UserCircle />
                       <span>{t("navbar.login/register")}</span>
                     </button>
-                  )}
+                  )} */}
 
                   {LoggedIn ? (
                     <div className="cursor-pointer flex items-center gap-6">
@@ -219,7 +219,7 @@ const Navbar = () => {
             </div>
             {/* white navbar */}
             <div className="flex gap-[12px] items-center lg:hidden cursor-pointer">
-              {LoggedIn ? (
+              {/* {LoggedIn ? (
                 <Link to={"/profile"}>
                   <img
                     src={LoginDetail.photoURL}
@@ -236,7 +236,7 @@ const Navbar = () => {
                     <span>{t("navbar.signin")}</span>
                   </div>
                 </Link>
-              )}
+              )} */}
               {LoggedIn && (
                 <div className="">
                   <Bell className="h-5 w-5" />
@@ -387,7 +387,7 @@ const Navbar = () => {
               </div>
             </div>
             <div className="flex gap-[12px] lg:hidden cursor-pointer items-center">
-              {LoggedIn ? (
+              {/* {LoggedIn ? (
                 <Link to={"/profile"} onClick={() => setIsMenuOpen(false)}>
                   <img
                     src={LoginDetail.photoURL}
@@ -404,7 +404,7 @@ const Navbar = () => {
                     <span>{t("navbar.signin")}</span>
                   </div>
                 </Link>
-              )}
+              )} */}
               {LoggedIn && (
                 <div className="">
                   <Bell className="h-5 w-5" />
@@ -441,7 +441,7 @@ const Navbar = () => {
               onClick={() => navigate("/")}
             />
             <div className="flex gap-[12px] lg:hidden cursor-pointer">
-              {LoggedIn ? (
+              {/* {LoggedIn ? (
                 <Link to={"/profile"} onClick={() => setIsMenuOpen(false)}>
                   <img
                     src={LoginDetail.photoURL}
@@ -458,7 +458,7 @@ const Navbar = () => {
                     <span>{t("navbar.signin")}</span>
                   </div>
                 </Link>
-              )}
+              )} */}
               <button
                 className=""
                 onClick={() => setIsMenuOpen((prev) => !prev)}

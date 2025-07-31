@@ -4,11 +4,13 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "start": "vite",
     "dev": "vite",
     "api": "node ./backend/server.js",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "both": "concurrently \"vite\" \"cd ../userservice/backend && npm start\" \"cd ../transactionservice/backend && npm start\""
   },
   "dependencies": {
     "@react-google-maps/api": "^2.20.6",

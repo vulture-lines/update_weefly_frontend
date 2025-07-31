@@ -9,8 +9,6 @@ import White_Money_Exchange from "../../assets/images/ReviewYourBooking/white_mo
 import White_eSim from "../../assets/images/ReviewYourBooking/white_eSim.svg";
 import White_Extra_Luggage from "../../assets/images/ReviewYourBooking/White_Extra_luggage.svg";
 import White_Visa_Process from "../../assets/images/ReviewYourBooking/White_Visa_process.svg";
-
-import LoadingScreen from "../../components/LoadingScreen";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -41,9 +39,6 @@ export default function ReviewYourBooking() {
 
   //   const [flight, setFlight] = useState(null);
   const TicketData = location.state;
-  console.log("flow", location.state.outwordTicketId);
-
-  const [loading, setLoading] = useState(false);
 
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [AlternativeFares, setAlternativeFares] = useState([]);
@@ -56,13 +51,6 @@ export default function ReviewYourBooking() {
   console.log("tripType", TicketData.tripType);
   console.log("travalers", TicketData.travalers); */
   const [supportedCards, setsupportedCards] = useState([]);
-  const [cardCharge, setcardCharge] = useState([]);
-  const [listOutwardLuggages, setListOutwardLuggages] = useState([]);
-  const [listReturnLuggages, setListReturnLuggages] = useState([]);
-  const [PerPassengerPrice, setPerPassengerPrice] = useState([]);
-
-  const [SupportedCardList, setSupportedCardList] = useState([]);
-  const [CardCharges, setCardCharges] = useState([]);
 
   // useEffect(() => {
   //   if (location.state && location.state.tripType) {
@@ -179,28 +167,9 @@ export default function ReviewYourBooking() {
     }
   }
     */
-  let commissionDetails = [];
-  const transactionUrl = import.meta.env.VITE_TRANSACTION_URL;
-  const getcommission = async () => {
-    try {
-      const res = await fetch(`${transactionUrl}/getcommissiondetails`);
-      const result = await res.json();
-      // console.log("co", result.commissionDetail);
-      const commission = result.commissionDetail;
-      // console.log(commission)
-      commissionDetails = commission;
-    } catch (error) {
-      console.error("Failed to fetch supplier route:", error);
-    }
-  };
-
-  useEffect(() => {
-    getcommission();
-  }, []);
 
   const handleProcessDetails = async () => {
     const flightTickets = [];
-    console.log("td", TicketData);
     const routeid = TicketData.routingId;
     let outwardid = TicketData.outwordTicketId.id;
     let returnid;
@@ -225,7 +194,7 @@ export default function ReviewYourBooking() {
       console.warn("Missing routeid or outwardid");
       return;
     }
-    setLoading(true);
+
     const response = await fetch(`${backendUrl}/process-details`, {
       method: "POST",
       headers: {
@@ -238,7 +207,6 @@ export default function ReviewYourBooking() {
         ...(returnid && { returnId: returnid }),
       }),
     });
-    setLoading(false);
 
     if (response.ok) {
       const res = await response.json();
@@ -285,28 +253,34 @@ export default function ReviewYourBooking() {
           seatOptions = seat.DisplayText[0];
           if (seat) {
             seatOptions = seat.DisplayText?.[0] || "";
+            console.log("Seat Options:", seatOptions);
           }
 
           if (meal) {
             mealType = meal.DisplayText?.[0] || "";
+            console.log("Meal Type:", mealType);
           }
 
           if (luggage) {
             luggageOptions = luggage.DisplayText?.[0] || "";
+            console.log("Luggage:", luggageOptions);
           }
 
           if (outwardLg) {
             outwardLuggage = outwardLg.DisplayText?.[0] || "";
+            console.log("Outward Luggage:", outwardLuggage);
           }
 
           if (returnLg) {
             returnLuggage = returnLg.DisplayText?.[0] || "";
+            console.log("Return Luggage:", returnLuggage);
           }
           if (outwardLgh) {
-            outwardHandLuggageOptions = outwardLgh.DisplayText?.[0] || "";
+            returnLuggage = outwardLgh.DisplayText?.[0] || "";
+            console.log("Return Luggage:", returnLuggage);
           }
           if (returnLgh) {
-            ReturnHandLuggageOptions = returnLgh.DisplayText?.[0] || "";
+            returnLuggage = returnLgh.DisplayText?.[0] || "";
           }
           // return;
         } else {
@@ -330,14 +304,10 @@ export default function ReviewYourBooking() {
         // Safely extract supported cards
         if (res.supportedCardlist) {
           supportedCardlist = res.supportedCardlist;
-          cardCharge = res.supportedCardlist.CardCharge[0].Charge[0];
-          setSupportedCardList(supportedCardlist);
-          setCardCharges(cardCharge);
         }
         if (res.groupList) {
           perPassengerPrice =
-            res.groupList?.[0].Group?.[0].Price?.[0].PassengerPriceList?.[0];
-          setPerPassengerPrice(perPassengerPrice);
+            res.groupList[0].Group[0].Price[0].PassengerPriceList[0];
         }
       } catch (parseError) {
         console.error("Error parsing response data:", parseError);
@@ -345,105 +315,60 @@ export default function ReviewYourBooking() {
         return;
       }
 
-      const getCommissionDetail = async (tfPrice) => {
-        try {
-          if (!commissionDetails) {
-            return console.log("Error");
-          } else {
-            const Commission = commissionDetails.Commission;
-            if (Commission) {
-              if (
-                commissionDetails.CommissionType.toLowerCase() === "percentage"
-              ) {
-                const commissionAmount = (tfPrice * Commission) / 100;
-                const totalAmount = tfPrice + commissionAmount;
-                return totalAmount.toFixed(2);
-              } else if (
-                commissionDetails.CommissionType.toLowerCase() === "amount"
-              ) {
-                const totalAmount = tfPrice + Commission;
-                return totalAmount.toFixed(2);
-              }
-            }
-          }
-        } catch (error) {
-          console.error(error);
-        }
-      };
+      // const seatOptions =
+      //   res.requiredParameterList[0].RequiredParameter[15].DisplayText[0];
+      // const LuggageOptions =
+      //   res.requiredParameterList[0].RequiredParameter[16].DisplayText[0];
+      // let sf = res.Features.Feature;
 
-      async function convertAllPricesToCVE(features) {
-        const rates = await fetchExchangeRates("CVE");
-        for (const feature of features) {
-          if (feature.Option && Array.isArray(feature.Option)) {
-            for (const option of feature.Option) {
-              const optionData = option["$"];
+      // console.log(sf);
+      // console.log(sf);
+      // let result = [];
 
-              if (optionData.Currency && optionData.Value) {
-                const originalPrice = parseFloat(optionData.Value);
-                const originalCurrency = optionData.Currency;
+      // sf.forEach((item) => {
+      //   const type = item?.$?.Type || "";
+      //   const label = item?.$?.Label || "";
 
-                const tfPrice = parseFloat(
-                  convertToRequestedCurrency(
-                    originalPrice,
-                    originalCurrency,
-                    "CVE",
-                    rates
-                  ).toFixed(2)
-                );
+      //   // Always check Type for these
+      //   if (
+      //     type === "FlightChange" ||
+      //     type === "Cancellation" ||
+      //     type === "SmallCabinBag" ||
+      //     type === "HoldBag" ||
+      //     type === "LargeCabinBag"
+      //   ) {
+      //     result.push(item);
+      //   }
 
-                const convertedPrice = await getCommissionDetail(tfPrice);
-                optionData.Value = convertedPrice.toString();
-                optionData.Currency = "CVE";
-              }
+      //   // For all Seat types regardless of label
+      //   if (type === "Seat") {
+      //     result.push(item);
+      //   }
+      // });
 
-              if (optionData.Currency && optionData.MinValue) {
-                const originalMin = parseFloat(optionData.MinValue);
-                const originalCurrency = optionData.Currency;
+      console.log(
+        "resluggageOptions",
+        luggageOptions,
+        "seatOptions",
+        seatOptions,
+        "features",
+        features,
+        "outwardLuggage",
+        outwardLuggage,
+        "returnLuggage",
+        returnLuggage
+      );
 
-                const tfMin = parseFloat(
-                  convertToRequestedCurrency(
-                    originalMin,
-                    originalCurrency,
-                    "CVE",
-                    rates
-                  ).toFixed(2)
-                );
-
-                const convertedMin = await getCommissionDetail(tfMin);
-                optionData.MinValue = convertedMin.toString();
-                optionData.Currency = "CVE";
-              }
-            }
-          }
-        }
-        return features;
-      }
-      console.log("Seat Options:", seatOptions);
-      console.log("Luggage Options:", luggageOptions);
-      console.log("Features:", features);
-      console.log("Alternative Fares:", alternativeFares);
-      console.log("Supported Card List:", supportedCardlist);
-      console.log("Meal Type:", mealType);
-      console.log("Outward Luggage:", outwardLuggage);
-      console.log("Return Luggage:", returnLuggage);
-      console.log("Return Hand Luggage Options:", ReturnHandLuggageOptions);
-      console.log("Outward Hand Luggage Options:", outwardHandLuggageOptions);
-      console.log("Card Charge:", cardCharge);
-      console.log("Per Passenger Price:", perPassengerPrice);
-      const sf = await convertAllPricesToCVE(features);
-      console.log("converted", sf);
       // console.log(result);
       setseatOptions(seatOptions);
       setluggageOptions(luggageOptions);
       setAlternativeFares(res.AlternativeFares);
       // setstructuredFeatures(sf);
-      setstructuredFeatures(sf);
+      setstructuredFeatures(features);
       setTickets(flightTickets);
       setIsPopupOpen(true);
-      setcardCharge(cardCharge);
-      setsupportedCards(supportedCardlist);
-      setListReturnLuggages(returnLuggage);
-      setListOutwardLuggages(outwardLuggage);
+
+      setsupportedCards(res.supportedCardlist);
       // trigger the navigation
       // navigate("/booking/TravelersDetails", {
       //   state: {
@@ -483,16 +408,9 @@ export default function ReviewYourBooking() {
         returnPrice: TicketData.returnTicketId?.price || 0,
         currency: TicketData.outwordTicketId.currency || "CVE",
         cardlist: supportedCards,
-        outwardLuggage: listOutwardLuggages,
-        returnLuggage: listReturnLuggages,
-        cardCharge: cardCharge,
-        CardCharges: CardCharges,
-        SupportedCardList: SupportedCardList,
       },
     });
   };
-
-  if (loading) return <LoadingScreen />;
 
   return (
     <>
@@ -504,7 +422,6 @@ export default function ReviewYourBooking() {
             <FlightDetailCard
               title={`${t("booking-card.leaving-from")}`}
               flight={TicketData.outwordTicketId}
-              PerPassengerPrice={PerPassengerPrice}
             />
           </div>
         ) : TicketData.tripType === "Round Trip" ? (
@@ -512,12 +429,10 @@ export default function ReviewYourBooking() {
             <FlightDetailCard
               title={`${t("booking-card.leaving-from")}`}
               flight={TicketData.outwordTicketId}
-              PerPassengerPrice={PerPassengerPrice}
             />
             <FlightDetailCard
               title={`${t("booking-card.returning-from")}`}
               flight={TicketData.returnTicketId}
-              PerPassengerPrice={PerPassengerPrice}
             />
           </div>
         ) : (
@@ -530,7 +445,6 @@ export default function ReviewYourBooking() {
             <FlightPriceCard
               title={`${t("booking-card.leaving-from")}`}
               flight={TicketData.outwordTicketId}
-              PerPassengerPrice={PerPassengerPrice}
             />
           </div>
         ) : TicketData.tripType === "Round Trip" ? (
@@ -538,12 +452,10 @@ export default function ReviewYourBooking() {
             <FlightPriceCard
               title={`${t("booking-card.leaving-from")}`}
               flight={TicketData.outwordTicketId}
-              PerPassengerPrice={PerPassengerPrice}
             />
             <FlightPriceCard
               title={`${t("booking-card.returning-from")}`}
               flight={TicketData.returnTicketId}
-              PerPassengerPrice={PerPassengerPrice}
             />
           </div>
         ) : (
@@ -612,9 +524,8 @@ export default function ReviewYourBooking() {
   );
 }
 
-function FlightDetailCard({ title, flight, PerPassengerPrice }) {
+function FlightDetailCard({ title, flight }) {
   const { t } = useTranslation();
-  const location = useLocation();
   return (
     <div className="rounded-[17px] bg-white px-[44px] py-[38px] mt-6">
       <h4 className="text-[20px] font-semibold flex gap-2 items-center mb-4">
@@ -674,32 +585,6 @@ function FlightDetailCard({ title, flight, PerPassengerPrice }) {
           </div>
 
           <div className="">
-            {/* {location.state.travalers === 30
-              ? location.state.travalers.length + "Adult"
-              : location.state.travalers === 7
-              ? location.state.travalers.length + "Child"
-              : ""}{" "}
-            x{PerPassengerPrice.Amount} */}
-
-            {location.state.travalers &&
-              (() => {
-                const adults = location.state.travalers.filter(
-                  (t) => t === 30
-                ).length;
-                const children = location.state.travalers.filter(
-                  (t) => t === 7
-                ).length;
-
-                return (
-                  <>
-                    {adults > 0 && `${adults} Adult`}
-                    {children > 0 &&
-                      `${adults > 0 ? " + " : ""}${children} Child`}{" "}
-                    x {PerPassengerPrice?.PassengerPrice?.[0].Amount}
-                  </>
-                );
-              })()}
-
             <p className="text-[#EE5128] font-extrabold text-[32px]">
               {flight.price}{" "}
               <span className="text-lg font-medium">/ {flight.currency}</span>
@@ -727,9 +612,8 @@ function FlightDetailCard({ title, flight, PerPassengerPrice }) {
   );
 }
 
-function FlightPriceCard({ title, flight, PerPassengerPrice }) {
+function FlightPriceCard({ title, flight }) {
   const { t } = useTranslation();
-  const location = useLocation();
   return (
     <div className="bg-white rounded-xl shadow-sm mb-4 overflow-hidden w-full p-4">
       <div className="flex items-center gap-2 mb-3">
@@ -782,25 +666,7 @@ function FlightPriceCard({ title, flight, PerPassengerPrice }) {
         </div>
       </div>
 
-      <div className="mt-4 flex justify-between items-center">
-        {location.state.travalers &&
-          (() => {
-            const adults = location.state.travalers.filter(
-              (t) => t === 30
-            ).length;
-            const children = location.state.travalers.filter(
-              (t) => t === 7
-            ).length;
-
-            return (
-              <>
-                {adults > 0 && `${adults} Adult`}
-                {children > 0 &&
-                  `${adults > 0 ? " + " : ""}${children} Child`}{" "}
-                x {PerPassengerPrice?.PassengerPrice?.[0].Amount}
-              </>
-            );
-          })()}
+      <div className="mt-4">
         <p className="text-[#EE5128] font-extrabold text-lg">
           {flight.price}{" "}
           <span className="text-sm font-medium">/ {flight.currency}</span>
@@ -836,6 +702,183 @@ const FeaturesPlanPopup = ({
 }) => {
   // const transactionUrl = import.meta.env.VITE_TRANSACTION_URL;
   //console.log("cards", supportedCardlist);
+  let commissionDetails = [];
+  const transactionUrl = import.meta.env.VITE_TRANSACTION_URL;
+  const getcommission = async () => {
+    try {
+      const res = await fetch(`${transactionUrl}/getcommissiondetails`);
+      const result = await res.json();
+      // console.log("co", result.commissionDetail);
+      const commission = result.commissionDetail;
+      // console.log(commission)
+      commissionDetails = commission;
+    } catch (error) {
+      console.error("Failed to fetch supplier route:", error);
+    }
+  };
+
+  console.log(AlternativeFares);
+
+  useEffect(() => {
+    getcommission();
+  }, []);
+  const getCommissionDetail = async (tfPrice) => {
+    try {
+      if (!commissionDetails) {
+        return console.log("Error");
+      } else {
+        const Commission = commissionDetails.Commission;
+        if (Commission) {
+          if (commissionDetails.CommissionType.toLowerCase() === "percentage") {
+            const commissionAmount = (tfPrice * Commission) / 100;
+            const totalAmount = tfPrice + commissionAmount;
+            return totalAmount.toFixed(2);
+          } else if (
+            commissionDetails.CommissionType.toLowerCase() === "amount"
+          ) {
+            const totalAmount = tfPrice + Commission;
+            return totalAmount.toFixed(2);
+          }
+        }
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  async function convertAllPricesToCVE(features) {
+    const rates = await fetchExchangeRates("CVE");
+    for (const feature of features) {
+      if (feature.Option && Array.isArray(feature.Option)) {
+        for (const option of feature.Option) {
+          const optionData = option["$"];
+
+          if (optionData.Currency && optionData.Value) {
+            const originalPrice = parseFloat(optionData.Value);
+            const originalCurrency = optionData.Currency;
+
+            const tfPrice = parseFloat(
+              convertToRequestedCurrency(
+                originalPrice,
+                originalCurrency,
+                "CVE",
+                rates
+              ).toFixed(2)
+            );
+
+            const convertedPrice = await getCommissionDetail(tfPrice);
+            optionData.Value = convertedPrice.toString();
+            optionData.Currency = "CVE";
+          }
+
+          if (optionData.Currency && optionData.MinValue) {
+            const originalMin = parseFloat(optionData.MinValue);
+            const originalCurrency = optionData.Currency;
+
+            const tfMin = parseFloat(
+              convertToRequestedCurrency(
+                originalMin,
+                originalCurrency,
+                "CVE",
+                rates
+              ).toFixed(2)
+            );
+
+            const convertedMin = await getCommissionDetail(tfMin);
+            optionData.MinValue = convertedMin.toString();
+            optionData.Currency = "CVE";
+          }
+        }
+      }
+    }
+    return features;
+  }
+  function parseFeaturesToPlans(featuresJson) {
+    const fareClasses = ["Standard", "Inclusive", "Inclusive Plus"];
+    const table = [
+      [
+        "Feature",
+        "Regular (Standard)",
+        "Flexi (Inclusive)",
+        "Super6E (Inclusive Plus)",
+      ],
+    ];
+
+    for (const feature of featuresJson) {
+      const featureType = feature?.["$"]?.Label || feature?.["$"]?.Type;
+      const row = [featureType];
+
+      const classMap = {
+        Standard: "-",
+        Inclusive: "-",
+        "Inclusive Plus": "-",
+      };
+
+      for (const option of feature.Option || []) {
+        const id = option.$.Id;
+        const value = option.$.Value || option.$.MinValue || "0.00";
+        const currency = option.$.Currency || "";
+        const provision =
+          (option.Condition || []).find((c) => c.$.Type === "Provision")?.$
+            .Value || "";
+        const supplierClass = (option.Condition || []).find(
+          (c) => c.$.Type === "SupplierClass"
+        )?.$.Value;
+        const weight = (option.Condition || []).find(
+          (c) => c.$.Type === "MaxWeight"
+        )?.$.Value;
+
+        if (!supplierClass) continue;
+
+        const classes = supplierClass.split(",").map((c) => c.trim());
+
+        for (const cls of classes) {
+          if (fareClasses.includes(cls)) {
+            let display = `ID ${id}`;
+            if (featureType.toLowerCase().includes("bag") && weight) {
+              display += ` (${weight}, ${value} ${currency})`;
+            } else if (value !== "0.00") {
+              display += ` (${value} ${currency})`;
+              display +=
+                provision.toLowerCase() === "bundled" ? ", Bundled" : ", Paid";
+            } else {
+              display +=
+                provision === "Bundled"
+                  ? ` (0.00 ${currency}, Bundled)`
+                  : " (Free)";
+            }
+            classMap[cls] = display;
+          }
+        }
+      }
+
+      row.push(
+        classMap["Standard"],
+        classMap["Inclusive"],
+        classMap["Inclusive Plus"]
+      );
+      table.push(row);
+    }
+
+    // Convert to 3-plan format
+    const [_, ...rows] = table;
+
+    const plans = {
+      Regular: [],
+      Flexi: [],
+      Super6E: [],
+    };
+
+    for (const row of rows) {
+      const [feature, regular, flexi, super6e] = row;
+
+      plans.Regular.push({ Feature: feature, Value: regular });
+      plans.Flexi.push({ Feature: feature, Value: flexi });
+      plans.Super6E.push({ Feature: feature, Value: super6e });
+    }
+
+    return plans;
+  }
 
   const [selectedTab, setSelectedTab] = useState("outward");
   // console.log("AlternativeFares:", AlternativeFares);
@@ -846,6 +889,24 @@ const FeaturesPlanPopup = ({
   // console.log("ti" + tickets);
 
   const [feature, setFeature] = useState([]);
+
+  useEffect(() => {
+    const processFeatures = async () => {
+      const updated = await convertAllPricesToCVE(structuredFeatures);
+      setFeature(updated);
+    };
+
+    processFeatures();
+  }, [structuredFeatures]);
+
+  useEffect(() => {
+    if (feature && feature.length > 0) {
+      const plans = parseFeaturesToPlans(feature);
+      console.log("plans:", plans);
+      // You can also set this to state if you want to use it in the UI
+      // setPlans(plans);
+    }
+  }, [feature]);
 
   const navigate = useNavigate();
   const handleNavigate = () => {
@@ -1249,7 +1310,7 @@ const FeatureSelection = ({ structuredFeatures }) => {
   // Filter out features that have options with value 0, empty, or null
   const filteredFeatures = mockStructuredFeatures.filter(
     (feature) =>
-      !feature?.Option?.some((option) => {
+      !feature.Option.some((option) => {
         const value = option.$.Value;
         return (
           value === 0 ||
@@ -1344,8 +1405,8 @@ const FeatureSelection = ({ structuredFeatures }) => {
                   {/* Show selected price in header */}
                   {selectedOption && (
                     <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                      {selectedOption?.$.Currency}
-                      {selectedOption?.$.Value}
+                      {selectedOption.$.Currency}
+                      {selectedOption.$.Value}
                     </div>
                   )}
                 </div>
@@ -1369,7 +1430,7 @@ const FeatureSelection = ({ structuredFeatures }) => {
                         }
                       >
                         <option value="">Select an option...</option>
-                        {feature?.Option?.map((option, optionIndex) => (
+                        {feature.Option.map((option, optionIndex) => (
                           <option key={optionIndex} value={optionIndex}>
                             {formatOptionText(option, optionIndex)}
                           </option>
@@ -1468,13 +1529,14 @@ const FeatureSelection = ({ structuredFeatures }) => {
                     return (
                       <div
                         key={featureIndex}
-                        className="flex justify-between items-center py-2 gap-2"
+                        className="flex justify-between items-center py-2"
                       >
                         <span className="font-medium text-gray-700">
-                          {feature.$.Type}:
+                          {feature.$.Type}
                         </span>
-                        <span className="font-bold text-blue-600 text-nowrap">
-                          {option.$.Value} {option.$.Currency}
+                        <span className="font-bold text-blue-600">
+                          {option.$.Currency}
+                          {option.$.Value}
                         </span>
                       </div>
                     );
@@ -1486,17 +1548,15 @@ const FeatureSelection = ({ structuredFeatures }) => {
                       Total:
                     </span>
                     <span className="text-2xl font-bold text-green-600">
+                      $
                       {Object.entries(selectedOptions).reduce(
                         (total, [featureIndex, optionIndex]) => {
                           const feature = filteredFeatures[featureIndex];
                           const option = feature.Option[optionIndex];
-                          return (total + parseFloat(option.$.Value)).toFixed(
-                            2
-                          );
+                          return total + parseInt(option.$.Value);
                         },
                         0
-                      )}{" "}
-                      CVE
+                      )}
                     </span>
                   </div>
                 </div>

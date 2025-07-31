@@ -27,11 +27,6 @@ import Brand8 from "../../assets/images/PaymentBrands/brand8.png";
 import Brand9 from "../../assets/images/PaymentBrands/brand9.png";
 import Brand10 from "../../assets/images/PaymentBrands/brand10.png";
 import Brand11 from "../../assets/images/PaymentBrands/brand11.png";
-import Brand23 from "../../assets/images/PaymentBrands/brand23.png";
-import Brand24 from "../../assets/images/PaymentBrands/brand24.png";
-import Brand25 from "../../assets/images/PaymentBrands/brand25.png";
-import Brand26 from "../../assets/images/PaymentBrands/brand26.png";
-import Brand27 from "../../assets/images/PaymentBrands/brand27.jpg";
 
 export default function PaymentPage() {
   const { t } = useTranslation();
@@ -194,7 +189,7 @@ export default function PaymentPage() {
     }
   };
   */
-
+  console.log("rt", returnTicket);
   const handleBooking = async (e) => {
     e.preventDefault();
     const transactionApi = import.meta.env.VITE_TRANSACTION_URL;
@@ -217,8 +212,24 @@ export default function PaymentPage() {
     //   console.log(result.price);
     //   reCalculatePrice(price, currency);
     // } else if (result.price === originalCurrencyPrice) {
+    console.log("seat", location.state.Seatoption);
+    console.log("gi", location.state.Guestid);
+    const senderId = location.state.Guestid;
+    const seat = location.state.Seatoption;
+    // const luggageOptions=location.state.luggage;
+    console.log(location.state.travellerDetails);
+    
+    const travellerDetails = location.state.TravellerList.TravellerList;
+    console.log(travellerDetails);
 
-    if (originalCurrencyPrice && originalCurrency && bookid) {
+    if (
+      originalCurrencyPrice &&
+      originalCurrency &&
+      bookid &&
+      senderId &&
+      OutwardTicket &&
+      travellerDetails
+    ) {
       try {
         const response = await fetch(`${transactionApi}/start-payment`, {
           method: "POST",
@@ -239,6 +250,17 @@ export default function PaymentPage() {
             expectedCurrency: originalCurrency,
             TFBookingReference: bookid,
             fakeBooking: true,
+            ...(Array.isArray(seat) &&
+              seat.length > 0 && {
+                seatOptions: seat,
+              }),
+            outwardFlight: OutwardTicket,
+            ...(returnTicket &&
+              Object.keys(returnTicket).length > 0 && {
+                returnFlight: returnTicket,
+              }),
+            Travellerdetail: travellerDetails,
+            senderId: senderId,
           }),
         });
 
@@ -750,11 +772,6 @@ export default function PaymentPage() {
                 <img src={Brand9} alt="brand9" height={50} width={50} />
                 <img src={Brand10} alt="brand10" height={50} width={50} />
                 <img src={Brand11} alt="brand11" height={50} width={50} />
-                <img src={Brand23} alt="brand24" height={80} width={80} />
-                <img src={Brand24} alt="brand24" height={50} width={50} />
-                <img src={Brand25} alt="brand25" height={50} width={50} />
-                <img src={Brand26} alt="brand26" height={80} width={80} />
-                <img src={Brand27} alt="brand27" height={50} width={50} />
               </div>
             </div>
 

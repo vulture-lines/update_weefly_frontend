@@ -49,8 +49,8 @@ function TicketConfirm() {
       if (response.ok) {
         const data = await response.json();
         setTicketDetails(data);
-        console.log(data.details.TravelfusionBookingDetails.TFBookingReference);
-        const bookid = data.details.TravelfusionBookingDetails.TFBookingReference;
+        console.log(data);
+        const bookid = data.Ticketdetail.TFBookingReference;
         console.log("TBTD", bookid);
         await getBookingDetail(bookid);
       } else {

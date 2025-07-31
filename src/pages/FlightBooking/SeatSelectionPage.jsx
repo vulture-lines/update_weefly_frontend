@@ -1375,6 +1375,8 @@ export default function SeatSelection() {
   const [selectedSeats, setSelectedSeats] = useState([]);
   const [activeTab, setActiveTab] = useState("Seats");
   const [mealCounts, setMealCounts] = useState({});
+  const [outwardLuggageList, setOutwardLuggageList] = useState([]);
+  const [returnLuggageList, setReturnLuggageList] = useState([]);
   const [selectOutwardSeats, setSelectOutwardSeats] = useState([]);
   const [selectReturnSeats, setSelectReturnSeats] = useState([]);
 
@@ -1389,6 +1391,8 @@ export default function SeatSelection() {
 
   console.log(location.state.flights);
   console.log(returnTicket);
+  console.log("outwardLuggage", location.state.outwardLuggage);
+  console.log("returnLuggage", location.state.returnLuggage);
   console.log("luggageOptions", location.state.luggageOptions);
 
   // Get traveler count helper function
@@ -1406,6 +1410,12 @@ export default function SeatSelection() {
 
   const convertLuggageOption = async () => {
     const LuggageOptions = parseLuggageOptions(location.state.luggageOptions);
+    const ConvertedOutwardLuggages = parseLuggageOptions(
+      location.state.outwardLuggage
+    );
+    const ConvertedRetuenLuggages = parseLuggageOptions(
+      location.state.returnLuggage
+    );
     const rates = await fetchExchangeRates("CVE");
     const Luggages = LuggageOptions.map((option) => {
       const originalPrice = option.price;
@@ -1426,6 +1436,51 @@ export default function SeatSelection() {
         currency: "CVE",
       };
     });
+
+    const outwardLuggage = ConvertedOutwardLuggages.map((option) => {
+      const originalPrice = option.price;
+      const originalCurrency = option.currency;
+
+      const convertedPrice = parseFloat(
+        convertToRequestedCurrency(
+          originalPrice,
+          originalCurrency,
+          "CVE",
+          rates
+        ).toFixed(2)
+      );
+
+      return {
+        ...option,
+        price: convertedPrice,
+        currency: "CVE",
+      };
+    });
+
+    const returnLuggage = ConvertedRetuenLuggages.map((option) => {
+      const originalPrice = option.price;
+      const originalCurrency = option.currency;
+
+      const convertedPrice = parseFloat(
+        convertToRequestedCurrency(
+          originalPrice,
+          originalCurrency,
+          "CVE",
+          rates
+        ).toFixed(2)
+      );
+
+      return {
+        ...option,
+        price: convertedPrice,
+        currency: "CVE",
+      };
+    });
+
+    console.log(outwardLuggage);
+    console.log(returnLuggage);
+    setOutwardLuggageList(outwardLuggage);
+    setReturnLuggageList(returnLuggage);
     setconvertedLuggageOptions(Luggages);
   };
 
@@ -1698,7 +1753,7 @@ export default function SeatSelection() {
   };
 
   const backendUrl = import.meta.env.VITE_FLIGHT_BACKEND_URL;
-
+  /*
   const handleProcessTerm = async (e) => {
     e.preventDefault();
     const seatsCombined = [...selectOutwardSeats, ...selectReturnSeats];
@@ -1872,6 +1927,179 @@ export default function SeatSelection() {
       console.error(`Server returned status: ${response.status}`);
       alert("Could not fetch booking details.");
     }
+  }; */
+  console.log("gi", location.state.guestId);
+
+  const handleProcessTerm = async (e) => {
+    e.preventDefault();
+
+    const seatsCombined = [...selectOutwardSeats, ...selectReturnSeats];
+    let formattedSeats = seatsCombined.map(
+      (seat) => `${seat.flightNumber}-${seat.seat}`
+    );
+
+    const luggageCombined = [
+      ...selectedOutwardLuggage,
+      ...selectedReturnLuggage,
+    ];
+    const formattedLuggageOption = luggageCombined.map(
+      (luggage) => `${luggage.option}`
+    );
+
+    const formattedOutwardLuggageOption = selectedOutwardLuggage.map(
+      (luggage) => `${luggage.option}`
+    );
+    const formattedReturnLuggageOption = selectedReturnLuggage.map(
+      (luggage) => `${luggage.option}`
+    );
+    console.log("flo", formattedLuggageOption);
+    console.log("fowl", formattedOutwardLuggageOption);
+
+    const travellerprofile = cleanTravellerDetails(travellerDetails);
+
+    let maxRetries = 5;
+    let attempt = 0;
+    let success = false;
+    let lastResponse = null;
+    let luggageOptions = formattedLuggageOption;
+    while (!success && attempt < maxRetries) {
+      const response = await fetch(`${backendUrl}/process-terms`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          mode: "plane",
+          routingId: routingId,
+          outwardId: outwardId,
+          ...(returnId && { returnId }), // Include returnId only if it exists
+          bookingProfile: travellerprofile,
+          seatOptions: [...formattedSeats],
+          ...(location.state.luggageOptions.length > 0
+            ? luggageOptions
+            : {
+                outwardLuggageOptions: formattedOutwardLuggageOption,
+                ...(location.state.tripType === "Round Trip" && {
+                  returnLuggageOptions: formattedReturnLuggageOption,
+                }),
+              }),
+        }),
+      });
+
+      if (response.ok) {
+        success = true;
+        lastResponse = response;
+        break;
+      } else if (response.status === 422) {
+        formattedSeats = formattedSeats.map((seat) => seat + ";"); // update
+        console.log(formattedSeats);
+        attempt++;
+        console.warn(`Retry attempt ${attempt} due to 422 error`);
+      } else {
+        console.error(`Failed with status: ${response.status}`);
+        alert("Could not fetch booking details.");
+        return;
+      }
+    }
+
+    if (!success) {
+      alert("Failed to resolve seat selection issue after multiple attempts.");
+      return;
+    }
+
+    // Now handle the successful response:
+    const contentType = lastResponse.headers.get("content-type");
+
+    if (contentType && contentType.includes("application/json")) {
+      try {
+        const res = await lastResponse.json();
+        try {
+          const priceList = res.data.Router[0].GroupList[0].Group[0].Price;
+          const originalCurrency = priceList[0].Currency[0];
+          const originalPrice = priceList[0].Amount[0];
+          const TFBookingReference = res.data.TFBookingReference[0];
+
+          if (
+            priceList &&
+            originalCurrency &&
+            originalPrice &&
+            TFBookingReference
+          ) {
+            const rates = await fetchExchangeRates("CVE");
+            const convertedPrice = parseFloat(
+              convertToRequestedCurrency(
+                originalPrice,
+                originalCurrency,
+                "CVE",
+                rates
+              ).toFixed(2)
+            );
+
+            console.log(priceList);
+            console.log(convertedPrice);
+            const Taxitemlist = priceList[0].TaxItemList[0];
+            console.log(Taxitemlist);
+            let seatCharge = 0;
+            let luggageSurcharge = 0;
+
+            const taxlist = Taxitemlist.TaxItem;
+            console.log(taxlist);
+            taxlist.forEach((item) => {
+              const originalPrice = parseFloat(item.Amount[0]);
+              const originalCurrency = item.Currency[0];
+              const name = item.Name[0];
+
+              const convertedPrice = parseFloat(
+                convertToRequestedCurrency(
+                  originalPrice,
+                  originalCurrency,
+                  "CVE",
+                  rates
+                ).toFixed(2)
+              );
+
+              if (name === "Seat Charge") {
+                seatCharge = convertedPrice;
+              } else if (name === "Luggage surcharge") {
+                luggageSurcharge = convertedPrice;
+              }
+            });
+
+            console.log(seatCharge);
+            console.log(TFBookingReference);
+
+            navigate("/booking/payment", {
+              state: {
+                flights: location.state.flights,
+                tripType: location.state.tripType,
+                convertedPrice,
+                originalPrice,
+                originalCurrency,
+                seatCharge: seatCharge,
+                luggageSurcharge: luggageSurcharge,
+                Address: travellerDetails.BillingDetails.Address,
+                Email: travellerDetails.ContactDetails.Email,
+                TFBookingReference,
+                CardCharges: location.state.CardCharges,
+                Seatoption: [...formattedSeats],
+                TravellerList: location.state.travellerDetails,
+                Guestid: location.state.guestId,
+              },
+            });
+          } else {
+            console.table(res);
+          }
+        } catch (error) {
+          console.error("Error using JSON data:", error);
+        }
+      } catch (err) {
+        console.error("Failed to parse JSON after success:", err);
+      }
+    } else {
+      const textResponse = await lastResponse.text();
+      console.error("Unsupported content type:", contentType, textResponse);
+      alert("Received unsupported response format.");
+    }
   };
 
   if (!flight)
@@ -1886,6 +2114,32 @@ export default function SeatSelection() {
     return parseFloat((amount * rate).toFixed(2));
   };
 
+  const currentLuggageList = !isOutwardSeat
+    ? LuggageOptions.length > 0
+      ? outwardLuggageList
+      : LuggageOptions
+    : returnLuggageList || LuggageOptions;
+
+  console.log(typeof LuggageOptions);
+
+  console.log(currentLuggageList);
+
+  const selectedLuggage = !isOutwardSeat
+    ? selectedOutwardLuggage
+    : selectedReturnLuggage;
+
+  const handleLuggageClick = (Luggage, isSelected) => {
+    if (!isOutwardSeat) {
+      isSelected
+        ? removeOutwardLuggage(Luggage)
+        : handleSelectOutwardLuggage(Luggage);
+    } else {
+      isSelected
+        ? removeReturnLuggage(Luggage)
+        : handleSelectReturnLuggage(Luggage);
+    }
+  };
+
   return (
     <div className="font-sans flex justify-center">
       <div className="w-full max-w-[1140px] px-4">
@@ -1898,7 +2152,7 @@ export default function SeatSelection() {
             <div className="w-full h-auto lg:h-[550px] rounded-md shadow-sm overflow-hidden bg-white">
               {/* Tabs */}
               <div className="flex items-center px-6 bg-[#EE5128] py-3 space-x-8 font-['Plus Jakarta Sans'] text-[16px]">
-                {["Seats", "Extra luggages"].map((tab) => (
+                {["Seats"].map((tab) => (
                   <span
                     key={tab}
                     onClick={() => setActiveTab(tab)}
@@ -2155,88 +2409,75 @@ export default function SeatSelection() {
 
                   {/* FIXED: Updated Extra luggages section with separate handling */}
                   {activeTab === "Extra luggages" && (
-                    <div className="w-full">
-                      <p className="font-semibold text-[16px] mb-4">
-                        Select {!isOutwardSeat ? "Outward" : "Return"}{" "}
-                        {t("luggages.title")}
-                      </p>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full overflow-y-auto h-[400px] no-scrollbar">
-                        {convertedLuggageOptions.map((Luggage, index) => {
-                          // FIXED: Check selection based on current flight
-                          const currentLuggageSelection = !isOutwardSeat
-                            ? selectedOutwardLuggage
-                            : selectedReturnLuggage;
-                          const isSelected = currentLuggageSelection.some(
-                            (l) => l === Luggage
-                          );
+                    <>
+                      <div className="w-full">
+                        <p className="font-semibold text-[16px] mb-4">
+                          Select {!isOutwardSeat ? "Outward" : "Return"}{" "}
+                          {t("luggages.title")}
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full overflow-y-auto h-[400px] no-scrollbar">
+                          {currentLuggageList.map((Luggage, index) => {
+                            const isSelected = selectedLuggage.some(
+                              (l) => l === Luggage
+                            );
 
-                          return (
-                            <div
-                              key={index}
-                              className={`rounded-md w-full flex flex-col gap-1 justify-between p-4  shadow-sm hover:bg-orange-500 hover:text-white ${
-                                isSelected
-                                  ? "bg-orange-600 text-white"
-                                  : "bg-white"
-                              } `}
-                              onClick={() => {
-                                // FIXED: Use appropriate handler based on current flight
-                                if (!isOutwardSeat) {
-                                  !isSelected
-                                    ? handleSelectOutwardLuggage(Luggage)
-                                    : removeOutwardLuggage(Luggage);
-                                } else {
-                                  !isSelected
-                                    ? handleSelectReturnLuggage(Luggage)
-                                    : removeReturnLuggage(Luggage);
+                            return (
+                              <div
+                                key={index}
+                                className={`rounded-md w-full flex flex-col gap-1 justify-between p-4 shadow-sm hover:bg-orange-500 hover:text-white ${
+                                  isSelected
+                                    ? "bg-orange-600 text-white"
+                                    : "bg-white"
+                                }`}
+                                onClick={() =>
+                                  handleLuggageClick(Luggage, isSelected)
                                 }
-                              }}
-                            >
-                              <div className="flex flex-col gap-1">
-                                <div className="flex gap-2">
-                                  {Luggage.weights.includes("15Kg") && (
-                                    <div className="flex items-end">
-                                      <ShoppingBag className="size-5" />
-                                      {
-                                        Luggage.weights.filter(
-                                          (item) => item === "15Kg"
-                                        ).length
-                                      }
-                                    </div>
-                                  )}
-                                  {Luggage.weights.includes("23Kg") && (
-                                    <div className="flex">
-                                      <div className="">
-                                        <LucideLuggage />
+                              >
+                                <div className="flex flex-col gap-1">
+                                  <div className="flex gap-2">
+                                    {Luggage.weights.includes("15Kg") && (
+                                      <div className="flex items-end">
+                                        <ShoppingBag className="size-5" />
+                                        {
+                                          Luggage.weights.filter(
+                                            (item) => item === "15Kg"
+                                          ).length
+                                        }
                                       </div>
-                                      {
-                                        Luggage.weights.filter(
-                                          (item) => item === "23Kg"
-                                        ).length
-                                      }
-                                    </div>
-                                  )}
+                                    )}
+                                    {Luggage.weights.includes("23Kg") && (
+                                      <div className="flex">
+                                        <LucideLuggage />
+                                        {
+                                          Luggage.weights.filter(
+                                            (item) => item === "23Kg"
+                                          ).length
+                                        }
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="text-xs text-nowrap">
+                                    {Luggage.weights.map((w) => w + " , ")}
+                                  </div>
                                 </div>
-                                <div className="text-xs text-nowrap">
-                                  {Luggage.weights.map((w) => w + " , ")}
+                                <div className="flex gap-2 flex-col">
+                                  <div className="flex flex-col justify-between items-center">
+                                    <span className="font-base text-base whitespace-nowrap overflow-hidden text-ellipsis">
+                                      {Luggage.name}
+                                    </span>
+                                  </div>
+                                  <div className="flex text-sm">
+                                    <span className="font-bold text-center text-nowrap">
+                                      {Luggage.price} CVE
+                                    </span>
+                                  </div>
                                 </div>
                               </div>
-                              <div className="flex gap-2 flex-col">
-                                <div className="flex flex-col justify-between items-center">
-                                  <span className="font-base text-base whitespace-nowrap overflow-hidden text-ellipsis">
-                                    {Luggage.name}
-                                  </span>
-                                </div>
-                                <div className="flex text-sm">
-                                  <span className="font-bold text-center text-nowrap">
-                                    {Luggage.price} CVE
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          );
-                        })}
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
+                    </>
                   )}
                 </div>
 
@@ -2738,9 +2979,9 @@ ${getSeatColor(seat.type)} ${
                     : t("continue-booking")
                   : null}
               </button>
-              <button className="text-[#EE5128] font-semibold text-sm lg:relative mt-2 md:mt-0 hover:underline px-10">
+              {/* <button className="text-[#EE5128] font-semibold text-sm lg:relative mt-2 md:mt-0 hover:underline px-10">
                 Skip Extra
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
