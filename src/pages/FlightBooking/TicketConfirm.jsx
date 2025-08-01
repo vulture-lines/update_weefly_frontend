@@ -6,11 +6,14 @@ import FlightLogo from "../../assets/images/FlightIcon.svg";
 import { Link, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { usePDF } from "react-to-pdf";
+import WeeflyLogo from "../../assets/images/footer/weefly-logo.png";
 
 function TicketConfirm() {
   const { id } = useParams();
   const [ticketDetails, setTicketDetails] = useState({});
   const [bookingDetails, setBookingDetails] = useState({});
+  const [isDownloading, setIsDownloading] = useState(false);
+
   console.log(id);
 
   const getBookingDetail = async (TFBookingReference) => {
@@ -66,7 +69,7 @@ function TicketConfirm() {
   }, []);
 
   const { toPDF, targetRef } = usePDF({
-    filename: "flight-ticket.pdf",
+    filename: `flight-ticket-${id}.pdf`,
     page: {
       margin: 20,
       format: "a4",
@@ -76,6 +79,23 @@ function TicketConfirm() {
 
   return (
     <div className="py-[30px] px-10 xl:px-40">
+      <div className="">
+        <img
+          src={tick}
+          alt={"Ticket Confirm Check Mark"}
+          className="size-[60px] xl:size-[144px] mx-auto"
+          data-aos="zoom-out"
+        />
+        <p
+          data-aos="fade-up"
+          className="font-jakarta font-bold text-[24px] xl:text-[40px] text-center mt-[23px] xl:mt-[41px] uppercase"
+        >
+          Your Ticket has <br className="md:hidden" /> confirmed
+        </p>
+
+        <h1 className="text-2xl mx-auto text-center mt-10">Ticket ID : {id}</h1>
+      </div>
+
       {/* <div className="mt-[61px]" data-aos="fade-up">
         <h3 className="bg-[#FFE2DA] rounded-t-[17px] px-[45px] py-[17px] font-jakarta font-semibold text-[26px]">
           Travelers Details
@@ -210,6 +230,7 @@ function TicketConfirm() {
             targetRef={targetRef}
             ticketDetails={ticketDetails}
             bookingDetails={bookingDetails}
+            isDownloading={isDownloading}
           />
         </div>
       </div>
@@ -224,13 +245,19 @@ function TicketConfirm() {
             loading ? "Preparing document..." : "Download Ticket PDF"
           }
         </PDFDownloadLink> */}
+
         <button
           data-aos="fade-up"
           className="font-jakarta font-semibold text-[18px] w-full bg-[#EE5128] py-[14px] rounded-[8px] text-white mt-[20px] drop-shadow-xl drop-shadow-[#FD74014D]"
-          onClick={() => toPDF()}
+          onClick={async () => {
+            setIsDownloading(true);
+            await toPDF();
+            setIsDownloading(false);
+          }}
         >
-          Download invoice
+          Download Ticket
         </button>
+
         <Link
           data-aos="fade-up"
           to={"/"}
@@ -245,7 +272,13 @@ function TicketConfirm() {
 
 export default TicketConfirm;
 
-const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
+const Recipet = ({
+  id,
+  targetRef,
+  ticketDetails,
+  bookingDetails,
+  isDownloading,
+}) => {
   console.log(ticketDetails.outwardFlight);
   console.log(bookingDetails);
 
@@ -253,54 +286,75 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
   const OutWardTicketData = TicketData?.outwardFlight;
 
   const TravellerData = TicketData?.Travellerdetails?.Traveller;
-  // const TravellerData =
-  //   bookingDetails?.Bookingdetails?.CommandList?.GetBookingDetails?.[0]
-  //     ?.BookingProfile?.[0].TravellerList?.[0]?.Traveller;
+  const BookingTravellerData =
+    bookingDetails?.Bookingdetails?.CommandList?.GetBookingDetails?.[0]
+      ?.BookingProfile?.[0].TravellerList?.[0]?.Traveller;
+  const AirportName =
+    bookingDetails?.Bookingdetails?.CommandList?.GetBookingDetails?.[0]
+      ?.AirportNamePair[0];
   const Terms =
     bookingDetails?.Bookingdetails?.CommandList?.GetBookingDetails?.[0]
       ?.RouterHistory?.[0].TermsRouter?.[0]?.SupplierInfoList[0]?.SupplierInfo;
 
-  console.log(Terms);
+  console.log(BookingTravellerData);
 
   return (
-    <div className="" ref={targetRef} style={{ colorScheme: "light" }}>
-      <div className="">
-        <img
-          src={tick}
-          alt={"Ticket Confirm Check Mark"}
-          className="size-[60px] xl:size-[144px] mx-auto"
-          data-aos="zoom-out"
-        />
-        <p
-          data-aos="fade-up"
-          className="font-jakarta font-bold text-[24px] xl:text-[40px] text-center mt-[23px] xl:mt-[41px] uppercase"
-        >
-          Your Ticket has <br className="md:hidden" /> confirmed
-        </p>
-
-        <h1 className="text-2xl mx-auto text-center mt-10">Ticket ID : {id}</h1>
+    <div
+      className={`font-jakarta ${
+        isDownloading ? "min-w-[375px]" : "w-[1220px]"
+      }`}
+      ref={targetRef}
+      style={{ colorScheme: "light" }}
+    >
+      <div className="flex justify-between p-6 my-6 items-center">
+        <img src={WeeflyLogo} alt="Weefly Logo" height={80} width={80} />
+        <div className="flex flex-col items-end text-lg">
+          <p>
+            <span className="font-bold">Flight Ticket</span>{" "}
+            {TicketData?.returnFlight ? "Round Trip" : "One Way"}
+          </p>
+          <p>
+            Booking ID: <span className="font-bold">{id}</span>
+          </p>
+        </div>
       </div>
       <>
         {/* outward */}
         {TicketData?.returnFlight ? (
           <>
             <div
-              className=" font-jakarta border-2 rounded-2x mt-10"
+              className=" font-jakarta border-2 rounded-2x"
               style={{ borderColor: "#d4d4d4" }}
             >
               <div
-                className="p-6 border-b-2 flex flex-col gap-2"
+                className="p-6 border-b-2 flex justify-between gap-2"
                 style={{ borderBottomColor: "#d4d4d4" }}
               >
-                <h2 className="text-3xl font-bold">
-                  {" "}
-                  {OutWardTicketData.departureCity}-{" "}
-                  {OutWardTicketData.arrivalCity}
-                </h2>
-                <p>
-                  {OutWardTicketData.departureDate} •{" "}
-                  {OutWardTicketData.duration} duration
-                </p>
+                <div className="flex flex-col gap-2">
+                  <h2 className="text-3xl font-bold">
+                    {" "}
+                    {AirportName?.OriginAirport[0]}-{" "}
+                    {AirportName?.DestinationAirport[0]}
+                  </h2>
+                  <p>
+                    {OutWardTicketData.departureDate} •{" "}
+                    {OutWardTicketData.duration} duration
+                  </p>
+                </div>
+                <div className="flex justify-center items-center">
+                  <div
+                    className="flex rounded-lg overflow-hidden border-2 font-bold tracking-wider text-xl "
+                    style={{ borderColor: "#6a7282" }}
+                  >
+                    <p
+                      className=" px-4 h-12"
+                      style={{ backgroundColor: "#6a7282", color: "#fff" }}
+                    >
+                      PNR
+                    </p>
+                    <p className=" px-4 ">{id}</p>
+                  </div>
+                </div>
               </div>
               <div className="flex">
                 <div
@@ -325,11 +379,16 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
                 </div>
                 <div className="flex-1 ">
                   <div className="flex-1 items-center w-full p-6">
-                    <div className="flex xl:px-[84px]">
+                    <div className="flex">
                       <div className="px-[20px] lg:px-[44px]">
                         <p className="text-2xl xl:text-3xl font-bold">
-                          {OutWardTicketData.departureCity}{" "}
-                          {OutWardTicketData.departureTime}
+                          <span className="">
+                            {AirportName?.OriginAirport[0]} <br />
+                            <span className="font-medium">
+                              {OutWardTicketData.departureCity}
+                            </span>
+                          </span>
+                          <span>{OutWardTicketData.departureTime}</span>
                         </p>
                         {/* <p
                           className="font-normal text-[13px] lg:text-[20px]"
@@ -375,8 +434,15 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
 
                       <div className="px-[20px] xl:px-[44px]">
                         <p className="text-[25px] xl:text-3xl font-bold">
-                          {OutWardTicketData.arrivalTime}{" "}
-                          {OutWardTicketData.arrivalCity}
+                          <span className="flex flex-col items-end">
+                            {AirportName?.DestinationAirport[0]} <br />
+                            <span>
+                              {OutWardTicketData?.arrivalTime}
+                              <span className="font-medium">
+                                {OutWardTicketData.arrivalCity}
+                              </span>
+                            </span>
+                          </span>
                         </p>
                         {/* <p
                           className="font-normal text-[13px] xl:text-[20px]"
@@ -423,11 +489,12 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
                       style={{ color: "#525252" }}
                     >
                       <th>traveller</th>
-                      <th>E-TICKET NO</th>
+
+                      <th>Seat</th>
                     </tr>
                   </thead>
                   <tbody className="font-medium">
-                    {TravellerData?.map((travaller, index) => (
+                    {/* {TravellerData?.map((travaller, index) => (
                       <tr key={index}>
                         <td>
                           {travaller.Name.Title}.{" "}
@@ -437,6 +504,25 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
                           </span>
                         </td>
                         <td>{id}</td>
+                      </tr>
+                    ))} */}
+                    {BookingTravellerData?.map((travaller, index) => (
+                      <tr key={index}>
+                        <td>
+                          {travaller.Name[0].Title}.{" "}
+                          {travaller.Name[0].NamePartList[0].NamePart.map(
+                            (n) => n
+                          )}{" "}
+                          {/* <span className="" style={{ borderColor: "#737373" }}>
+                            Adult
+                          </span> */}
+                        </td>
+                        <td>
+                          {
+                            travaller.CustomSupplierParameterList[0]
+                              .CustomSupplierParameter[1].Value
+                          }
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -448,18 +534,37 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
               style={{ borderColor: "#d4d4d4" }}
             >
               <div
-                className="p-6 border-b-2 flex flex-col gap-2"
+                className="p-6 border-b-2 flex gap-2 justify-between"
                 style={{ borderBottomColor: "#d4d4d4" }}
               >
-                <h2 className="text-3xl font-bold">
-                  {" "}
-                  {TicketData.returnFlight.departureCity} -{" "}
-                  {TicketData.returnFlight.arrivalCity}
-                </h2>
-                <p>
-                  {TicketData.returnFlight.departureDate} •{" "}
-                  {TicketData.returnFlight.duration} duration
-                </p>
+                <div className="flex flex-col gap-2">
+                  <h2 className="text-3xl font-bold">
+                    {" "}
+                    {AirportName?.DestinationAirport[0]} -{" "}
+                    {AirportName?.OriginAirport[0]}
+                  </h2>
+                  <p>
+                    {TicketData.returnFlight.departureDate} •{" "}
+                    {TicketData.returnFlight.duration} duration
+                  </p>
+                </div>
+                <div className="flex justify-center items-center">
+                  <div
+                    className="flex rounded-lg overflow-hidden border-2 font-bold tracking-wider text-xl "
+                    style={{ borderColor: "#6a7282" }}
+                  >
+                    <p
+                      className=" px-4 h-12"
+                      style={{
+                        backgroundColor: "#6a7282",
+                        color: "#fff",
+                      }}
+                    >
+                      PNR
+                    </p>
+                    <p className="px-4">{id}</p>
+                  </div>
+                </div>
               </div>
               <div className="flex">
                 <div
@@ -487,10 +592,15 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
                 </div>
                 <div className="flex-1 ">
                   <div className="flex-1 items-center w-full p-6">
-                    <div className="flex xl:px-[84px]">
+                    <div className="flex">
                       <div className="px-[20px] lg:px-[44px]">
                         <p className="text-2xl xl:text-3xl font-bold">
-                          {TicketData.returnFlight.departureCity}{" "}
+                          <span className="">
+                            {AirportName?.DestinationAirport[0]} <br />
+                            <span className="font-medium">
+                              {TicketData.returnFlight.departureCity}{" "}
+                            </span>
+                          </span>
                           {TicketData.returnFlight.departureTime}
                         </p>
                         {/* <p
@@ -536,9 +646,15 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
                       </div>
 
                       <div className="px-[20px] xl:px-[44px]">
-                        <p className="text-[25px] xl:text-3xl font-bold">
-                          {TicketData.returnFlight.arrivalTime}{" "}
-                          {TicketData.returnFlight.arrivalCity}
+                        <p className="text-[25px] xl:text-3xl font-bold text-end">
+                          <span className="text-end">
+                            <span>{AirportName?.OriginAirport[0]}</span>
+                            <br />
+                            <span>{TicketData.returnFlight.arrivalTime}</span>
+                          </span>
+                          <span className="font-medium">
+                            {TicketData.returnFlight.arrivalCity}
+                          </span>
                         </p>
                         {/* <p
                           className="font-normal text-[13px] xl:text-[20px]"
@@ -582,11 +698,11 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
                       style={{ color: "#525252" }}
                     >
                       <th>traveller</th>
-                      <th>E-TICKET NO</th>
+                      <th>seat</th>
                     </tr>
                   </thead>
                   <tbody className="font-medium">
-                    {TravellerData?.map((travaller, index) => (
+                    {/* {TravellerData?.map((travaller, index) => (
                       <tr key={index}>
                         <td>
                           {travaller.Name.Title}.{" "}
@@ -597,6 +713,25 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
                         </td>
                         <td>{id}</td>
                       </tr>
+                    ))} */}
+                    {BookingTravellerData?.map((travaller, index) => (
+                      <tr key={index}>
+                        <td>
+                          {travaller.Name[0].Title}.{" "}
+                          {travaller.Name[0].NamePartList[0].NamePart.map(
+                            (n) => n
+                          )}{" "}
+                          {/* <span className="" style={{ borderColor: "#737373" }}>
+                            Adult
+                          </span> */}
+                        </td>
+                        <td>
+                          {
+                            travaller.CustomSupplierParameterList[0]
+                              .CustomSupplierParameter[1].Value
+                          }
+                        </td>
+                      </tr>
                     ))}
                   </tbody>
                 </table>
@@ -606,22 +741,38 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
         ) : (
           <>
             <div
-              className=" font-jakarta border-2 rounded-2x mt-10"
+              className=" font-jakarta border-2 rounded-2x"
               style={{ borderColor: "#d4d4d4" }}
             >
               <div
-                className="p-6 border-b-2 flex flex-col gap-2"
+                className="p-6 border-b-2 flex justify-between gap-2"
                 style={{ borderBottomColor: "#d4d4d4" }}
               >
-                <h2 className="text-3xl font-bold">
-                  {" "}
-                  {OutWardTicketData?.departureCity}-{" "}
-                  {OutWardTicketData?.arrivalCity}
-                </h2>
-                <p>
-                  {OutWardTicketData?.departureDate} •{" "}
-                  {OutWardTicketData?.duration} duration
-                </p>
+                <div className="flex flex-col gap-2">
+                  <h2 className="text-3xl font-bold">
+                    {" "}
+                    {AirportName?.OriginAirport[0]}-{" "}
+                    {AirportName?.DestinationAirport[0]}
+                  </h2>
+                  <p>
+                    {OutWardTicketData?.departureDate} •{" "}
+                    {OutWardTicketData?.duration} duration
+                  </p>
+                </div>
+                <div className="flex justify-center items-center">
+                  <div
+                    className="flex rounded-lg overflow-hidden border-2 font-bold tracking-wider text-xl "
+                    style={{ borderColor: "#6a7282" }}
+                  >
+                    <p
+                      className="h-12 px-4"
+                      style={{ backgroundColor: "#6a7282", color: "#fff" }}
+                    >
+                      PNR
+                    </p>
+                    <p className="px-4">{id}</p>
+                  </div>
+                </div>
               </div>
               <div className="flex">
                 <div
@@ -646,11 +797,16 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
                 </div>
                 <div className="flex-1 ">
                   <div className="flex-1 items-center w-full p-6">
-                    <div className="flex xl:px-[84px]">
+                    <div className="flex">
                       <div className="px-[20px] lg:px-[44px]">
                         <p className="text-2xl xl:text-3xl font-bold">
-                          {OutWardTicketData?.departureCity}{" "}
-                          {OutWardTicketData?.departureTime}
+                          <span className="">
+                            {AirportName?.OriginAirport[0]} <br />
+                            <span className="font-medium">
+                              {OutWardTicketData?.departureCity}
+                            </span>
+                          </span>
+                          <span>{OutWardTicketData?.departureTime}</span>
                         </p>
                         {/* <p
                           className="font-normal text-[13px] lg:text-[20px]"
@@ -696,8 +852,15 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
 
                       <div className="px-[20px] xl:px-[44px]">
                         <p className="text-[25px] xl:text-3xl font-bold">
-                          {OutWardTicketData?.arrivalTime}{" "}
-                          {OutWardTicketData?.arrivalCity}
+                          <span className="flex flex-col items-end">
+                            {AirportName?.DestinationAirport[0]} <br />
+                            <span>
+                              {OutWardTicketData?.arrivalTime}
+                              <span className="font-medium">
+                                {OutWardTicketData?.arrivalCity}
+                              </span>
+                            </span>
+                          </span>
                         </p>
                         {/* <p
                           className="font-normal text-[13px] xl:text-[20px]"
@@ -744,11 +907,12 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
                       style={{ color: "#525252" }}
                     >
                       <th>traveller</th>
-                      <th>E-TICKET NO</th>
+
+                      <th>Seat</th>
                     </tr>
                   </thead>
                   <tbody className="font-medium">
-                    {TravellerData?.map((travaller, index) => (
+                    {/* {TravellerData?.map((travaller, index) => (
                       <tr key={index}>
                         <td>
                           {travaller.Name.Title}.{" "}
@@ -758,6 +922,25 @@ const Recipet = ({ id, targetRef, ticketDetails, bookingDetails }) => {
                           </span>
                         </td>
                         <td>{id}</td>
+                      </tr>
+                    ))} */}
+                    {BookingTravellerData?.map((travaller, index) => (
+                      <tr key={index}>
+                        <td>
+                          {travaller.Name[0].Title}.{" "}
+                          {travaller.Name[0].NamePartList[0].NamePart.map(
+                            (n) => n
+                          )}{" "}
+                          {/* <span className="" style={{ borderColor: "#737373" }}>
+                            Adult
+                          </span> */}
+                        </td>
+                        <td>
+                          {
+                            travaller.CustomSupplierParameterList[0]
+                              .CustomSupplierParameter[1].Value
+                          }
+                        </td>
                       </tr>
                     ))}
                   </tbody>
