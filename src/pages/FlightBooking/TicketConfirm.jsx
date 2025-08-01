@@ -7,6 +7,7 @@ import { Link, useParams } from "react-router";
 import { useEffect, useState } from "react";
 import { usePDF } from "react-to-pdf";
 import WeeflyLogo from "../../assets/images/footer/weefly-logo.png";
+import TicketSign from "../../assets/images/TicketSigns.jpg";
 
 function TicketConfirm() {
   const { id } = useParams();
@@ -950,7 +951,9 @@ const Recipet = ({
           </>
         )}
       </>
-
+      <div className="my-12">
+        <img src={TicketSign} alt="" />
+      </div>
       <ul
         className="p-6 border-2 mt-10 font-jakarta"
         style={{ borderColor: "#d4d4d4" }}
