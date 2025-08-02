@@ -2128,6 +2128,26 @@ function TicketConfirm() {
           ticketDetails={ticketDetails}
           paymentDetails={paymentDetails}
           isDownloading={isDownloadingReceipt}
+          // Add payment summary from backend or reconstruct from ticket details
+          paymentSummary={
+            ticketDetails?.paymentSummary || {
+              outwardTicketPrice:
+                ticketDetails?.Ticketdetail?.Receiptdetails
+                  ?.OutwardTicketcharge,
+              returnTicketPrice:
+                ticketDetails?.Ticketdetail?.Receiptdetails?.Returnticketcharge,
+              seatCharge:
+                ticketDetails?.Ticketdetail?.Receiptdetails?.SeatCharge,
+              luggageCharge: ticketDetails?.Ticketdetail?.luggageCharge,
+              tax: ticketDetails?.Ticketdetail?.Receiptdetails?.Totaltax,
+              totalPrice:
+                ticketDetails?.Ticketdetail?.Receiptdetails?.Totalprice,
+              currency: "CVE",
+              tripType: ticketDetails?.Ticketdetail?.returnFlight
+                ? "Round Trip"
+                : "One Way",
+            }
+          }
         />
       </div>
 
@@ -2875,9 +2895,9 @@ const EReceipt = ({
   ticketDetails,
   paymentDetails,
   isDownloading,
+  paymentSummary = {}, // Add this new prop
 }) => {
-  const TicketData = ticketDetails.Ticketdetail;
-  const receiptDetails = TicketData?.Receiptdetails;
+  const TicketData = ticketDetails?.Ticketdetail;
 
   // Get current date for both transaction and service delivery (same date)
   const getCurrentDate = () => {
@@ -2887,6 +2907,20 @@ const EReceipt = ({
       month: "2-digit",
       year: "numeric",
     });
+  };
+
+  // Helper function to clean currency values
+  const cleanCurrencyValue = (value) => {
+    if (!value) return "0";
+    return typeof value === "string"
+      ? value.replace(/[^\d.]/g, "")
+      : value.toString();
+  };
+
+  // Helper function to format currency display
+  const formatCurrency = (value, currency = "CVE") => {
+    const cleanValue = cleanCurrencyValue(value);
+    return `${cleanValue} ${currency}`;
   };
 
   return (
@@ -2934,11 +2968,9 @@ const EReceipt = ({
             <div className="space-y-2 text-sm">
               <p>
                 <span className="font-medium">Transaction ID:</span>{" "}
-                {paymentDetails?.Paymentresponse?.merchantRespMerchantSession}
+                {paymentDetails?.Paymentresponse?.merchantRespMerchantSession ||
+                  id}
               </p>
-              {/* <p>
-                <span className="font-medium">Payment Reference:</span> PAY-{id}
-              </p> */}
               <p>
                 <span className="font-medium">Transaction Date:</span>{" "}
                 {getCurrentDate()}
@@ -2952,7 +2984,7 @@ const EReceipt = ({
         </div>
       </div>
 
-      {/* Payment Summary - Complete Summary from Payment Page */}
+      {/* Payment Summary - Using props data */}
       <div
         className="border-2 rounded-lg mb-6"
         style={{ borderColor: "#d4d4d4" }}
@@ -2962,50 +2994,70 @@ const EReceipt = ({
 
           <div className="space-y-3">
             {/* Flight Services */}
-            {receiptDetails?.OutwardTicketcharge && (
+            {paymentSummary.outwardTicketPrice && (
               <div className="flex justify-between text-sm">
                 <span>Outward Ticket</span>
                 <span className="font-medium">
-                  {receiptDetails.OutwardTicketcharge}
+                  {formatCurrency(
+                    paymentSummary.outwardTicketPrice,
+                    paymentSummary.currency
+                  )}
                 </span>
               </div>
             )}
 
-            {receiptDetails?.Returnticketcharge && (
-              <div className="flex justify-between text-sm">
-                <span>Return Ticket</span>
-                <span className="font-medium">
-                  {receiptDetails.Returnticketcharge}
-                </span>
-              </div>
-            )}
-
-            {receiptDetails?.SeatCharge &&
-              receiptDetails.SeatCharge !== "0 CVE" && (
+            {paymentSummary.returnTicketPrice &&
+              paymentSummary.tripType === "Round Trip" && (
                 <div className="flex justify-between text-sm">
-                  <span>Seat Charge</span>
+                  <span>Return Ticket</span>
                   <span className="font-medium">
-                    {receiptDetails.SeatCharge}
+                    {formatCurrency(
+                      paymentSummary.returnTicketPrice,
+                      paymentSummary.currency
+                    )}
                   </span>
                 </div>
               )}
 
-            {/* Add luggage charge if exists */}
-            {TicketData?.luggageCharge &&
-              TicketData.luggageCharge !== "0 CVE" && (
+            {paymentSummary.seatCharge &&
+              parseFloat(cleanCurrencyValue(paymentSummary.seatCharge)) > 0 && (
+                <div className="flex justify-between text-sm">
+                  <span>Seat Charge</span>
+                  <span className="font-medium">
+                    {formatCurrency(
+                      paymentSummary.seatCharge,
+                      paymentSummary.currency
+                    )}
+                  </span>
+                </div>
+              )}
+
+            {paymentSummary.luggageCharge &&
+              parseFloat(cleanCurrencyValue(paymentSummary.luggageCharge)) >
+                0 && (
                 <div className="flex justify-between text-sm">
                   <span>Luggage Charge</span>
                   <span className="font-medium">
-                    {TicketData.luggageCharge}
+                    {formatCurrency(
+                      paymentSummary.luggageCharge,
+                      paymentSummary.currency
+                    )}
                   </span>
                 </div>
               )}
 
             {/* Taxes and Fees */}
-            {receiptDetails?.Totaltax && (
+            {paymentSummary.tax && (
               <div className="flex justify-between text-sm">
                 <span>Total Tax</span>
-                <span className="font-medium">{receiptDetails.Totaltax}</span>
+                <span className="font-medium">
+                  {paymentSummary.tax.includes("%")
+                    ? paymentSummary.tax
+                    : formatCurrency(
+                        paymentSummary.tax,
+                        paymentSummary.currency
+                      )}
+                </span>
               </div>
             )}
 
@@ -3022,7 +3074,10 @@ const EReceipt = ({
               >
                 <span className="text-lg font-bold">Total Amount Paid</span>
                 <span className="text-xl font-bold">
-                  {receiptDetails?.Totalprice || "N/A"}
+                  {formatCurrency(
+                    paymentSummary.totalPrice,
+                    paymentSummary.currency
+                  )}
                 </span>
               </div>
               <p className="text-sm mt-2 text-center">
@@ -3046,7 +3101,9 @@ const EReceipt = ({
           <div className="flex justify-center items-center space-x-4 text-xs">
             <span>Generated on: {getCurrentDate()}</span>
             <span>•</span>
-            <span>Receipt ID : {paymentDetails?.transactionid}</span>
+            <span>
+              Receipt ID : {paymentDetails?.transactionid || `WF-RCP-${id}`}
+            </span>
             <span>•</span>
             <span>weefly.africa</span>
           </div>

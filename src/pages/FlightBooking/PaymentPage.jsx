@@ -190,6 +190,8 @@ export default function PaymentPage() {
   };
   */
   console.log("rt", returnTicket);
+  // Update your handleBooking function in PaymentPage.jsx
+
   const handleBooking = async (e) => {
     e.preventDefault();
     const transactionApi = import.meta.env.VITE_TRANSACTION_URL;
@@ -197,30 +199,24 @@ export default function PaymentPage() {
     const date = new Date();
     const time = date.getTime();
     const totalPrice = Math.ceil(price);
-    // const bookid = location.state?.TFBookingReference;
     const originalCurrencyPrice = location.state?.originalPrice;
     const originalCurrency = location.state?.originalCurrency;
-    // console.log(bookid);
-    console.log("oc", originalCurrency);
-    console.log("ocp", originalCurrencyPrice);
-    // const result = await handleProcessTerm(location.state?.requestBody);
     const bookid = location.state.TFBookingReference;
-    console.log("bookid", bookid);
-    // if (result.price !== originalCurrencyPrice) {
-    //   const { price, currency } = result;
-    //   window.alert("Price CHanges !!");
-    //   console.log(result.price);
-    //   reCalculatePrice(price, currency);
-    // } else if (result.price === originalCurrencyPrice) {
-    console.log("seat", location.state.Seatoption);
-    console.log("gi", location.state.Guestid);
     const senderId = location.state.Guestid;
     const seat = location.state.Seatoption;
-    // const luggageOptions=location.state.luggage;
-    console.log(location.state.travellerDetails);
-    
     const travellerDetails = location.state.TravellerList.TravellerList;
-    console.log(travellerDetails);
+
+    // Prepare payment summary data
+    const paymentSummaryData = {
+      outwardTicketPrice: OutwardTicket.price,
+      returnTicketPrice: returnTicket ? returnTicket.price : null,
+      seatCharge: location.state?.seatCharge || 0,
+      luggageCharge: location.state?.luggageSurcharge || 0,
+      tax: tax,
+      totalPrice: totalPrice,
+      currency: "CVE",
+      tripType: location.state.tripType,
+    };
 
     if (
       originalCurrencyPrice &&
@@ -242,7 +238,6 @@ export default function PaymentPage() {
             billAddrCountry: "Portugal",
             billAddrCity: address.City,
             billAddrline1: `${address.Flat}, ${address.BuildingName}, ${address.BuildingNumber}`,
-            // billAddrline2: `${address.street}, ${address.locality}, ${address.province}`,
             billAddrPostCode: address.Postcode,
             Paymentdate,
             time,
@@ -250,6 +245,8 @@ export default function PaymentPage() {
             expectedCurrency: originalCurrency,
             TFBookingReference: bookid,
             fakeBooking: true,
+            // Add payment summary data
+            paymentSummary: paymentSummaryData,
             ...(Array.isArray(seat) &&
               seat.length > 0 && {
                 seatOptions: seat,
@@ -265,15 +262,15 @@ export default function PaymentPage() {
         });
 
         const html = await response.text();
-
         const container = document.createElement("div");
         container.innerHTML = html;
         document.body.appendChild(container);
         container.querySelector("form").submit();
+
         if (!response.ok) {
           const data = await response.json();
           if (data.status === "UserCancelled") {
-            navigate("/booking/payment"); // react-router handles it smoothly
+            navigate("/booking/payment");
             return;
           }
         }
