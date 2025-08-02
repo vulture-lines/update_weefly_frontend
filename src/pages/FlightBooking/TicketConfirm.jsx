@@ -2895,9 +2895,13 @@ const EReceipt = ({
   ticketDetails,
   paymentDetails,
   isDownloading,
-  paymentSummary = {}, // Add this new prop
+  // paymentSummary = {}, // Add this new prop
 }) => {
   const TicketData = ticketDetails?.Ticketdetail;
+
+  const paymentSummary =
+    paymentDetails?.TravelfusionBookingDetails?.Receiptdetails;
+  // console.log(paymentDetails.);
 
   // Get current date for both transaction and service delivery (same date)
   const getCurrentDate = () => {
@@ -2994,19 +2998,16 @@ const EReceipt = ({
 
           <div className="space-y-3">
             {/* Flight Services */}
-            {paymentSummary.outwardTicketPrice && (
+            {paymentSummary?.OutwardTicketcharge && (
               <div className="flex justify-between text-sm">
                 <span>Outward Ticket</span>
                 <span className="font-medium">
-                  {formatCurrency(
-                    paymentSummary.outwardTicketPrice,
-                    paymentSummary.currency
-                  )}
+                  {paymentSummary?.OutwardTicketcharge}
                 </span>
               </div>
             )}
 
-            {paymentSummary.returnTicketPrice &&
+            {/* {paymentSummary?.Returnticketcharge &&
               paymentSummary.tripType === "Round Trip" && (
                 <div className="flex justify-between text-sm">
                   <span>Return Ticket</span>
@@ -3017,22 +3018,28 @@ const EReceipt = ({
                     )}
                   </span>
                 </div>
-              )}
+              )} */}
+            {paymentSummary?.Returnticketcharge && TicketData?.returnFlight && (
+              <div className="flex justify-between text-sm">
+                <span>Return Ticket</span>
+                <span className="font-medium">
+                  {paymentSummary?.Returnticketcharge}
+                </span>
+              </div>
+            )}
 
-            {paymentSummary.seatCharge &&
-              parseFloat(cleanCurrencyValue(paymentSummary.seatCharge)) > 0 && (
+            {paymentSummary?.SeatCharge &&
+              parseFloat(cleanCurrencyValue(paymentSummary?.SeatCharge)) >
+                0 && (
                 <div className="flex justify-between text-sm">
                   <span>Seat Charge</span>
                   <span className="font-medium">
-                    {formatCurrency(
-                      paymentSummary.seatCharge,
-                      paymentSummary.currency
-                    )}
+                    {paymentSummary?.SeatCharge}
                   </span>
                 </div>
               )}
 
-            {paymentSummary.luggageCharge &&
+            {/* {paymentSummary.luggageCharge &&
               parseFloat(cleanCurrencyValue(paymentSummary.luggageCharge)) >
                 0 && (
                 <div className="flex justify-between text-sm">
@@ -3044,20 +3051,13 @@ const EReceipt = ({
                     )}
                   </span>
                 </div>
-              )}
+              )} */}
 
             {/* Taxes and Fees */}
-            {paymentSummary.tax && (
+            {paymentSummary?.Totaltax && (
               <div className="flex justify-between text-sm">
                 <span>Total Tax</span>
-                <span className="font-medium">
-                  {paymentSummary.tax.includes("%")
-                    ? paymentSummary.tax
-                    : formatCurrency(
-                        paymentSummary.tax,
-                        paymentSummary.currency
-                      )}
-                </span>
+                <span className="font-medium">{paymentSummary.Totaltax}</span>
               </div>
             )}
 
@@ -3074,10 +3074,7 @@ const EReceipt = ({
               >
                 <span className="text-lg font-bold">Total Amount Paid</span>
                 <span className="text-xl font-bold">
-                  {formatCurrency(
-                    paymentSummary.totalPrice,
-                    paymentSummary.currency
-                  )}
+                  {paymentSummary?.Totalprice}
                 </span>
               </div>
               <p className="text-sm mt-2 text-center">
