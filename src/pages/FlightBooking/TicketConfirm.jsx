@@ -992,7 +992,8 @@ const EReceipt = ({
                 support@weefly.africa
               </p>
               <p>
-                <span className="font-medium">Contact No:</span> +238 959 23 88
+                <span className="font-medium">Support Contact:</span> +238 959
+                23 88
               </p>
             </div>
           </div>
