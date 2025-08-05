@@ -37,8 +37,8 @@ const HeroSection = ({ country }) => {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [flightReturnDate, setflightReturnDate] = useState(
-    new Date(2025, 8, 25)
-  ); // Sept 25, 2025
+    new Date(2025, 8, 28)
+  ); // Sept 28, 2025
   const [searchCount, setSearchCount] = useState(0);
   const [flightsData, setFlightsData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -46,14 +46,14 @@ const HeroSection = ({ country }) => {
   const [flightTypeFilter, setFlightTypeFilter] = useState("Domestic");
   const [isDirectFlight, setIsDirectFlight] = useState(false);
   const [flightDepatureDate, setflightDepatureDate] = useState(
-    new Date(2025, 7, 15)
+    new Date(2025, 7, 18)
   );
   const [routingId, setRoutingId] = useState("");
   const [searchData, setSearchdata] = useState({
     from: "LGW",
     to: "MAD",
-    flightDepatureDate: new Date(2025, 7, 15),
-    flightReturnDate: new Date(2025, 8, 25),
+    flightDepatureDate: new Date(2025, 7, 18),
+    flightReturnDate: new Date(2025, 8, 28),
     travelClass: "Economy",
   });
   const [travellers, setTravellers] = useState([30]);
@@ -827,7 +827,7 @@ const HeroSection = ({ country }) => {
                       </svg>
                     </p>
                     <div className="text-[16px] font-semibold text-gray-700">
-                      15 Aug 2025
+                      18 Aug 2025
                     </div>
                     <p className="text-xs text-gray-500 mt-1">Friday</p>
                   </div>
@@ -852,7 +852,7 @@ const HeroSection = ({ country }) => {
                       </svg>
                     </p>
                     <div className="text-[16px] font-semibold text-gray-700">
-                      25 Sep 2025
+                      28 Sep 2025
                     </div>
                     <p className="text-xs text-gray-500 mt-1">Thursday</p>
                   </div>
