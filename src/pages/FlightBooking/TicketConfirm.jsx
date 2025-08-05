@@ -140,7 +140,7 @@ function TicketConfirm() {
         </div>
       </div>
 
-      {/* E-Receipt (Hidden) */}
+      {/* E-Receipt (Hidden) - This should be completely separate */}
       <div style={{ position: "absolute", left: "-9999px", top: "-9999px" }}>
         <EReceipt
           id={id}
@@ -149,26 +149,6 @@ function TicketConfirm() {
           bookingDetails={bookingDetails}
           paymentDetails={paymentDetails}
           isDownloading={isDownloadingReceipt}
-          // Add payment summary from backend or reconstruct from ticket details
-          paymentSummary={
-            ticketDetails?.paymentSummary || {
-              outwardTicketPrice:
-                ticketDetails?.Ticketdetail?.Receiptdetails
-                  ?.OutwardTicketcharge,
-              returnTicketPrice:
-                ticketDetails?.Ticketdetail?.Receiptdetails?.Returnticketcharge,
-              seatCharge:
-                ticketDetails?.Ticketdetail?.Receiptdetails?.SeatCharge,
-              luggageCharge: ticketDetails?.Ticketdetail?.luggageCharge,
-              tax: ticketDetails?.Ticketdetail?.Receiptdetails?.Totaltax,
-              totalPrice:
-                ticketDetails?.Ticketdetail?.Receiptdetails?.Totalprice,
-              currency: "CVE",
-              tripType: ticketDetails?.Ticketdetail?.returnFlight
-                ? "Round Trip"
-                : "One Way",
-            }
-          }
         />
       </div>
 
@@ -236,26 +216,6 @@ const Recipet = ({
       ?.RouterHistory?.[0].TermsRouter?.[0]?.SupplierInfoList[0]?.SupplierInfo;
 
   console.log(BookingTravellerData);
-
-  // Get current date for transaction
-  const getCurrentDate = () => {
-    const date = new Date();
-    return date.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
-
-  const getDeliveryDate = () => {
-    const date = new Date();
-    date.setDate(date.getDate() + 1); // Next day for service delivery
-    return date.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
-  };
 
   return (
     <div
@@ -761,21 +721,24 @@ const Recipet = ({
           </>
         )}
       </>
+
       <div className="my-12">
         <img src={TicketSign} alt="" />
       </div>
+
+      {/* REMOVED THE E-RECEIPT SECTION FROM HERE - This was causing the issue */}
+
+      {/* Terms and Conditions - Only show in ticket PDF */}
       <ul
-        className="p-6 border-2 mt-56 font-jakarta"
+        className="p-6 border-2 mt-10 font-jakarta"
         style={{ borderColor: "#d4d4d4" }}
       >
-        <p className="text-center text-2xl font-bold my-10  ">
-          {" "}
+        <p className="text-center text-2xl font-bold my-10">
           Terms and Conditions
         </p>
         {Terms?.map((term, idx) => (
-          <li key={idx} className="flex flex-col mb-4 ">
+          <li key={idx} className="flex flex-col mb-4">
             <p className="font-medium"> • {term.DisplayName[0]}</p>
-
             <div className="leading-8">
               {term.InfoType[0] === "url" ? (
                 <Link to={term.Info[0]} className="underline">
@@ -788,126 +751,6 @@ const Recipet = ({
           </li>
         ))}
       </ul>
-
-      {/* E-Receipt Details Section - Only visible during PDF download, hidden on screen */}
-      <div
-        className="border-2 mt-10 font-jakarta"
-        style={{
-          borderColor: "#d4d4d4",
-          pageBreakBefore: "always",
-          display: isDownloading ? "block" : "none",
-        }}
-      >
-        <div className="p-6">
-          <h3 className="text-center text-3xl font-bold mb-6">E-RECEIPT</h3>
-          <p className="text-center text-lg font-semibold mb-8">
-            Payment Confirmation
-          </p>
-
-          {/* Merchant & Customer Info */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <div>
-              <h4 className="text-lg font-bold mb-4">Merchant Information</h4>
-              <div className="space-y-2 text-sm">
-                <p>
-                  <span className="font-medium">Merchant Name:</span> FLY CABO
-                  VERDE LDA
-                </p>
-                <p>
-                  <span className="font-medium">Website:</span> weefly.africa
-                </p>
-                <p>
-                  <span className="font-medium">Customer Service:</span>{" "}
-                  support@weefly.africa
-                </p>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-lg font-bold mb-4">Transaction Details</h4>
-              <div className="space-y-2 text-sm">
-                <p>
-                  <span className="font-medium">Transaction ID:</span> {id}
-                </p>
-                <p>
-                  <span className="font-medium">Payment Reference:</span> PAY-
-                  {id}
-                </p>
-                <p>
-                  <span className="font-medium">Transaction Date:</span>{" "}
-                  {getCurrentDate()}
-                </p>
-                <p>
-                  <span className="font-medium">Service Delivery Date:</span>{" "}
-                  {getDeliveryDate()}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Payment Summary */}
-          <div className="mb-8">
-            <h4 className="text-lg font-bold mb-6">Payment Summary</h4>
-
-            <div className="space-y-3">
-              {/* Flight Services */}
-              <div className="flex justify-between text-sm">
-                <span>Outward Ticket</span>
-                <span className="font-medium">10097.25 CVE</span>
-              </div>
-
-              <div className="flex justify-between text-sm">
-                <span>Return Ticket</span>
-                <span className="font-medium">8532.50 CVE</span>
-              </div>
-
-              <div className="flex justify-between text-sm">
-                <span>Total Tax</span>
-                <span className="font-medium">1670.25 CVE</span>
-              </div>
-
-              {/* Divider line */}
-              <div className="border-t pt-3" style={{ borderColor: "#d4d4d4" }}>
-                {/* Total Amount */}
-                <div
-                  className="border-2 p-4 rounded flex justify-between items-center"
-                  style={{
-                    borderColor: "#000000",
-                    backgroundColor: "#000000",
-                    color: "#ffffff",
-                  }}
-                >
-                  <span className="text-lg font-bold">Total Amount Paid</span>
-                  <span className="text-xl font-bold">20300.00 CVE</span>
-                </div>
-                <p className="text-sm mt-2 text-center">
-                  Payment Status: <span className="font-bold">Confirmed ✓</span>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Receipt Footer */}
-          <div
-            className="text-center pt-4 border-t"
-            style={{ borderColor: "#d4d4d4" }}
-          >
-            <p className="text-lg font-bold mb-2">
-              Thank You for Choosing Weefly!
-            </p>
-            <p className="text-sm mb-4">
-              We appreciate your business and hope you have a wonderful travel
-              experience.
-            </p>
-            <div className="flex justify-center items-center space-x-4 text-xs">
-              <span>Generated on: {getCurrentDate()}</span>
-              <span>•</span>
-              <span>Receipt ID: WF-RCP-{id}</span>
-              <span>•</span>
-              <span>weefly.africa</span>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
@@ -919,7 +762,6 @@ const EReceipt = ({
   bookingDetails,
   paymentDetails,
   isDownloading,
-  // paymentSummary = {}, // Add this new prop
 }) => {
   const TicketData = ticketDetails?.Ticketdetail;
 
@@ -1017,7 +859,7 @@ const EReceipt = ({
         </div>
       </div>
 
-      {/* NEW BOOKING DETAILS SECTION */}
+      {/* Booking Details Section */}
       <div
         className="border-2 rounded-lg mb-6"
         style={{ borderColor: "#d4d4d4" }}
@@ -1067,7 +909,7 @@ const EReceipt = ({
         </div>
       </div>
 
-      {/* Payment Summary - Using props data */}
+      {/* Payment Summary */}
       <div
         className="border-2 rounded-lg mb-6"
         style={{ borderColor: "#d4d4d4" }}
