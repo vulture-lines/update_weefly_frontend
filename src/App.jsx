@@ -47,6 +47,9 @@ import SupportTicket from "./pages/AgentDashboard/supportTicket/SupportTicket";
 import TicketConfirm from "./pages/FlightBooking/TicketConfirm";
 import TicketNotConfirm from "./pages/FlightBooking/TicketNotConfirm";
 import ErrorPage from "./pages/ErrorPage";
+import ExternalError from "./pages/FlightBooking/ExternalError";
+import InternalError from "./pages/FlightBooking/InternalError";
+import UserCancel from "./pages/FlightBooking/UserCancel";
 import TicketPendingConfirmation from "./pages/FlightBooking/TicketPendingConfirmation";
 import SupplierError from "./pages/FlightBooking/SupplierError";
 import TermsofService from "./pages/Home/TermsofService";
@@ -130,6 +133,9 @@ const App = () => {
             </Route>
             <Route path="ticketconfirm/:id" element={<TicketConfirm />} />
             <Route path="ticketnotconfirm" element={<TicketNotConfirm />} />
+            <Route path="usercancelled" element={<UserCancel />} />
+            <Route path="externalerror" element={<ExternalError />} />
+            <Route path="internalerror" element={<InternalError />} />
             <Route
               path="ticketwaiting"
               element={<TicketPendingConfirmation />}
