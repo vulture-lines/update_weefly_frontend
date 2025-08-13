@@ -18,13 +18,19 @@ import {
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyC9P8uYHfOT8F2fTw4ad7WYTHMtv65lCf8",
-  authDomain: "weefly-auth.firebaseapp.com",
-  projectId: "weefly-auth",
-  storageBucket: "weefly-auth.firebasestorage.app",
-  messagingSenderId: "309755458136",
-  appId: "1:309755458136:web:f5b55ba6d5adb9f4ef102d",
-  measurementId: "G-L0XHNZMQPX",
+  // apiKey: "AIzaSyC9P8uYHfOT8F2fTw4ad7WYTHMtv65lCf8",
+  // authDomain: "weefly-auth.firebaseapp.com",
+  // projectId: "weefly-auth",
+  // storageBucket: "weefly-auth.firebasestorage.app",
+  // messagingSenderId: "309755458136",
+  // appId: "1:309755458136:web:f5b55ba6d5adb9f4ef102d",
+  // measurementId: "G-L0XHNZMQPX",
+  apiKey: "AIzaSyBvbsYRFFW_cllyCnDp9hw55KW8BLXxxRg",
+  authDomain: "weefly-b03d0.firebaseapp.com",
+  projectId: "weefly-b03d0",
+  storageBucket: "weefly-b03d0.firebasestorage.app",
+  messagingSenderId: "552620785662",
+  appId: "1:552620785662:web:c3e4f650eb8c1819160aaf",
 };
 
 // Initialize Firebase
@@ -55,9 +61,8 @@ export const HandleGoogleLogin = async () => {
         photoURL: UserDetails.photoURL,
         phoneNumber: UserDetails.phoneNumber,
       };
-      localStorage.setItem("loginUserDetail", JSON.stringify(Payloads));
-      localStorage.setItem("email", UserDetails.email);
       return Payloads;
+      
     }
 
     // if (!UserDetails.phoneNumber && phoneNumberInput && otpInput) {

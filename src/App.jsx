@@ -52,6 +52,9 @@ import SupplierError from "./pages/FlightBooking/SupplierError";
 import TermsofService from "./pages/Home/TermsofService";
 import PrivacyPolicy from "./pages/Home/PrivacyPolicy";
 import RefundPolicy from "./pages/Home/RefundPolicy";
+import ExternalError from "./pages/FlightBooking/ExternalError";
+import InternalError from "./pages/FlightBooking/InternalError";
+import UserCancel from "./pages/FlightBooking/UserCancel";
 import cookies from "js-cookie";
 const App = () => {
   useEffect(() => {
@@ -60,7 +63,7 @@ const App = () => {
     });
   }, []);
   const [location, setLocation] = useState("Fetching location...");
-  /* const cardApiUrl = import.meta.env.VITE_TRANSACTION_URL;
+  const cardApiUrl = import.meta.env.VITE_TRANSACTION_URL;
   const setToken = async () => {
     try {
       const res = await fetch(`${cardApiUrl}/injecttoken`, {
@@ -77,7 +80,7 @@ const App = () => {
 
   if (!cookies.get("token")) {
     setToken();
-  } */
+  }
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -102,6 +105,16 @@ const App = () => {
       setLocation("");
     }
   }, []);
+
+  // console.log = function () { };
+
+  // if (process.env.NODE_ENV === "production") {
+  //   console.log = function () { };
+  //   console.debug = function () { };
+  //   console.info = function () { };
+  // }
+
+
 
   return (
     <>
@@ -130,12 +143,18 @@ const App = () => {
             </Route>
             <Route path="ticketconfirm/:id" element={<TicketConfirm />} />
             <Route path="ticketnotconfirm" element={<TicketNotConfirm />} />
+            <Route path="usercancelled" element={<UserCancel />} />
+            <Route path="externalerror" element={<ExternalError />} />
+            <Route path="internalerror" element={<InternalError />} />
             <Route
               path="ticketwaiting"
               element={<TicketPendingConfirmation />}
             />
             <Route path="UnconfirmedSupplier" element={<SupplierError />} />
-            <Route path="profile" element={<ProfilePage />} />
+            <Route
+              path="profile"
+              element={<ProfilePage country={location} />}
+            />
             <Route path="/Contact" element={<ContactUsPage />} />
           </Route>
           {/* Authentication Route */}

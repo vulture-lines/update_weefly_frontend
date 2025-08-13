@@ -105,34 +105,49 @@ import { Link, useNavigate } from "react-router";
 import WeeFlyLogo from "../assets/Auth/OrangeWeeflyLogo.svg";
 import OTPVerifyBg from "../assets/Auth/OTPbg.png";
 import { VerifyOTP } from "../features/firebase";
-
+import Cookies from "js-cookie";
 function OTP_VerificationPage() {
   const navigate = useNavigate();
-  const inputRefs = Array.from({ length: 6 }, () => useRef());
+  const inputRefs = Array.from({ length: 4 }, () => useRef());
 
   const handleOtpVerification = async (e) => {
     e.preventDefault();
     const otp = inputRefs.map((ref) => ref.current.value).join("");
     console.log(otp);
 
-    if (otp.length === 6) {
+    if (otp.length === 4) {
       try {
-        const res = await VerifyOTP(otp);
-        console.log("OTP Verified:", res);
-        if (res) {
-          navigate("/");
+        const email = Cookies.get("email");
+        const USER_API_URL =
+          import.meta.env.VITE_USER_SERVICE_URL ||
+          "http://localhost:3000/userapi";
+
+        const res = await fetch(`${USER_API_URL}/validateotp`, {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+            inputOtp: otp,
+          }),
+        });
+        if (res.ok) {
+          Cookies.remove("email");
+          navigate("/profile");
         }
-      } catch (err) {
-        console.error("OTP Verification Failed:", err);
+      } catch (error) {
+        console.error(error);
       }
     } else {
-      alert("Please enter all 6 digits of the OTP.");
+      alert("Please enter all 4 digits of the OTP.");
     }
   };
 
   const handleInputChange = (e, index) => {
     const value = e.target.value;
-    if (value.length === 1 && index < 5) {
+    if (value.length === 1 && index < 3) {
       inputRefs[index + 1].current.focus();
     } else if (value === "" && index > 0) {
       inputRefs[index - 1].current.focus();
@@ -159,13 +174,13 @@ function OTP_VerificationPage() {
           />
           <h1 className="font-jakarta font-semibold text-[24px]">Enter OTP</h1>
           <h1 className="font-jakarta font-normal text-[16px] text-[#555555] text-center max-w-[430px]">
-            We have sent an OTP to your mobile number
+            We have sent an OTP to your Email
           </h1>
           <form
             onSubmit={handleOtpVerification}
             className="max-w-[430px] w-full"
           >
-            <div className="flex gap-[10px] xl:gap-[24px]">
+            <div className="w-full flex justify-center items-center gap-[10px] xl:gap-[24px] px-16 ">
               {inputRefs.map((ref, index) => (
                 <input
                   key={index}
@@ -174,7 +189,7 @@ function OTP_VerificationPage() {
                   ref={ref}
                   onChange={(e) => handleInputChange(e, index)}
                   onKeyDown={(e) => handleKeyDown(e, index)}
-                  className="text-center px-[20px] py-[14px] w-full outline-[#EE5128] border rounded-[8px] border-[#CCCCCC] text-[18px]"
+                  className="text-center px-[20px] py-[14px] w-full outline-[#EE5128] border rounded-[8px] border-[#CCCCCC] text-[18px] "
                 />
               ))}
             </div>

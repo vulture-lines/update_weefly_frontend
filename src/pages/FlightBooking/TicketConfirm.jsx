@@ -198,10 +198,12 @@ const Recipet = ({
   bookingDetails,
   isDownloading,
 }) => {
-  console.log(ticketDetails.outwardFlight);
-  console.log(bookingDetails);
+  console.log(ticketDetails);
 
-  const TicketData = ticketDetails.Ticketdetail;
+  // console.log(ticketDetails?.outwardFlight);
+  // console.log(bookingDetails);
+
+  const TicketData = ticketDetails?.Ticketdetail;
   const OutWardTicketData = TicketData?.outwardFlight;
 
   const TravellerData = TicketData?.Travellerdetails?.Traveller;
@@ -219,9 +221,8 @@ const Recipet = ({
 
   return (
     <div
-      className={`font-jakarta ${
-        isDownloading ? "min-w-[375px]" : "w-[1220px]"
-      }`}
+      className={`font-jakarta ${isDownloading ? "min-w-[375px]" : "w-[1220px]"
+        }`}
       ref={targetRef}
       style={{ colorScheme: "light" }}
     >
@@ -772,6 +773,8 @@ const EReceipt = ({
     bookingDetails?.Bookingdetails?.CommandList?.GetBookingDetails?.[0]
       ?.BookingProfile?.[0].TravellerList?.[0]?.Traveller;
 
+  const dccdata = paymentDetails?.Paymentresponse;
+
   const getCurrentDate = () => {
     const date = new Date();
     return date.toLocaleDateString("en-GB", {
@@ -797,9 +800,8 @@ const EReceipt = ({
 
   return (
     <div
-      className={`font-jakarta ${
-        isDownloading ? "min-w-[375px]" : "w-[800px]"
-      } mx-auto bg-white`}
+      className={`font-jakarta ${isDownloading ? "min-w-[375px]" : "w-[800px]"
+        } mx-auto bg-white`}
       ref={targetRef}
       style={{ colorScheme: "light" }}
     >
@@ -939,11 +941,21 @@ const EReceipt = ({
 
             {paymentSummary?.SeatCharge &&
               parseFloat(cleanCurrencyValue(paymentSummary?.SeatCharge)) >
-                0 && (
+              0 && (
                 <div className="flex justify-between text-sm">
                   <span>Seat Charge</span>
                   <span className="font-medium">
                     {paymentSummary?.SeatCharge}
+                  </span>
+                </div>
+              )}
+            {paymentSummary?.luggageCharge &&
+              parseFloat(cleanCurrencyValue(paymentSummary?.luggageCharge)) >
+              0 && (
+                <div className="flex justify-between text-sm">
+                  <span>luggage Charge</span>
+                  <span className="font-medium">
+                    {paymentSummary?.luggageCharge}
                   </span>
                 </div>
               )}
@@ -955,6 +967,36 @@ const EReceipt = ({
                 <span className="font-medium">{paymentSummary.Totaltax}</span>
               </div>
             )}
+
+            {dccdata?.dccRate && (
+              <div className="flex justify-between text-sm">
+                <span>Currency Conversion Rate</span>
+                <span className="font-medium">
+                  {dccdata.dccRate} {dccdata.dccCurrency}
+                </span>
+              </div>
+            )}
+
+            {dccdata?.dccMarkup && (
+              <div className="flex justify-between text-sm">
+                <span>DCC Service Fee \ DCC Markup</span>
+                <span className="font-medium">
+                  {" "}
+                  {dccdata?.dccMarkup} {dccdata.dccCurrency}
+                </span>
+              </div>
+            )}
+            {dccdata?.dccCurrency && (
+              <div className="flex justify-between text-sm">
+                <span>Transaction Currency</span>
+                <span className="font-medium">{dccdata.dccCurrency}</span>
+              </div>
+            )}
+
+            {/* <div className="flex justify-between text-sm">
+              <span>TOTAL</span>
+              <span className="font-medium">[10.58] [USD]</span>
+            </div> */}
 
             {/* Divider line */}
             <div className="border-t pt-3" style={{ borderColor: "#d4d4d4" }}>
@@ -969,9 +1011,20 @@ const EReceipt = ({
               >
                 <span className="text-lg font-bold">Total Amount Paid</span>
                 <span className="text-xl font-bold">
-                  {paymentSummary?.Totalprice}
+                  {/* {paymentSummary?.Totalprice} */}
+                  {dccdata?.dccAmount
+                    ? dccdata?.dccAmount + dccdata.dccCurrency
+                    : paymentSummary?.Totalprice}
+                  {/* 428.18 USD */}
                 </span>
               </div>
+              {dccdata?.dccCurrency && (
+                <p className="text-sm mt-2 text-center">
+                  I have been offered a choice of currencies and agreed to pay
+                  in [USD] Dynamic Currency Conversion (DCC) offered by vinti4
+                  network. Exchange rate provided by Banco de Cabo Verde.
+                </p>
+              )}
               <p className="text-sm mt-2 text-center">
                 Payment Status: <span className="font-bold">Confirmed ✓</span>
               </p>

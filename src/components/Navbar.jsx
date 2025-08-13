@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import Aos from "aos";
 import WeeFlyLogo from "../assets/images/WeeFly-white-logo.svg";
 import AfricaFlag from "../assets/images/africaflag.png";
 import Menu from "../assets/images/menu.svg";
@@ -26,7 +27,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { HandleGoogleLogout } from "../features/firebase";
 import TranslatorSwitch from "./TranslatorSwitch";
 import { useTranslation } from "react-i18next";
-
+import Cookies from "js-cookie";
 const Navbar = () => {
   const { t } = useTranslation();
   const Location = useLocation();
@@ -34,9 +35,11 @@ const Navbar = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const LoggedIn = JSON.parse(localStorage.getItem("loggedIn") || "false");
-  const LoginDetail = JSON.parse(localStorage.getItem("loginUserDetail"));
-
+  const [ProfileData, setProfileData] = useState({});
+  // const LoggedIn = JSON.parse(localStorage.getItem("loggedIn") || "false");
+  // const LoginDetail = JSON.parse(localStorage.getItem("loginUserDetail"));
+  const USER_API_URL =
+    import.meta.env.VITE_USER_SERVICE_URL || "http://localhost:3000/userapi";
   const NavLinks = [
     { label: `${t("navbar.home")}`, link: "/" },
     { label: `${t("navbar.aboutus")}`, link: "/" },
@@ -53,26 +56,59 @@ const Navbar = () => {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+
+    Aos.init({
+      once: true,
+    })
+  }, []);
+
+  useEffect(() => {
+    // Fetch user profile data from backend
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch(`${USER_API_URL}/getuserprofile`, {
+          method: "GET",
+          credentials: "include", // send JWT cookie
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(
+            `Failed to fetch profile: ${response.status} ${response.statusText}`
+          );
+        }
+
+        const data = await response.json();
+        setProfileData(data);
+        console.log(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchUserProfile();
   }, []);
 
   const HandleLogout = () => {
-    HandleGoogleLogout();
-    localStorage.clear();
+    // HandleGoogleLogout();
+    Cookies.remove("userjwt")
+    setProfileData();
     navigate("/");
+
   };
   return (
     <>
       {location.pathname === "/" ? (
         <div
           data-aos="fade-down"
-          className={` fixed w-full z-50 top-0 px-10 xl:px-40 font-sans ${
-            isScrolled ? "backdrop-blur-lg bg-white text-black" : "text-white"
-          }`}
+          className={` fixed w-full z-50 top-0 px-10 xl:px-40 font-sans ${isScrolled ? "backdrop-blur-lg bg-white text-black" : "text-white"
+            }`}
         >
           <div
-            className={`flex justify-between items-center  ${
-              isMenuOpen || isScrolled ? "h-20" : "h-30"
-            }
+            className={`flex justify-between items-center  ${isMenuOpen || isScrolled ? "h-20" : "h-30"
+              }
  transition-all duration-300`}
           >
             {/* <div
@@ -162,14 +198,14 @@ const Navbar = () => {
                   </div>
                 </form> */}
                 <div className="flex items-center gap-4">
-                  {/* {LoggedIn ? (
+                  {ProfileData ? (
                     <button
-                      className="font-medium text-sm font-jakarta px-3.5 py-2 flex items-center rounded-md gap-2 transition-colors duration-200"
+                      className="font-medium text-sm  font-jakarta px-3.5 py-2 flex items-center rounded-md gap-2 transition-colors duration-200"
                       onClick={() => navigate("/profile")}
                     >
-                      {LoginDetail.photoURL ? (
+                      {ProfileData?.Profileimage ? (
                         <img
-                          src={LoginDetail.photoURL}
+                          src={ProfileData?.Profileimage}
                           alt=""
                           height={30}
                           width={30}
@@ -182,7 +218,7 @@ const Navbar = () => {
                       <span className="flex gap-2">
                         <div className="">Hi,</div>
                         <div className="">
-                          {LoginDetail.name ? LoginDetail.name : "user"}
+                          {ProfileData.Name ? ProfileData.Name : "user"}
                         </div>
                       </span>
                     </button>
@@ -194,9 +230,9 @@ const Navbar = () => {
                       <UserCircle />
                       <span>{t("navbar.login/register")}</span>
                     </button>
-                  )} */}
+                  )}
 
-                  {LoggedIn ? (
+                  {ProfileData ? (
                     <div className="cursor-pointer flex items-center gap-6">
                       <div className="">
                         <Bell className="h-5 w-5" />
@@ -219,10 +255,10 @@ const Navbar = () => {
             </div>
             {/* white navbar */}
             <div className="flex gap-[12px] items-center lg:hidden cursor-pointer">
-              {/* {LoggedIn ? (
+              {ProfileData ? (
                 <Link to={"/profile"}>
                   <img
-                    src={LoginDetail.photoURL}
+                    src={ProfileData?.Profileimage}
                     alt=""
                     height={30}
                     width={30}
@@ -236,8 +272,8 @@ const Navbar = () => {
                     <span>{t("navbar.signin")}</span>
                   </div>
                 </Link>
-              )} */}
-              {LoggedIn && (
+              )}
+              {ProfileData && (
                 <div className="">
                   <Bell className="h-5 w-5" />
                 </div>
@@ -268,9 +304,8 @@ const Navbar = () => {
             } transition-all duration-300`}
           > */}
           <div
-            className={`flex justify-between items-center  ${
-              isMenuOpen || isScrolled ? "h-20" : "h-30"
-            }
+            className={`flex justify-between items-center  ${isMenuOpen || isScrolled ? "h-20" : "h-30"
+              }
  transition-all duration-300`}
           >
             <div className="">
@@ -327,16 +362,16 @@ const Navbar = () => {
                     <button className="hidden" type="submit" />
                   </div>
                 </form> */}
-                {/* <div className="flex items-center gap-4">
-                  {LoggedIn ? (
+                <div className="flex items-center gap-4">
+                  {ProfileData ? (
                     <button
                       className="font-medium text-sm px-3.5 py-2 flex items-center rounded-md gap-2 transition-colors duration-200 font-jakarta "
                       onClick={() => navigate("/profile")}
                     >
-                      {LoggedIn ? (
+                      {ProfileData ? (
                         <Link to={"/profile"}>
                           <img
-                            src={LoginDetail.photoURL}
+                            src={ProfileData?.Profileimage}
                             alt=""
                             height={30}
                             width={30}
@@ -352,7 +387,7 @@ const Navbar = () => {
                       <span className="flex gap-1">
                         <div className="">Hi,</div>
                         <div className="">
-                          {LoginDetail.name ? LoginDetail.name : "user"}
+                          {ProfileData.Name ? ProfileData.Name : "user"}
                         </div>
                       </span>
                     </button>
@@ -365,7 +400,7 @@ const Navbar = () => {
                       <span>{t("navbar.login/register")}</span>
                     </button>
                   )}
-                  {LoggedIn ? (
+                  {ProfileData ? (
                     <div className="cursor-pointer flex items-center gap-6">
                       <div className="">
                         <Bell className="h-5 w-5" />
@@ -383,14 +418,14 @@ const Navbar = () => {
                     />
                   )}
                   <TranslatorSwitch />
-                </div> */}
+                </div>
               </div>
             </div>
-            {/* <div className="flex gap-[12px] lg:hidden cursor-pointer items-center">
-              {LoggedIn ? (
+            <div className="flex gap-[12px] lg:hidden cursor-pointer items-center">
+              {ProfileData ? (
                 <Link to={"/profile"} onClick={() => setIsMenuOpen(false)}>
                   <img
-                    src={LoginDetail.photoURL}
+                    src={ProfileData?.Profileimage}
                     alt=""
                     height={30}
                     width={30}
@@ -405,7 +440,7 @@ const Navbar = () => {
                   </div>
                 </Link>
               )}
-              {LoggedIn && (
+              {ProfileData && (
                 <div className="">
                   <Bell className="h-5 w-5" />
                 </div>
@@ -421,16 +456,15 @@ const Navbar = () => {
                   <AlignLeft className="h-5 w-5" />
                 )}
               </button>
-            </div> */}
+            </div>
           </div>
         </div>
       )}
 
       {/* Mobile sidebar */}
       <div
-        className={`h-screen transition-all duration-300 origin-right fixed lg:hidden right-0 top-0 z-[999] overflow-hidden ${
-          isMenuOpen ? "w-full" : "w-0"
-        }`}
+        className={`h-screen transition-all duration-300 origin-right fixed lg:hidden right-0 top-0 z-[999] overflow-hidden ${isMenuOpen ? "w-full" : "w-0"
+          }`}
       >
         <div className="h-full bg-black/60 bg-opacity-50 backdrop-blur-md flex flex-col items-center">
           <div className="w-full z-50 top-0 px-10 xl:px-40 font-sans h-20 flex justify-between items-center text-white">
@@ -441,10 +475,10 @@ const Navbar = () => {
               onClick={() => navigate("/")}
             />
             <div className="flex gap-[12px] lg:hidden cursor-pointer">
-              {/* {LoggedIn ? (
+              {ProfileData ? (
                 <Link to={"/profile"} onClick={() => setIsMenuOpen(false)}>
                   <img
-                    src={LoginDetail.photoURL}
+                    src={ProfileData?.Profileimage}
                     alt=""
                     height={30}
                     width={30}
@@ -458,7 +492,7 @@ const Navbar = () => {
                     <span>{t("navbar.signin")}</span>
                   </div>
                 </Link>
-              )} */}
+              )}
               <button
                 className=""
                 onClick={() => setIsMenuOpen((prev) => !prev)}

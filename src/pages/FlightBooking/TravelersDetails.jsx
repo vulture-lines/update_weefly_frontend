@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router";
-
+import Cookies from "js-cookie";
+import { decryptPayload } from "../../utils/Payload";
+import { HandleGoogleLogin } from "../../features/firebase";
 // Country data with flags, names, and codes
 const countries = [
+  { code: "CV", name: "Cape Verde", dialCode: "00238", flag: "🇨🇻" },
   { code: "AD", name: "Andorra", dialCode: "00376", flag: "🇦🇩" },
   { code: "AE", name: "United Arab Emirates", dialCode: "00971", flag: "🇦🇪" },
   { code: "AF", name: "Afghanistan", dialCode: "0093", flag: "🇦🇫" },
@@ -65,7 +68,7 @@ const countries = [
   { code: "CO", name: "Colombia", dialCode: "0057", flag: "🇨🇴" },
   { code: "CR", name: "Costa Rica", dialCode: "00506", flag: "🇨🇷" },
   { code: "CU", name: "Cuba", dialCode: "0053", flag: "🇨🇺" },
-  { code: "CV", name: "Cape Verde", dialCode: "00238", flag: "🇨🇻" },
+
   { code: "CW", name: "Curaçao", dialCode: "00599", flag: "🇨🇼" },
   { code: "CX", name: "Christmas Island", dialCode: "0061", flag: "🇨🇽" },
   { code: "CY", name: "Cyprus", dialCode: "00357", flag: "🇨🇾" },
@@ -439,6 +442,17 @@ function TravelersDetails({ country = "" }) {
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isCheckingUser, setIsCheckingUser] = useState(false);
+  const [showLoginGuestPopup, setShowLoginGuestPopup] = useState(false);
+  const [showLoginForm, setShowLoginForm] = useState(false);
+
+  const [loginError, setLoginError] = useState("");
+
+  const [showSignUpForm, setShowSignUpForm] = useState(false);
+  // Add these new state variables
+
+  const [signUpError, setSignUpError] = useState("");
 
   // Supported Card list
   const supportedCardlist = location.state.SupportedCardList;
@@ -518,6 +532,286 @@ function TravelersDetails({ country = "" }) {
   const [sameAsContact, setSameAsContact] = useState(false);
   const [showValidationPopup, setShowValidationPopup] = useState(false);
   const [validationErrors, setValidationErrors] = useState([]);
+  const TRANSACTION_API_URL = import.meta.env.VITE_TRANSACTION_URL;
+  const cardTypes = location.state.SupportedCardList.CardType;
+  const cardtoken = Cookies.get("token");
+
+  console.log("tfpay", location.state.TFPay);
+  useEffect(() => {
+    if (!location.state.TFPay) {
+      const getCard = async (cardtype) => {
+        try {
+          const res = await fetch(
+            `${TRANSACTION_API_URL}/getcard/${cardtype}`,
+            {
+              method: "GET",
+              headers: {
+                Authorization: `Bearer ${cardtoken}`,
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+
+          const data = await res.json();
+          const cardDetail = decryptPayload(data.payload);
+          console.log(cardDetail);
+          setBillingDetails((prev) => ({
+            ...prev,
+            CreditCard: {
+              ...prev.CreditCard,
+              Number: cardDetail.Cardnumber,
+              SecurityCode: cardDetail.Cardsecuritycode,
+              ExpiryDate: cardDetail.Cardexpirydate,
+              StartDate: cardDetail.Cardstartdate,
+              CardType: cardDetail.Cardtype,
+              IssueNumber: cardDetail.Cardissuenumber,
+            },
+          }));
+        } catch (error) {
+          console.error(`Failed to fetch card for ${cardtype}:`, error);
+        }
+      };
+
+      // Loop through the array and use switch for each card type
+      cardTypes.forEach((type) => {
+        switch (type) {
+          case "Visa Credit":
+            getCard("Visa Credit");
+            break;
+          case "Visa Delta":
+            getCard("Visa Delta");
+            break;
+          case "Visa Debit":
+            getCard("Visa Debit");
+            break;
+          case "Visa Electron":
+            getCard("Visa Electron");
+            break;
+          case "MasterCard":
+            getCard("MasterCard");
+            break;
+          case "American Express":
+            getCard("American Express");
+            break;
+          case "Air Plus":
+            getCard("Air Plus");
+            break;
+          case "Diners Club":
+            getCard("Diners Club");
+            break;
+          case "Connect":
+            getCard("Connect");
+            break;
+          case "EuroCard":
+            getCard("EuroCard");
+            break;
+          case "Discover":
+            getCard("Discover");
+            break;
+          case "Maestro":
+            getCard("Maestro");
+            break;
+          case "Carte Bleue":
+            getCard("Carte Bleue");
+            break;
+          default:
+            console.error("Unsupported card type:", type);
+        }
+      });
+    } else {
+      setBillingDetails((prev) => {
+        const updated = { ...prev };
+        delete updated.CreditCard;
+        return updated;
+      });
+    }
+  }, [location.state.TFPay]);
+
+  const USER_API_URL =
+    import.meta.env.VITE_USER_SERVICE_URL || "http://localhost:3000/userapi";
+  const fetchUserProfile = async () => {
+    try {
+      const response = await fetch(`${USER_API_URL}/getuserprofile`, {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch profile: ${response.status} ${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+      console.log(data);
+      const Phonenumber = data.Mobilenumber.split("-");
+      console.log("ph", Phonenumber);
+      const Nameparts = data.Name.split(" ");
+      console.log("np", Nameparts);
+      if (Nameparts.length >= 4) {
+        setBillingDetails((prevDetails) => ({
+          ...prevDetails,
+          Name: {
+            Title:
+              Nameparts[0] !== undefined
+                ? Nameparts[0].replace(".", "")
+                : prevDetails.Name?.Title,
+            NamePartList: {
+              NamePart: [
+                Nameparts[1] !== undefined
+                  ? Nameparts[1]
+                  : prevDetails.Name?.NamePartList?.NamePart[0],
+                Nameparts[2] !== undefined
+                  ? Nameparts[2]
+                  : prevDetails.Name?.NamePartList?.NamePart[1],
+                Nameparts[3] !== undefined
+                  ? Nameparts[3]
+                  : prevDetails.Name?.NamePartList?.NamePart[2],
+              ],
+            },
+          },
+        }));
+
+        setContactDetails((prevDetails) => ({
+          ...prevDetails,
+          Name: {
+            Title:
+              Nameparts[0] !== undefined
+                ? Nameparts[0].replace(".", "")
+                : prevDetails.Name?.Title,
+            NamePartList: {
+              NamePart: [
+                Nameparts[1] !== undefined
+                  ? Nameparts[1]
+                  : prevDetails.Name?.NamePartList?.NamePart[0],
+                Nameparts[2] !== undefined
+                  ? Nameparts[2]
+                  : prevDetails.Name?.NamePartList?.NamePart[1],
+                Nameparts[3] !== undefined
+                  ? Nameparts[3]
+                  : prevDetails.Name?.NamePartList?.NamePart[2],
+              ],
+            },
+          },
+        }));
+      } else {
+        setBillingDetails((prevDetails) => ({
+          ...prevDetails,
+          Name: {
+            NamePartList: {
+              NamePart: [
+                Nameparts[0] !== undefined
+                  ? Nameparts[0]
+                  : prevDetails.Name?.NamePartList?.NamePart[0],
+                Nameparts[1] !== undefined
+                  ? Nameparts[1]
+                  : prevDetails.Name?.NamePartList?.NamePart[1],
+                Nameparts[2] !== undefined
+                  ? Nameparts[2]
+                  : prevDetails.Name?.NamePartList?.NamePart[2],
+              ],
+            },
+          },
+        }));
+
+        setContactDetails((prevDetails) => ({
+          ...prevDetails,
+          Name: {
+            NamePartList: {
+              NamePart: [
+                Nameparts[0] !== undefined
+                  ? Nameparts[0]
+                  : prevDetails.Name?.NamePartList?.NamePart[0],
+                Nameparts[1] !== undefined
+                  ? Nameparts[1]
+                  : prevDetails.Name?.NamePartList?.NamePart[1],
+                Nameparts[2] !== undefined
+                  ? Nameparts[2]
+                  : prevDetails.Name?.NamePartList?.NamePart[2],
+              ],
+            },
+          },
+        }));
+      }
+
+      setContactDetails((prevDetails) => ({
+        ...prevDetails,
+        Email: data.Emailaddress,
+        MobilePhone:
+          data.Mobilenumber === "Googleauth" || !data.Mobilenumber
+            ? prevDetails.MobilePhone
+            : {
+                ...prevDetails.MobilePhone,
+                Number: Phonenumber[1] || Phonenumber[0],
+                InternationalCode: `00${Phonenumber[0]}`,
+              },
+      }));
+      if (data.ContactAddress) {
+        setContactDetails((prevDetails) => ({
+          ...prevDetails,
+          Address: {
+            Company: data.ContactAddress.Company || data.ContactAddress.company,
+            Flat: data.ContactAddress.Flat || data.ContactAddress.flat,
+            BuildingName:
+              data.ContactAddress.BuildingName ||
+              data.ContactAddress.buildingName,
+            BuildingNumber:
+              data.ContactAddress.BuildingNumber ||
+              data.ContactAddress.buildingNumber,
+            Street: data.ContactAddress.Street || data.ContactAddress.street,
+            Locality:
+              data.ContactAddress.Locality || data.ContactAddress.locality,
+            City: data.ContactAddress.City || data.ContactAddress.city,
+            Province:
+              data.ContactAddress.Province || data.ContactAddress.province,
+            Postcode:
+              data.ContactAddress.Postcode || data.ContactAddress.postcode,
+            CountryCode:
+              data.ContactAddress.CountryCode ||
+              data.ContactAddress.countryCode,
+          },
+        }));
+      }
+
+      if (data.BillingAddress) {
+        setBillingDetails((prevDetails) => ({
+          ...prevDetails,
+          Address: {
+            Company: data.BillingAddress.Company,
+            Flat: data.BillingAddress.Flat,
+            BuildingName: data.BillingAddress.BuildingName,
+            BuildingNumber: data.BillingAddress.BuildingNumber,
+            Street: data.BillingAddress.Street,
+            Locality: data.BillingAddress.Locality,
+            City: data.BillingAddress.City,
+            Province: data.BillingAddress.Province,
+            Postcode: data.BillingAddress.Postcode,
+            CountryCode: data.BillingAddress.CountryCode,
+          },
+        }));
+      }
+
+      return data;
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    const user = Cookies.get("userjwt");
+
+    if (user) {
+      fetchUserProfile();
+    }
+  }, []);
+
+  // empty dependency array = run once after first render
 
   const handleNumericInput = (value, maxLength = null) => {
     // Remove all non-numeric characters
@@ -760,47 +1054,47 @@ function TravelersDetails({ country = "" }) {
       errors.push("Billing Country Code is required");
     }
 
-    // Credit Card validation - ALL fields required
-    if (!billing.CreditCard?.Company?.trim()) {
-      errors.push("Credit Card Company is required");
-    }
+    // // Credit Card validation - ALL fields required
+    // if (!billing.CreditCard?.Company?.trim()) {
+    //   errors.push("Credit Card Company is required");
+    // }
 
-    if (!billing.CreditCard?.Number?.trim()) {
-      errors.push("Credit Card Number is required");
-    }
+    // if (!billing.CreditCard?.Number?.trim()) {
+    //   errors.push("Credit Card Number is required");
+    // }
 
-    if (!billing.CreditCard?.SecurityCode?.trim()) {
-      errors.push("Credit Card Security Code is required");
-    }
+    // if (!billing.CreditCard?.SecurityCode?.trim()) {
+    //   errors.push("Credit Card Security Code is required");
+    // }
 
-    if (!billing.CreditCard?.ExpiryDate?.trim()) {
-      errors.push("Credit Card Expiry Date is required");
-    }
+    // if (!billing.CreditCard?.ExpiryDate?.trim()) {
+    //   errors.push("Credit Card Expiry Date is required");
+    // }
 
-    if (!billing.CreditCard?.StartDate?.trim()) {
-      errors.push("Credit Card Start Date is required");
-    }
+    // if (!billing.CreditCard?.StartDate?.trim()) {
+    //   errors.push("Credit Card Start Date is required");
+    // }
 
-    if (!billing.CreditCard?.CardType?.trim()) {
-      errors.push("Credit Card Type is required");
-    }
+    // if (!billing.CreditCard?.CardType?.trim()) {
+    //   errors.push("Credit Card Type is required");
+    // }
 
-    if (!billing.CreditCard?.IssueNumber?.trim()) {
-      errors.push("Credit Card Issue Number is required");
-    }
+    // if (!billing.CreditCard?.IssueNumber?.trim()) {
+    //   errors.push("Credit Card Issue Number is required");
+    // }
 
-    // Card Name validation
-    if (!billing.CreditCard?.NameOnCard?.Title) {
-      errors.push("Name on Card Title is required");
-    }
+    // // Card Name validation
+    // if (!billing.CreditCard?.NameOnCard?.Title) {
+    //   errors.push("Name on Card Title is required");
+    // }
 
-    if (!billing.CreditCard?.NameOnCard?.NamePartList?.NamePart?.[0]?.trim()) {
-      errors.push("Name on Card First Name is required");
-    }
+    // if (!billing.CreditCard?.NameOnCard?.NamePartList?.NamePart?.[0]?.trim()) {
+    //   errors.push("Name on Card First Name is required");
+    // }
 
-    if (!billing.CreditCard?.NameOnCard?.NamePartList?.NamePart?.[1]?.trim()) {
-      errors.push("Name on Card Last Name is required");
-    }
+    // if (!billing.CreditCard?.NameOnCard?.NamePartList?.NamePart?.[1]?.trim()) {
+    //   errors.push("Name on Card Last Name is required");
+    // }
 
     return errors;
   };
@@ -1005,11 +1299,11 @@ function TravelersDetails({ country = "" }) {
     let ticketYear;
 
     if (tripType === "One Way") {
-      ticketYear = OutwardTicket?.departureDate?.split("-")[0];
+      ticketYear = OutwardTicket?.segments[0].departureDate?.split("-")[0];
     }
 
     if (tripType === "Round Trip") {
-      ticketYear = returnTicket?.departureDate?.split("-")[0];
+      ticketYear = returnTicket?.segments[0].departureDate?.split("-")[0];
     }
 
     if (!ticketYear) {
@@ -1209,7 +1503,7 @@ function TravelersDetails({ country = "" }) {
     } else if (currentStep === totalTravellers + 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      // Final step - prepare data and navigate
+      // Final step - Show popup directly without API call
       const finalData = {
         TravellerList: travellerList,
         ContactDetails: contactDetails,
@@ -1217,72 +1511,308 @@ function TravelersDetails({ country = "" }) {
       };
 
       console.log("Final booking data:", JSON.stringify(finalData, null, 2));
-      // sessionStorage.setItem("travellerDetails", JSON.stringify(finalData));
-      try {
-        const userService = import.meta.env.VITE_USER_SERVICE_URL;
-        const response = await fetch(`${userService}/guestregister`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            payload: contactDetails,
-          }),
-        });
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data);
-          //  Navigate to next page
-          navigate("/booking/SeatSelection", {
-            state: {
-              flight,
-              travellerDetails: finalData,
-              flights: location.state.flights,
-              tripType: location.state.tripType,
-              routingId: location.state.routingId,
-              seatOption: location.state.seatOption,
-              luggageOptions: location.state.luggageOptions,
-              outwardLuggage: location.state.outwardLuggage,
-              returnLuggage: location.state.returnLuggage,
-              // CardCharges
-              CardCharges: location.state.CardCharges,
-              // SupportedCardList
-              SupportedCardList: location.state.SupportedCardList,
-              guestId: data.guestId,
-            },
-          });
-        } else if (response.status === 409) {
-          const data = await response.json();
-          console.log(data);
-          if (data.role.includes("Guest")) {
-            navigate("/booking/SeatSelection", {
-              state: {
-                flight,
-                travellerDetails: finalData,
-                flights: location.state.flights,
-                tripType: location.state.tripType,
-                routingId: location.state.routingId,
-                seatOption: location.state.seatOption,
-                luggageOptions: location.state.luggageOptions,
-                outwardLuggage: location.state.outwardLuggage,
-                returnLuggage: location.state.returnLuggage,
-                // CardCharges
-                CardCharges: location.state.CardCharges,
-                // SupportedCardList
-                SupportedCardList: location.state.SupportedCardList,
-                guestId: data.userId,
-              },
-            });
-          }
-        } else if (response.status === 422) {
-          return console.error("Payload missing");
-        }
-      } catch (error) {
-        console.error("Error registering guest:", error);
+      const user = Cookies.get("userjwt");
+
+      if (user) {
+        handleContinueAsGuest();
+      } else {
+        // Show popup directly
+        setShowLoginGuestPopup(true);
       }
     }
   };
 
+  // Handle Navigation
+  const handleAuthNavigation = () => {
+    setShowLoginGuestPopup(false);
+    // Clear any previous errors
+    setLoginError("");
+    setSignUpError("");
+
+    setShowLoginForm(true);
+  };
+  // Handle Continue as Guest
+  const handleContinueAsGuest = async () => {
+    console.log("Function calls!!");
+    const areAddressesSame =
+      JSON.stringify(contactDetails.Address) ===
+      JSON.stringify(billingDetails.Address);
+    const finalData = {
+      TravellerList: travellerList,
+      ContactDetails: contactDetails,
+      BillingDetails: billingDetails,
+    };
+
+    try {
+      const userService = import.meta.env.VITE_USER_SERVICE_URL;
+      const response = await fetch(`${userService}/guestregister`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          payload: contactDetails,
+          ...(areAddressesSame ? {} : { BillingDetails: billingDetails }),
+        }),
+      });
+      console.log(response);
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log(data);
+        setShowLoginGuestPopup(false);
+        // Navigate to next page
+        navigateToSeatSelection(finalData, data.userId);
+      } else if (response.status === 409) {
+        const data = await response.json();
+        console.log(data);
+        if (data.role.includes("Guest")) {
+          setShowLoginGuestPopup(false);
+          // Navigate to next page
+          navigateToSeatSelection(finalData, data.userId);
+        } else if (data.role.includes("User") || data.role.includes("Agent")) {
+          console.log("Works");
+          setShowLoginGuestPopup(false);
+          // Show notification that user already exists
+          setValidationErrors([
+            "You are an existing customer. Please login to continue with your account benefits and saved preferences.",
+          ]);
+          setShowValidationPopup(true);
+        }
+      } else if (response.status === 422) {
+        console.error("Payload missing");
+        setValidationErrors([
+          "There was an error with your booking data. Please try again.",
+        ]);
+        setShowValidationPopup(true);
+      }
+    } catch (error) {
+      console.error("Error registering guest:", error);
+      setValidationErrors([
+        "Network error. Please check your connection and try again.",
+      ]);
+      setShowValidationPopup(true);
+    }
+  };
+
+  // Handle Login to Continue
+  // const handleLoginToContinue = () => {
+  //   setShowLoginGuestPopup(false);
+
+  //   // Auto-populate email if available
+  //   if (contactDetails.Email) {
+  //     setLoginCredentials((prev) => ({
+  //       ...prev,
+  //       email: contactDetails.Email,
+  //     }));
+  //   }
+
+  //   setShowLoginForm(true);
+  // };
+
+  // Handle Login
+  const handleLogin = async (credentials) => {
+    setLoginError("");
+
+    if (!credentials.email || !credentials.password) {
+      setLoginError("Please enter both email and password");
+      return;
+    }
+
+    try {
+      const userService = import.meta.env.VITE_USER_SERVICE_URL;
+      const response = await fetch(`${userService}/userlogin`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          Emailaddress: credentials.email,
+          Password: credentials.password,
+        }),
+      });
+
+      if (response.status === 200) {
+        setShowLoginForm(false);
+        const finalData = {
+          TravellerList: travellerList,
+          ContactDetails: contactDetails,
+          BillingDetails: billingDetails,
+        };
+        const data = await fetchUserProfile();
+        navigateToSeatSelection(finalData, data._id);
+      } else if (response.status === 401) {
+        setLoginError("Invalid email or password. Please try again.");
+      } else if (response.status === 400) {
+        setLoginError(
+          "You are not a registered user. Please sign up to continue."
+        );
+      } else {
+        setLoginError("Login failed. Please try again.");
+      }
+    } catch (error) {
+      console.error(error);
+
+      setLoginError(
+        "Network error. Please check your connection and try again."
+      );
+    }
+  };
+
+  // ADD this missing function (you have all the others):
+  const handleGoogleLogin = async () => {
+    const userData = await HandleGoogleLogin();
+    console.log(userData);
+    let credentials = {
+      email: "",
+      password: "Googleauth",
+    };
+    credentials.email = userData.email;
+    handleLogin(credentials);
+  };
+
+  // Add new function to handle login redirect from signup:
+  const handleLoginRedirect = () => {
+    setShowSignUpForm(false);
+    setSignUpError("");
+    setShowLoginForm(true);
+  };
+
+  const handleSignUp = async (signUpData) => {
+    setSignUpError("");
+    if (
+      !signUpData.name ||
+      !signUpData.phone ||
+      !signUpData.email ||
+      !signUpData.password
+    ) {
+      setSignUpError("Please fill in all required fields");
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(signUpData.email)) {
+      setSignUpError("Please enter a valid email address");
+      return;
+    }
+
+    const finalData = {
+      TravellerList: travellerList,
+      ContactDetails: contactDetails,
+      BillingDetails: billingDetails,
+    };
+
+    let finaldata = {
+      flight: location.state.flights,
+      travellerDetails: finalData,
+      flights: location.state.flights,
+      tripType: location.state.tripType,
+      routingId: location.state.routingId,
+      seatOption: location.state.seatOption,
+      luggageOptions: location.state.luggageOptions,
+      outwardLuggage: location.state.outwardLuggage,
+      returnLuggage: location.state.returnLuggage,
+      CardCharges: location.state.CardCharges,
+      SupportedCardList: location.state.SupportedCardList,
+    };
+    let payload = {
+      Emailaddress: signUpData.email,
+      Name: signUpData.name,
+      Mobilenumber: signUpData.phone,
+      Password: signUpData.password,
+      finaldata,
+    };
+    if (signUpData.password !== "Googleauth") {
+      payload = {
+        email: signUpData.email,
+        name: signUpData.name,
+        phone: signUpData.phone,
+        Password: signUpData.password,
+        finaldata,
+      };
+    }
+    try {
+      const userService = import.meta.env.VITE_USER_SERVICE_URL;
+      const response = await fetch(`${userService}/userregister`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({
+          payload,
+        }),
+      });
+      if (response.status === 200) {
+        console.log("Works");
+        // setShowSignUpForm(false);
+        setIsVerifyingOtp(true);
+      } else if (response.status === 201) {
+        console.log(response);
+        setShowSignUpForm(false);
+        let userId = "undefined";
+        const finalData = {
+          TravellerList: travellerList,
+          ContactDetails: contactDetails,
+          BillingDetails: billingDetails,
+        };
+        navigateToSeatSelection(finalData, userId);
+      } else if (response.status === 409) {
+        setSignUpError(
+          "An account with this email already exists. Please login instead."
+        );
+      } else {
+        setSignUpError("Registration failed. Please try again.");
+      }
+    } catch (error) {
+      setSignUpError(
+        "Network error. Please check your connection and try again."
+      );
+    }
+  };
+
+  const handleSignUpRedirect = () => {
+    setShowLoginForm(false);
+    setLoginError("");
+    setShowSignUpForm(true);
+  };
+  // Add new function to handle Google signup:
+  const handleGoogleSignUp = async () => {
+    const userData = await HandleGoogleLogin();
+
+    if (userData) {
+      const googleFormData = {
+        name: userData.name,
+        phone: "Googleauth",
+        email: userData.email,
+        password: "Googleauth",
+      };
+      await handleSignUp(googleFormData);
+    }
+  };
+
+  // Navigate to Seat Selection
+  const navigateToSeatSelection = (finalData, userId) => {
+    navigate("/booking/SeatSelection", {
+      state: {
+        flight: location.state.flights,
+        travellerDetails: finalData,
+        flights: location.state.flights,
+        tripType: location.state.tripType,
+        routingId: location.state.routingId,
+        seatOption: location.state.seatOption,
+        luggageOptions: location.state.luggageOptions,
+        outwardLuggage: location.state.outwardLuggage,
+        returnLuggage: location.state.returnLuggage,
+        CardCharges: location.state.CardCharges,
+        SupportedCardList: location.state.SupportedCardList,
+        guestId: userId || "undefined",
+        TFPay: location.state.TFPay,
+      },
+    });
+  };
   const handleBack = () => {
     if (currentStep > 1) {
       if (currentStep <= totalTravellers) {
@@ -1307,7 +1837,559 @@ function TravelersDetails({ country = "" }) {
 
   const stepInfo = getStepInfo();
   const currentTraveller = getCurrentTraveller();
-  // Replace your ValidationPopup component with this professional design:
+
+  // Updated LoginGuestPopup
+  const LoginGuestPopup = ({
+    isOpen,
+    onClose,
+    onContinueAsGuest,
+    onAuthNavigation,
+    isExistingUser,
+    isCheckingUser,
+    userEmail,
+  }) => {
+    if (!isOpen) return null;
+
+    return (
+      <>
+        {/* Premium Backdrop */}
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+          }}
+          onClick={onClose}
+        >
+          {/* Premium Modal */}
+          <div
+            className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl transform transition-all duration-300"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              animation:
+                "premiumSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+              boxShadow:
+                "0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <style jsx>{`
+              @keyframes premiumSlideIn {
+                from {
+                  opacity: 0;
+                  transform: translateY(-20px) scale(0.95);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0) scale(1);
+                }
+              }
+            `}</style>
+
+            {/*  Header */}
+            <div className="relative overflow-hidden rounded-t-2xl">
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-orange-500 to-orange-600"></div>
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+              <div className="relative px-6 py-5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30 shadow-lg">
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2.5}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white">
+                        Complete Your Booking
+                      </h3>
+                      <p className="text-orange-100 text-sm mt-1">
+                        {isCheckingUser
+                          ? "Verifying your account status..."
+                          : "Choose your preferred booking method"}
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={onClose}
+                    className="w-9 h-9 rounded-lg bg-white/20 hover:bg-white/30 backdrop-blur-sm flex items-center justify-center text-white/80 hover:text-white transition-all duration-200 border border-white/20"
+                  >
+                    <svg
+                      className="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/*  Content */}
+            <div className="px-6 py-6">
+              {isCheckingUser ? (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <div className="relative">
+                    <div className="w-12 h-12 border-3 border-orange-100 rounded-full"></div>
+                    <div className="absolute top-0 left-0 w-12 h-12 border-3 border-orange-500 rounded-full border-t-transparent animate-spin"></div>
+                  </div>
+                  <div className="mt-4 text-center">
+                    <h4 className="font-semibold text-gray-900">
+                      Verifying Account
+                    </h4>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Please wait a moment...
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {/*  Guest Option */}
+                  <button
+                    onClick={onContinueAsGuest}
+                    className="w-full group relative overflow-hidden rounded-xl border-2 border-gray-200 hover:border-orange-300 transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5"
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-r from-gray-50 to-white group-hover:from-orange-50 group-hover:to-orange-100 transition-all duration-300"></div>
+                    <div className="relative p-5">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-11 h-11 bg-gray-100 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-orange-500 group-hover:shadow-md">
+                          <svg
+                            className="w-5 h-5 text-gray-600 group-hover:text-white transition-colors duration-300"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                        </div>
+                        <div className="flex-1 text-left">
+                          <h4 className="font-bold text-gray-900 group-hover:text-orange-700 transition-colors duration-300">
+                            Continue as Guest
+                          </h4>
+                          <p className="text-gray-600 text-sm mt-1.5 leading-relaxed">
+                            Quick and easy booking without creating an account.
+                            Perfect for one-time bookings.
+                          </p>
+                          <div className="flex items-center mt-3 text-xs text-gray-500">
+                            <div className="flex items-center mr-4">
+                              <svg
+                                className="w-3 h-3 mr-1 text-green-500"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              No registration
+                            </div>
+                            <div className="flex items-center">
+                              <svg
+                                className="w-3 h-3 mr-1 text-green-500"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              Instant booking
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+
+                  {/* Login Option - Changed from Auth to Login */}
+                  <button
+                    onClick={onAuthNavigation}
+                    className="w-full group relative overflow-hidden rounded-xl border-2 border-orange-300 bg-gradient-to-r from-orange-50 to-orange-100 hover:from-orange-500 hover:to-orange-600 transition-all duration-300 hover:shadow-xl hover:-translate-y-0.5"
+                  >
+                    <div className="relative p-5">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-11 h-11 bg-orange-500 rounded-xl flex items-center justify-center transition-all duration-300 group-hover:bg-white group-hover:shadow-md">
+                          <svg
+                            className="w-5 h-5 text-white group-hover:text-orange-500 transition-colors duration-300"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            strokeWidth={2}
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z"
+                            />
+                          </svg>
+                        </div>
+                        <div className="flex-1 text-left">
+                          <h4 className="font-bold text-orange-800 group-hover:text-white transition-colors duration-300">
+                            Login to Continue
+                          </h4>
+                          <p className="text-orange-700 group-hover:text-orange-100 text-sm mt-1.5 leading-relaxed transition-colors duration-300">
+                            Access your account to enjoy saved preferences,
+                            booking history, and exclusive member benefits.
+                          </p>
+                          <div className="flex items-center mt-3 text-xs text-orange-600 group-hover:text-orange-200 transition-colors duration-300">
+                            <div className="flex items-center mr-4">
+                              <svg
+                                className="w-3 h-3 mr-1"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              Saved data
+                            </div>
+                            <div className="flex items-center">
+                              <svg
+                                className="w-3 h-3 mr-1"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              Quick booking
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                </div>
+              )}
+            </div>
+
+            <div className="px-6 py-4 bg-gray-50 rounded-b-2xl border-t border-gray-100">
+              <div className="flex items-center justify-center space-x-2 text-xs text-gray-500">
+                <svg
+                  className="w-4 h-4 text-green-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
+                </svg>
+                <span>
+                  Your data is secure and encrypted with industry-standard
+                  protection
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  // Fixed LoginFormPopup Component with local state management and cursor pointers
+  const LoginFormPopup = ({
+    isOpen,
+    onClose,
+    onLogin,
+    onGoogleLogin,
+    onSignUpRedirect,
+    initialEmail = "",
+    error,
+  }) => {
+    // LOCAL STATE - this prevents re-renders from parent
+    const [credentials, setCredentials] = useState({
+      email: initialEmail,
+      password: "",
+    });
+
+    // Update local state when popup opens with new initial email
+    useEffect(() => {
+      if (isOpen && initialEmail !== credentials.email) {
+        setCredentials((prev) => ({
+          ...prev,
+          email: initialEmail,
+        }));
+      }
+    }, [isOpen, initialEmail]);
+
+    if (!isOpen) return null;
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      onLogin(credentials);
+    };
+
+    const handleEmailChange = (e) => {
+      setCredentials((prev) => ({
+        ...prev,
+        email: e.target.value,
+      }));
+    };
+
+    const handlePasswordChange = (e) => {
+      setCredentials((prev) => ({
+        ...prev,
+        password: e.target.value,
+      }));
+    };
+
+    // Check if error indicates user not found
+    const isUserNotFoundError =
+      error &&
+      (error.includes("Account not found") ||
+        error.includes("not found") ||
+        error.includes("not a registered user"));
+
+    return (
+      <>
+        {/* Professional Backdrop */}
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-300 cursor-pointer"
+          style={{
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            backdropFilter: "blur(8px)",
+            WebkitBackdropFilter: "blur(8px)",
+          }}
+          onClick={onClose}
+        >
+          {/* Modal Container */}
+          <div
+            className="relative w-full max-w-md transform transition-all duration-300 ease-out cursor-default"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              animation: "modalSlideIn 0.3s ease-out",
+            }}
+          >
+            <style jsx>{`
+              @keyframes modalSlideIn {
+                from {
+                  opacity: 0;
+                  transform: translateY(-20px) scale(0.95);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0) scale(1);
+                }
+              }
+            `}</style>
+
+            {/* Professional Card */}
+            <div className="bg-white rounded-2xl overflow-hidden shadow-2xl border border-gray-100">
+              {/* Header */}
+              <div className="px-6 py-5 bg-gradient-to-r from-orange-50 to-orange-100 border-b border-orange-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center shadow-lg">
+                      <svg
+                        className="w-6 h-6 text-white"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2}
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-900">
+                        Login to Your Account
+                      </h3>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Enter your credentials to continue
+                      </p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={onClose}
+                    className="w-10 h-10 rounded-xl bg-white hover:bg-gray-50 flex items-center justify-center text-gray-400 hover:text-gray-600 transition-all duration-200 shadow-sm cursor-pointer"
+                  >
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Content */}
+              <div className="px-6 py-8">
+                {error && (
+                  <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                    <div className="flex items-start space-x-3">
+                      <svg
+                        className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-red-800 font-medium">
+                          {error}
+                        </p>
+                        {isUserNotFoundError && (
+                          <button
+                            onClick={() => onSignUpRedirect(credentials.email)}
+                            className="mt-3 text-sm font-semibold text-orange-600 hover:text-orange-700 underline transition-colors duration-200 cursor-pointer"
+                          >
+                            Click here to Sign Up →
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={credentials.email}
+                      onChange={handleEmailChange}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-gray-50 focus:bg-white cursor-text"
+                      placeholder="Enter your email"
+                      autoComplete="email"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-bold text-gray-700 mb-2">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      value={credentials.password}
+                      onChange={handlePasswordChange}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-gray-50 focus:bg-white cursor-text"
+                      placeholder="Enter your password"
+                      autoComplete="current-password"
+                      required
+                    />
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 cursor-pointer"
+                  >
+                    Login to Account
+                  </button>
+                </form>
+
+                <div className="mt-6">
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t-2 border-gray-200" />
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-4 bg-white text-gray-500 font-medium">
+                        Or continue with
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={onGoogleLogin}
+                    className="w-full mt-4 bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700 font-bold py-4 px-6 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-200 flex items-center justify-center space-x-3 shadow-md hover:shadow-lg cursor-pointer"
+                  >
+                    <svg className="w-6 h-6" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                      />
+                    </svg>
+                    <span>Continue with Google</span>
+                  </button>
+
+                  {/* Don't have account link */}
+                  <div className="text-center pt-4 border-t border-gray-100 mt-6">
+                    <p className="text-sm text-gray-600">
+                      Don't have an account?{" "}
+                      <button
+                        type="button"
+                        onClick={() => onSignUpRedirect(credentials.email)}
+                        className="font-semibold text-orange-600 hover:text-orange-700 transition-colors duration-200 cursor-pointer"
+                      >
+                        Sign up here
+                      </button>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  };
 
   const ValidationPopup = ({ isOpen, errors, onClose }) => {
     if (!isOpen) return null;
@@ -1322,7 +2404,6 @@ function TravelersDetails({ country = "" }) {
             backdropFilter: "blur(16px) saturate(180%)",
             WebkitBackdropFilter: "blur(16px) saturate(180%)",
           }}
-          onClick={onClose}
         >
           {/* Professional Modal Container */}
           <div
@@ -2374,15 +3455,17 @@ function TravelersDetails({ country = "" }) {
                   <div className="text-center">
                     <p className="text-[20px] font-bold font-jakarta">
                       {/* {flight.departureTime} */}
-                      {OutwardTicket.departureTime}
+                      {OutwardTicket.segments[0].departureTime}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {OutwardTicket.departureCity}
+                      {OutwardTicket.segments[0].departureCity}
                     </p>
                   </div>
                   <div className="flex flex-col items-center relative">
                     <p className="text-xs text-gray-500 mb-[2px]">
-                      {OutwardTicket.duration}
+                      {parseInt(OutwardTicket.segments[0].duration) +
+                        parseInt(OutwardTicket?.segments[1]?.duration || 0) +
+                        "hr"}
                     </p>
                     <div className="flex items-center justify-center">
                       <span className="w-[6px] h-[6px] bg-gray-300 rounded-full" />
@@ -2392,16 +3475,20 @@ function TravelersDetails({ country = "" }) {
                       <span className="w-[6px] h-[6px] bg-gray-300 rounded-full" />
                     </div>
                     <div className="mt-[6px] bg-green-600 text-white text-xs px-2 py-[2px] rounded">
-                      {OutwardTicket.class}
+                      {OutwardTicket.segments[0].class}
                     </div>
                   </div>
                   <div className="text-center">
                     <p className="text-[20px] font-bold font-jakarta">
                       {/* {flight.arrivalTime} */}
-                      {OutwardTicket?.arrivalTime}
+                      {OutwardTicket?.segments[1]
+                        ? OutwardTicket?.segments[1].arrivalTime
+                        : OutwardTicket?.segments[0].arrivalTime}
                     </p>
                     <p className="text-xs text-gray-500 mt-1">
-                      {OutwardTicket.arrivalCity}
+                      {OutwardTicket?.segments[1]
+                        ? OutwardTicket.segments[1].arrivalCity
+                        : OutwardTicket?.segments[0].arrivalCity}
                     </p>
                   </div>
                 </div>
@@ -2412,7 +3499,7 @@ function TravelersDetails({ country = "" }) {
                       {t("booking-details.departure")}
                     </p>
                     <p className="text-xs text-gray-500 mt-[2px]">
-                      {OutwardTicket?.departureDate.split("-")[0]}
+                      {OutwardTicket?.segments[0].departureDate.split("-")[0]}
                     </p>
                   </div>
                   <div className="text-left w-1/2 pl-4">
@@ -2420,7 +3507,7 @@ function TravelersDetails({ country = "" }) {
                       {t("booking-details.landing")}
                     </p>
                     <p className="text-xs text-gray-500 mt-[2px] ml-5">
-                      {OutwardTicket?.arrivalDate.split("-")[0]}
+                      {OutwardTicket?.segments[0].arrivalDate.split("-")[0]}
                     </p>
                   </div>
                 </div>
@@ -2444,15 +3531,17 @@ function TravelersDetails({ country = "" }) {
                     <div className="text-center">
                       <p className="text-[20px] font-bold font-jakarta">
                         {/* {flight.departureTime} */}
-                        {OutwardTicket?.departureTime}
+                        {OutwardTicket?.segments[0].departureTime}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        {OutwardTicket.departureCity}
+                        {OutwardTicket.segments[0].departureCity}
                       </p>
                     </div>
                     <div className="flex flex-col items-center relative">
                       <p className="text-xs text-gray-500 mb-[2px]">
-                        {OutwardTicket.duration}
+                        {parseInt(OutwardTicket.segments[0].duration) +
+                          parseInt(OutwardTicket?.segments[1]?.duration || 0) +
+                          "hr"}
                       </p>
                       <div className="flex items-center justify-center">
                         <span className="w-[6px] h-[6px] bg-gray-300 rounded-full" />
@@ -2462,16 +3551,20 @@ function TravelersDetails({ country = "" }) {
                         <span className="w-[6px] h-[6px] bg-gray-300 rounded-full" />
                       </div>
                       <div className="mt-[6px] bg-green-600 text-white text-xs px-2 py-[2px] rounded">
-                        {OutwardTicket.class}
+                        {OutwardTicket.segments[0].class}
                       </div>
                     </div>
                     <div className="text-center">
                       <p className="text-[20px] font-bold font-jakarta">
                         {/* {flight.arrivalTime} */}
-                        {OutwardTicket?.arrivalTime}
+                        {OutwardTicket?.segments[1]
+                          ? OutwardTicket?.segments[1].arrivalTime
+                          : OutwardTicket?.segments[0].arrivalTime}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        {OutwardTicket.arrivalCity}
+                        {OutwardTicket?.segments[1]
+                          ? OutwardTicket.segments[1].arrivalCity
+                          : OutwardTicket?.segments[0].arrivalCity}
                       </p>
                     </div>
                   </div>
@@ -2482,7 +3575,12 @@ function TravelersDetails({ country = "" }) {
                         {t("booking-details.departure")}
                       </p>
                       <p className="text-xs text-gray-500 mt-[2px]">
-                        {OutwardTicket?.departureDate.split("-")[0]}
+                        {
+                          (
+                            OutwardTicket?.segments?.[1]?.departureDate ??
+                            OutwardTicket?.segments?.[0]?.departureDate
+                          )?.split("-")[0]
+                        }
                       </p>
                     </div>
                     <div className="text-left w-1/2 pl-4">
@@ -2490,7 +3588,12 @@ function TravelersDetails({ country = "" }) {
                         {t("booking-details.landing")}
                       </p>
                       <p className="text-xs text-gray-500 mt-[2px] ml-5">
-                        {OutwardTicket?.arrivalDate.split("-")[0]}
+                        {
+                          (
+                            OutwardTicket?.segments?.[1]?.arrivalDate ??
+                            OutwardTicket?.segments?.[0]?.arrivalDate
+                          )?.split("-")[0]
+                        }
                       </p>
                     </div>
                   </div>
@@ -2499,15 +3602,17 @@ function TravelersDetails({ country = "" }) {
                     <div className="text-center">
                       <p className="text-[20px] font-bold font-jakarta">
                         {/* {flight.departureTime} */}
-                        {returnTicket?.departureTime}
+                        {returnTicket?.segments[0].departureTime}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        {returnTicket.departureCity}
+                        {returnTicket.segments[0].departureCity}
                       </p>
                     </div>
                     <div className="flex flex-col items-center relative">
                       <p className="text-xs text-gray-500 mb-[2px]">
-                        {returnTicket.duration}
+                        {parseInt(returnTicket.segments[0].duration) +
+                          parseInt(returnTicket?.segments[1]?.duration || 0) +
+                          "hr"}
                       </p>
                       <div className="flex items-center justify-center">
                         <span className="w-[6px] h-[6px] bg-gray-300 rounded-full" />
@@ -2517,16 +3622,20 @@ function TravelersDetails({ country = "" }) {
                         <span className="w-[6px] h-[6px] bg-gray-300 rounded-full" />
                       </div>
                       <div className="mt-[6px] bg-green-600 text-white text-xs px-2 py-[2px] rounded">
-                        {returnTicket.class}
+                        {returnTicket.segments[0].class}
                       </div>
                     </div>
                     <div className="text-center">
                       <p className="text-[20px] font-bold font-jakarta">
                         {/* {flight.arrivalTime} */}
-                        {returnTicket?.arrivalTime}
+                        {returnTicket.segments[1]
+                          ? returnTicket?.segments[1].arrivalTime
+                          : returnTicket?.segments[0].arrivalTime}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        {returnTicket.arrivalCity}
+                        {returnTicket.segments[1]
+                          ? returnTicket.segments[1].arrivalCity
+                          : returnTicket.segments[0].arrivalCity}
                       </p>
                     </div>
                   </div>
@@ -2537,7 +3646,12 @@ function TravelersDetails({ country = "" }) {
                         {t("booking-details.departure")}
                       </p>
                       <p className="text-xs text-gray-500 mt-[2px]">
-                        {returnTicket?.departureDate.split("-")[0]}
+                        {
+                          (
+                            returnTicket?.segments?.[1]?.departureDate ??
+                            returnTicket?.segments?.[0]?.departureDate
+                          )?.split("-")[0]
+                        }
                       </p>
                     </div>
                     <div className="text-left w-1/2 pl-4">
@@ -2545,7 +3659,12 @@ function TravelersDetails({ country = "" }) {
                         {t("booking-details.landing")}
                       </p>
                       <p className="text-xs text-gray-500 mt-[2px] ml-5">
-                        {returnTicket?.arrivalDate.split("-")[0]}
+                        {
+                          (
+                            returnTicket?.segments?.[1]?.arrivalDate ??
+                            returnTicket?.segments?.[0]?.arrivalDate
+                          )?.split("-")[0]
+                        }
                       </p>
                     </div>
                   </div>
@@ -2573,8 +3692,660 @@ function TravelersDetails({ country = "" }) {
         errors={validationErrors}
         onClose={() => setShowValidationPopup(false)}
       />
+
+      {/* Login/Guest Choice Popup */}
+      <LoginGuestPopup
+        isOpen={showLoginGuestPopup}
+        onClose={() => setShowLoginGuestPopup(false)}
+        onContinueAsGuest={handleContinueAsGuest}
+        onAuthNavigation={handleAuthNavigation}
+        isExistingUser={false} // Always false since we removed the user check
+        isCheckingUser={isCheckingUser}
+        userEmail={null}
+      />
+
+      {/* Login Form Popup */}
+      <LoginFormPopup
+        isOpen={showLoginForm}
+        onClose={() => setShowLoginForm(false)}
+        onLogin={handleLogin}
+        onGoogleLogin={handleGoogleLogin}
+        onSignUpRedirect={handleSignUpRedirect}
+        initialEmail={contactDetails.Email}
+        error={loginError}
+      />
+
+      <SignUpFormPopup
+        isOpen={showSignUpForm}
+        onClose={() => setShowSignUpForm(false)}
+        onSignUp={handleSignUp}
+        onGoogleSignUp={handleGoogleSignUp}
+        onLoginRedirect={handleLoginRedirect}
+        initialEmail={contactDetails.Email}
+        error={signUpError}
+        travellerList={travellerList}
+        contactDetails={contactDetails}
+        billingDetails={billingDetails}
+        onNavigateToSeatSelection={navigateToSeatSelection}
+        isVerifyingOtp={isVerifyingOtp}
+        setIsVerifyingOtp={setIsVerifyingOtp}
+      />
     </div>
   );
 }
 
 export default TravelersDetails;
+
+// Fixed SignUpFormPopup Component with local state management and cursor pointers
+const SignUpFormPopup = ({
+  isOpen,
+  onClose,
+  onSignUp,
+  onGoogleSignUp,
+  onLoginRedirect,
+  initialEmail = "",
+  error,
+  // ✅ ADD these new props
+  travellerList,
+  contactDetails,
+  billingDetails,
+  onNavigateToSeatSelection,
+  isVerifyingOtp,
+  setIsVerifyingOtp,
+}) => {
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [showEmailVerification, setShowEmailVerification] = useState(false);
+  const [otpCode, setOtpCode] = useState(["", "", "", ""]);
+  const [otpError, setOtpError] = useState("");
+
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [signUpUserData, setSignUpUserData] = useState(null);
+
+  // LOCAL STATE - this prevents re-renders from parent
+  const [signUpData, setSignUpData] = useState({
+    name: "",
+    phone: "",
+    email: initialEmail,
+    password: "",
+  });
+
+  // Update local state when popup opens with new initial email
+  useEffect(() => {
+    if (isOpen && initialEmail !== signUpData.email) {
+      setSignUpData((prev) => ({
+        ...prev,
+        email: initialEmail,
+      }));
+    }
+  }, [isOpen, initialEmail]);
+
+  if (!isOpen) return null;
+
+  // ✅ ADD this handleClose function here:
+  const handleClose = () => {
+    // Reset all states when closing
+    setIsLoading(false);
+    setShowEmailVerification(false);
+    setShowSuccessMessage(false);
+    setOtpCode(["", "", "", ""]);
+    setOtpError("");
+    setIsVerifyingOtp(false);
+    setSignUpUserData(null);
+
+    // Call the original onClose
+    onClose();
+  };
+
+  // Function to handle numeric input for phone
+  const handleNumericInput = (value, maxLength = null) => {
+    const numericValue = value.replace(/[^0-9]/g, "");
+    if (maxLength && numericValue.length > maxLength) {
+      return numericValue.slice(0, maxLength);
+    }
+    return numericValue;
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // Start loading
+    setIsLoading(true);
+
+    // Call the signup function passed from parent
+    onSignUp(signUpData);
+
+    // Simulate processing time and then show verification step
+    setTimeout(() => {
+      setShowEmailVerification(true);
+      setIsLoading(false);
+    }, 2000); // Show loader for 2 seconds
+  };
+  const handleBackToSignup = () => {
+    setShowEmailVerification(false);
+  };
+
+  const handleNameChange = (e) => {
+    setSignUpData((prev) => ({ ...prev, name: e.target.value }));
+  };
+
+  const handlePhoneChange = (e) => {
+    const numericValue = handleNumericInput(e.target.value, 15);
+    setSignUpData((prev) => ({ ...prev, phone: numericValue }));
+  };
+
+  const handleEmailChange = (e) => {
+    setSignUpData((prev) => ({ ...prev, email: e.target.value }));
+  };
+
+  const handlePasswordChange = (e) => {
+    setSignUpData((prev) => ({ ...prev, password: e.target.value }));
+  };
+  const handleOtpChange = (index, value) => {
+    if (value.length > 1) return; // Only allow single digit
+
+    const newOtp = [...otpCode];
+    newOtp[index] = value;
+    setOtpCode(newOtp);
+
+    // Auto-focus next input
+    if (value && index < 3) {
+      const nextInput = document.querySelector(
+        `input[name="otp-${index + 1}"]`
+      );
+      if (nextInput) nextInput.focus();
+    }
+  };
+
+  // Handle OTP verification
+  const handleVerifyOtp = async () => {
+    let enteredOtp = otpCode.join("");
+
+    if (enteredOtp.length !== 4) {
+      setOtpError("Please enter all 4 digits");
+      return;
+    };
+    try {
+      const USER_API_URL =
+        import.meta.env.VITE_USER_SERVICE_URL ||
+        "http://localhost:3000/userapi";
+
+      const res = await fetch(`${USER_API_URL}/validateotp`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: signUpData.email,
+          inputOtp: enteredOtp,
+        }),
+      });
+      if (res.ok) {
+        setShowSuccessMessage(true);
+        setIsVerifyingOtp(false);
+        return console.log("Navigation Logic");
+      }
+    } catch (error) {
+      console.error(error);
+      setIsVerifyingOtp(false);
+      setOtpError("Invalid OTP. Please try again.");
+    }
+  };
+  // Handle continue to seat selection
+  // Handle continue to seat selection
+  const handleContinueToSeatSelection = async () => {
+    const finalData = {
+      TravellerList: travellerList,
+      ContactDetails: contactDetails,
+      BillingDetails: billingDetails,
+    };
+
+    // if (!signUpUserData || !signUpUserData.userId) {
+    //   console.error("No user data available");
+    //   handleClose();
+    //   return;
+    // }
+    onNavigateToSeatSelection(finalData, undefined);
+
+    // Close all popups
+    handleClose();
+
+    // Navigate with actual user ID
+    onNavigateToSeatSelection(finalData, signUpUserData.userId); // ✅ This should work now
+  };
+  return (
+    <>
+      {/* Premium Backdrop */}
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 cursor-pointer"
+        style={{
+          backgroundColor: "rgba(0, 0, 0, 0.5)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+        }}
+        onClick={handleClose}
+      >
+        {/* Premium Modal */}
+        <div
+          className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl transform transition-all duration-300 cursor-default"
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            animation: "premiumSlideIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)",
+            boxShadow:
+              "0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 25px rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          <style jsx>{`
+            @keyframes premiumSlideIn {
+              from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+              }
+              to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+              }
+            }
+          `}</style>
+
+          {/* Header */}
+          <div className="relative overflow-hidden rounded-t-2xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-orange-500 to-orange-600"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+            <div className="relative px-6 py-5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center border border-white/30 shadow-lg">
+                    <svg
+                      className="w-6 h-6 text-white"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      strokeWidth={2.5}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM3 19.235v-.07a4.125 4.125 0 118.25 0v.07M16.5 17.25h.007v.008H16.5v-.008z"
+                      />
+                    </svg>
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">
+                      {showEmailVerification
+                        ? "Verify Your Email"
+                        : "Create New Account"}
+                    </h3>
+                    <p className="text-orange-100 text-sm mt-1">
+                      {showEmailVerification
+                        ? "Check your inbox to continue"
+                        : "Join us to enjoy exclusive benefits"}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={handleClose}
+                  className="w-9 h-9 rounded-lg bg-white/20 hover:bg-white/30 backdrop-blur-sm flex items-center justify-center text-white/80 hover:text-white transition-all duration-200 border border-white/20 cursor-pointer"
+                >
+                  <svg
+                    className="w-4 h-4"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="px-6 py-6">
+            {error && (
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl">
+                <div className="flex items-start space-x-3">
+                  <svg
+                    className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-red-800 font-medium">{error}</p>
+                  </div>
+                </div>
+              </div>
+            )}
+            {showEmailVerification ? (
+              // OTP Verification Steps
+              <div className="space-y-4">
+                {!showSuccessMessage ? (
+                  // OTP Input Step
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mx-auto mb-3">
+                        <svg
+                          className="w-6 h-6 text-orange-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                          />
+                        </svg>
+                      </div>
+
+                      <h4 className="text-lg font-semibold text-gray-900 mb-2">
+                        OTP Sent to Your Email
+                      </h4>
+
+                      <p className="text-sm text-gray-600 mb-6">
+                        We've sent a 4-digit verification code to{" "}
+                        <span className="font-semibold text-orange-600">
+                          {signUpData.email}
+                        </span>
+                      </p>
+                    </div>
+
+                    {/* OTP Input Boxes */}
+                    <div className="space-y-4">
+                      <div className="flex justify-center space-x-3">
+                        {[0, 1, 2, 3].map((index) => (
+                          <input
+                            key={index}
+                            name={`otp-${index}`}
+                            type="text"
+                            inputMode="numeric"
+                            maxLength="1"
+                            value={otpCode[index]}
+                            onChange={(e) =>
+                              handleOtpChange(index, e.target.value)
+                            }
+                            onKeyDown={(e) => {
+                              // Handle backspace
+                              if (
+                                e.key === "Backspace" &&
+                                !otpCode[index] &&
+                                index > 0
+                              ) {
+                                const prevInput = document.querySelector(
+                                  `input[name="otp-${index - 1}"]`
+                                );
+                                if (prevInput) prevInput.focus();
+                              }
+                            }}
+                            className="w-12 h-12 text-center text-lg font-bold border-2 border-gray-300 rounded-lg focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-200"
+                            placeholder="0"
+                          />
+                        ))}
+                      </div>
+
+                      {otpError && (
+                        <div className="text-center">
+                          <p className="text-sm text-red-600 font-medium">
+                            {otpError}
+                          </p>
+                        </div>
+                      )}
+
+                      <button
+                        type="button"
+                        onClick={handleVerifyOtp}
+                        className="w-full bg-orange-500 hover:bg-orange-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold py-3 px-4 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 disabled:transform-none flex items-center justify-center"
+                      >
+                        "Verify OTP"
+                      </button>
+
+                      <div className="text-center">
+                        <button
+                          type="button"
+                          onClick={handleBackToSignup}
+                          className="text-sm text-gray-600 hover:text-gray-800 underline"
+                        >
+                          Back to Sign Up
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  // Success Message Step
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg
+                          className="w-8 h-8 text-green-500"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
+                      </div>
+
+                      <h4 className="text-xl font-bold text-gray-900 mb-2">
+                        Account Successfully Created!
+                      </h4>
+
+                      <p className="text-sm text-gray-600 mb-6">
+                        Welcome aboard! Your account has been verified and is
+                        ready to use.
+                      </p>
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={handleContinueToSeatSelection}
+                      className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-green-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    >
+                      Continue to Seat Selection
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              // Original Signup Form
+              <>
+                <form onSubmit={handleSubmit} className="space-y-3">
+                  {/* Full Name and Phone in one row */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Full Name
+                      </label>
+                      <input
+                        type="text"
+                        value={signUpData.name}
+                        onChange={handleNameChange}
+                        className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-gray-50 focus:bg-white text-sm cursor-text"
+                        placeholder="Enter name"
+                        autoComplete="name"
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-bold text-gray-700 mb-1">
+                        Phone
+                      </label>
+                      <input
+                        type="text"
+                        value={signUpData.phone}
+                        onChange={handlePhoneChange}
+                        className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-gray-50 focus:bg-white text-sm cursor-text"
+                        placeholder="Phone number"
+                        inputMode="numeric"
+                        autoComplete="tel"
+                        required
+                        disabled={isLoading}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      value={signUpData.email}
+                      onChange={handleEmailChange}
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-gray-50 focus:bg-white text-sm cursor-text"
+                      placeholder="Enter your email"
+                      autoComplete="email"
+                      required
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-gray-700 mb-1">
+                      Password
+                    </label>
+                    <input
+                      type="password"
+                      value={signUpData.password}
+                      onChange={handlePasswordChange}
+                      className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all duration-200 bg-gray-50 focus:bg-white text-sm cursor-text"
+                      placeholder="Create password"
+                      autoComplete="new-password"
+                      required
+                      disabled={isLoading}
+                    />
+                    <p className="text-xs text-gray-500 mt-0.5">
+                      Min 8 characters
+                    </p>
+                  </div>
+
+                  <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 mt-4 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center min-h-[48px]"
+                  >
+                    {isLoading ? (
+                      <div className="flex flex-col items-center space-y-2">
+                        {/* Grid Loader */}
+                        <div className="grid grid-cols-3 gap-1">
+                          {[...Array(9)].map((_, i) => (
+                            <div
+                              key={i}
+                              className="w-2 h-2 bg-white rounded-sm animate-pulse"
+                              style={{
+                                animationDelay: `${i * 0.1}s`,
+                                animationDuration: "1.2s",
+                              }}
+                            ></div>
+                          ))}
+                        </div>
+                        <span className="text-sm font-medium">
+                          Creating your account...
+                        </span>
+                      </div>
+                    ) : (
+                      "Create Account"
+                    )}
+                  </button>
+                </form>
+
+                <div className="mt-4">
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t-2 border-gray-200" />
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                      <span className="px-4 bg-white text-gray-500 font-medium">
+                        Or continue with
+                      </span>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={onGoogleSignUp}
+                    disabled={isLoading}
+                    className="w-full mt-4 bg-white border-2 border-gray-200 hover:border-orange-300 hover:bg-orange-50 text-gray-700 font-bold py-3 px-4 rounded-xl transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-orange-200 flex items-center justify-center space-x-3 shadow-md hover:shadow-lg cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    <svg className="w-5 h-5" viewBox="0 0 24 24">
+                      <path
+                        fill="#4285F4"
+                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                      />
+                      <path
+                        fill="#34A853"
+                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                      />
+                      <path
+                        fill="#FBBC05"
+                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                      />
+                      <path
+                        fill="#EA4335"
+                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                      />
+                    </svg>
+                    <span>Sign up with Google</span>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* Footer */}
+          <div className="px-6 py-4 bg-gray-50 rounded-b-2xl border-t border-gray-100">
+            <div className="text-center">
+              <p className="text-sm text-gray-600">
+                Already have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => onLoginRedirect(signUpData.email)}
+                  className="font-semibold text-orange-600 hover:text-orange-700 transition-colors duration-200 cursor-pointer"
+                >
+                  Login here
+                </button>
+              </p>
+            </div>
+            <div className="flex items-center justify-center space-x-2 text-xs text-gray-500 mt-2">
+              <svg
+                className="w-4 h-4 text-green-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                />
+              </svg>
+              <span>
+                Your data is secure and encrypted with industry-standard
+                protection
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};

@@ -9,6 +9,7 @@
 	--color-primary: #ee5128;
 }
 
+
 html,
 body {
 	scroll-behavior: smooth;
@@ -16,6 +17,9 @@ body {
 
 input {
 	font-family: inherit;
+}
+button{
+	cursor: pointer;
 }
 
 .no-calendar-icon::-webkit-calendar-picker-indicator {
@@ -112,3 +116,51 @@ s .no-calendar-icon {
 .react-tel-input .selected-flag {
   padding: 0 8px 0 11px;
 } */
+
+
+/* Remove scroll bar arrows for WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar-button {
+    display: none;
+}
+
+/* Or target specific directions */
+::-webkit-scrollbar-button:vertical:start {
+    display: none; /* Remove top arrow */
+}
+
+::-webkit-scrollbar-button:vertical:end {
+    display: none; /* Remove bottom arrow */
+}
+
+::-webkit-scrollbar-button:horizontal:start {
+    display: none; /* Remove left arrow */
+}
+
+::-webkit-scrollbar-button:horizontal:end {
+    display: none; /* Remove right arrow */
+}
+
+
+/* Custom scrollbar without arrows */
+::-webkit-scrollbar {
+    width: 4px; /* Width of vertical scrollbar */
+    height: 4px; /* Height of horizontal scrollbar */
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Remove the arrow buttons */
+::-webkit-scrollbar-button {
+    display: none;
+}

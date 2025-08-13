@@ -60,7 +60,7 @@ export default function ReviewYourBooking() {
   const [listOutwardLuggages, setListOutwardLuggages] = useState([]);
   const [listReturnLuggages, setListReturnLuggages] = useState([]);
   const [PerPassengerPrice, setPerPassengerPrice] = useState([]);
-
+  const [tfpay, settfpay] = useState(false);
   const [SupportedCardList, setSupportedCardList] = useState([]);
   const [CardCharges, setCardCharges] = useState([]);
 
@@ -256,6 +256,7 @@ export default function ReviewYourBooking() {
       let outwardHandLuggageOptions = [];
       let cardCharge = [];
       let perPassengerPrice = [];
+      let TFPay;
       // Safely extract data with proper error checking
       try {
         // Check if requiredParameterList exists and has the expected structure
@@ -282,6 +283,8 @@ export default function ReviewYourBooking() {
           const returnLg = getParamByName("ReturnLuggageOptions"); // optional/hypothetical
           const outwardLgh = getParamByName("OutwardHandLuggageOptions");
           const returnLgh = getParamByName("ReturnHandLuggageOptions");
+          TFPay = getParamByName("UseTFPrepay");
+          
           seatOptions = seat.DisplayText[0];
           if (seat) {
             seatOptions = seat.DisplayText?.[0] || "";
@@ -444,6 +447,10 @@ export default function ReviewYourBooking() {
       setsupportedCards(supportedCardlist);
       setListReturnLuggages(returnLuggage);
       setListOutwardLuggages(outwardLuggage);
+      if (TFPay) {
+        settfpay(true);
+      }
+
       // trigger the navigation
       // navigate("/booking/TravelersDetails", {
       //   state: {
@@ -488,6 +495,7 @@ export default function ReviewYourBooking() {
         cardCharge: cardCharge,
         CardCharges: CardCharges,
         SupportedCardList: SupportedCardList,
+        TFPay: tfpay ? true : false,
       },
     });
   };
@@ -623,11 +631,17 @@ function FlightDetailCard({ title, flight, PerPassengerPrice }) {
 
       <div className="max-w-[636px] font-semibold text-base text-white bg-[#EE5128] rounded-[7px] flex flex-col sm:flex-row items-center justify-between px-[22px] py-[14px] mb-[24px]">
         <p>
-          {flight?.departureCity} - {flight?.arrivalCity} | {flight?.stops}{" "}
-          {t("booking-card.stops")}
+          {flight?.segments[0].departureCity} -{" "}
+          {flight?.segments[1]
+            ? flight?.segments[1].arrivalCity
+            : flight?.segments[0].arrivalCity}{" "}
+          | {flight?.segments[0].stops} {t("booking-card.stops")}
         </p>
         <p>
-          {t("booking-card.duration")} : {flight?.duration}
+          {t("booking-card.duration")} :{" "}
+          {parseInt(flight?.segments[0].duration) +
+            parseInt(flight?.segments[1]?.duration || 0) +
+            "hr"}
         </p>
       </div>
 
@@ -635,21 +649,25 @@ function FlightDetailCard({ title, flight, PerPassengerPrice }) {
         {/* Left: Airline */}
         <div className="flex flex-col items-start gap-2 min-w-[100px]">
           <img
-            src={flight?.logo}
-            alt={`${flight?.airline} logo`}
+            src={flight?.segments[0].logo}
+            alt={`${flight?.segments[0].airline} logo`}
             className="h-[30px] object-contain"
           />
-          <p className="text-gray-500 text-sm">{flight?.flightNumber}</p>
+          {/* <p className="text-gray-500 text-sm">{flight?.segments[0].flightNumber}</p> */}
           <p className="bg-[#008905] text-white text-xs px-2 py-1 rounded">
-            {flight?.class}
+            {flight?.segments[0].class}
           </p>
         </div>
 
         {/* Center: Times and Plane */}
         <div className="flex-1 flex justify-between items-center">
           <div className="text-center min-w-[80px]">
-            <p className="text-[32px] font-bold">{flight?.departureTime}</p>
-            <p className="text-sm text-gray-500">{flight?.departureCity}</p>
+            <p className="text-[32px] font-bold">
+              {flight?.segments[0].departureTime}
+            </p>
+            <p className="text-sm text-gray-500">
+              {flight?.segments[0].departureCity}
+            </p>
           </div>
 
           <div className="flex flex-col items-center gap-2 px-4">
@@ -662,15 +680,28 @@ function FlightDetailCard({ title, flight, PerPassengerPrice }) {
                 className="absolute top-[-12px] left-1/2 transform -translate-x-1/2 w-[24px] h-[24px] bg-white"
               />
             </div>
-            <p className="text-sm text-gray-500">{flight?.duration}</p>
+            <p className="text-sm text-gray-500">
+              {parseInt(flight?.segments[0].duration) +
+                parseInt(flight?.segments[1]?.duration || 0) +
+                "hr"}
+            </p>
             <p className="bg-[#008905] text-white text-xs px-2 py-1 rounded">
               Refundable
             </p>
           </div>
 
           <div className="text-center min-w-[80px]">
-            <p className="text-[32px] font-bold"> {flight?.arrivalTime}</p>
-            <p className="text-sm text-gray-500">{flight?.arrivalCity}</p>
+            <p className="text-[32px] font-bold">
+              {" "}
+              {flight?.segments[1]
+                ? flight?.segments[1].arrivalTime
+                : flight?.segments[0].arrivalTime}
+            </p>
+            <p className="text-sm text-gray-500">
+              {flight?.segments[1]
+                ? flight?.segments[1].arrivalCity
+                : flight?.segments[0].arrivalCity}
+            </p>
           </div>
 
           <div className="">
@@ -739,8 +770,11 @@ function FlightPriceCard({ title, flight, PerPassengerPrice }) {
 
       <div className="bg-[#EE5128] text-white text-xs font-medium rounded-lg px-4 py-2">
         <p>
-          {flight?.departureCity} - {flight?.arrivalCity} | {flight?.stops}{" "}
-          {t("booking-card.stops")}
+          {flight?.segments[0].departureCity} -{" "}
+          {flight?.segments[1]
+            ? flight?.segments[1].arrivalCity
+            : flight?.segments[0].arrivalCity}{" "}
+          | {flight?.stops} {t("booking-card.stops")}
         </p>
         <span className="ml-2">
           {t("booking-card.duration")} : {flight?.duration}
@@ -749,20 +783,24 @@ function FlightPriceCard({ title, flight, PerPassengerPrice }) {
 
       <div className="flex flex-col items-center mt-4 gap-1">
         <img
-          src={flight?.logo}
-          alt={`${flight?.airline} logo`}
+          src={flight?.segments[0].logo}
+          alt={`${flight?.segments[0].airline} logo`}
           className="h-[30px] object-contain"
         />
-        <p className="text-[11px] text-gray-500">{flight?.flightNumber}</p>
+        {/* <p className="text-[11px] text-gray-500">{flight?.flightNumber}</p> */}
         <span className="text-[11px] bg-[#008905] text-white px-2 py-1 rounded">
-          {flight?.class}
+          {flight?.segments[0].class}
         </span>
       </div>
 
       <div className="flex justify-between items-center mt-4">
         <div className="text-center">
-          <p className="text-xl font-bold">{flight?.departureTime}</p>
-          <p className="text-[11px] text-gray-500">{flight?.departureCity}</p>
+          <p className="text-xl font-bold">
+            {flight?.segments[0].departureTime}
+          </p>
+          <p className="text-[11px] text-gray-500">
+            {flight?.segments[0].departureCity}
+          </p>
         </div>
 
         <div className="flex-1 flex flex-col items-center mx-2">
@@ -773,12 +811,24 @@ function FlightPriceCard({ title, flight, PerPassengerPrice }) {
               className="absolute top-[-10px] left-1/2 transform -translate-x-1/2 w-4 h-4 bg-white"
             />
           </div>
-          <p className="text-[11px] text-gray-500 mt-1">{flight?.duration}</p>
+          <p className="text-[11px] text-gray-500 mt-1">
+            {parseInt(flight?.segments[0].duration) +
+              parseInt(flight?.segments[1]?.duration || 0) +
+              "hr"}
+          </p>
         </div>
 
         <div className="text-center">
-          <p className="text-xl font-bold">{flight?.arrivalTime}</p>
-          <p className="text-[11px] text-gray-500">{flight?.arrivalCity}</p>
+          <p className="text-xl font-bold">
+            {flight?.segments[1]
+              ? flight?.segments[1].arrivalTime
+              : flight?.segments[0].arrivalTime}
+          </p>
+          <p className="text-[11px] text-gray-500">
+            {flight?.segments[1]
+              ? flight?.segments[1].arrivalCity
+              : flight?.segments[0].arrivalCity}
+          </p>
         </div>
       </div>
 
@@ -823,419 +873,6 @@ function FlightPriceCard({ title, flight, PerPassengerPrice }) {
 }
 
 // add Selecting Features plan popup
-
-const FeaturesPlanPopup = ({
-  setIsPopupOpen,
-  TicketData,
-  AlternativeFares,
-  structuredFeatures,
-  seat,
-  luggage,
-  tickets,
-  supportedCardlist,
-}) => {
-  // const transactionUrl = import.meta.env.VITE_TRANSACTION_URL;
-  //console.log("cards", supportedCardlist);
-
-  const [selectedTab, setSelectedTab] = useState("outward");
-  // console.log("AlternativeFares:", AlternativeFares);
-  // console.log("structuredFeatures:", structuredFeatures);
-
-  // console.log("lu" + luggage);
-  // console.log("se" + seat);
-  // console.log("ti" + tickets);
-
-  const [feature, setFeature] = useState([]);
-
-  const navigate = useNavigate();
-  const handleNavigate = () => {
-    navigate("/booking/TravelersDetails", {
-      state: {
-        flights: tickets,
-        routingId: TicketData.routingId,
-        travalers: TicketData.travalers,
-        tripType: TicketData.tripType,
-        seatOption: seat,
-        luggageOptions: luggage,
-        // Add price information
-        outwordPrice: TicketData.outwordTicketId.price,
-        returnPrice: TicketData.returnTicketId?.price || 0,
-        currency: TicketData.outwordTicketId.currency || "CVE",
-        cardlist: supportedCardlist,
-      },
-    });
-  };
-  return (
-    <div className="fixed top-0 left-0 h-full w-full flex justify-center items-center bg-black/20 z-50 backdrop-blur-lg">
-      <div className="p-6 bg-white rounded-2xl max-w-9/12 w-full">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-jakarta font-medium">Select Your Fare</h2>
-          <div
-            className="text-gray-600 cursor-pointer"
-            onClick={() => setIsPopupOpen(false)}
-          >
-            <X />
-          </div>
-        </div>
-
-        {/* tab section */}
-
-        <div className="py-6 font-jakarta">
-          <div className="flex items-center">
-            <div
-              className={`${
-                selectedTab === "outward" ? "border-b-4 border-orange-600" : ""
-              } cursor-pointer p-2 px-10 flex items-center gap-8 border-r`}
-              onClick={() => setSelectedTab("outward")}
-            >
-              <div className="flex flex-col gap-1 text-sm">
-                {/* <img
-                  src={TicketData.outwordTicketId.logo}
-                  alt={TicketData.outwordTicketId.airline}
-                  loading="lazy"
-                  className="w-10 rounded"
-                /> */}
-                {/* <p className="tracking-tighter text-sm font-medium">
-                  {TicketData.outwordTicketId.airline}
-                </p> */}
-              </div>
-              <div className="flex flex-col text-sm">
-                <p className="flex font-medium justify-between">
-                  <span>London</span>
-                  <span>
-                    <ArrowRight />
-                  </span>
-                  <span>Madrid</span>
-                  <span>
-                    <Dot />
-                  </span>
-                  <span>Tue, 15 Jul</span>
-                </p>
-                <p className="flex font-semibold">
-                  <span>06:30</span>
-                  <span> - </span> <span> 20:30</span>
-                  <span>
-                    <Dot />
-                  </span>
-                  <span>15 ( 1hr)</span>
-                </p>
-              </div>
-            </div>
-            <div
-              className={`${
-                selectedTab === "return" ? "border-b-4 border-orange-600" : ""
-              } cursor-pointer p-2 px-10 flex items-center gap-8`}
-              onClick={() => setSelectedTab("return")}
-            >
-              <div className="flex flex-col gap-1">
-                {/* <img
-                  src={TicketData.returnTicketId.logo}
-                  alt={TicketData.returnTicketId.airline}
-                  loading="lazy"
-                  className=" w-10 rounded"
-                /> */}
-                {/* <p className="tracking-tighter text-sm font-medium">
-                  {TicketData.returnTicketId.airline}
-                </p> */}
-              </div>
-              <div className="flex flex-col text-sm">
-                <p className=" flex font-medium justify-between">
-                  <span>Madrid</span>
-                  <span>
-                    <ArrowRight />
-                  </span>
-                  <span>London</span>
-                  <span>
-                    <Dot />
-                  </span>
-                  <span>Tue, 15 Jul</span>
-                </p>
-                <p className="flex font-semibold">
-                  <span>06:30</span>
-                  <span> - </span> <span> 20:30</span>
-                  <span>
-                    <Dot />
-                  </span>
-                  <span>15 ( 1hr)</span>
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="py-6 flex">
-            <div className="max-w-[250px] w-full px-4">
-              <div className="mt-42 flex flex-col gap-2">
-                <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                  Cancellation Fee
-                </p>
-                <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                  Date Change Fee
-                </p>
-                <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                  Seat Selection
-                </p>
-                <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                  Meal Selection
-                </p>
-                <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                  Cabin Bag/Adult
-                </p>
-                <p className="flex items-center gap-2 text-sm py-2">
-                  Check-in Bag/Adult
-                </p>
-              </div>
-            </div>
-            {selectedTab.includes("outward") ? (
-              <div className="w-full inline-flex gap-4 overflow-x-scroll text-nowrap">
-                <div className="border-2 border-gray-600 hover:border-orange-600 p-8 w-[300px] rounded-xl flex flex-col gap-2 group">
-                  <p className=" font-semibold">Regular</p>
-                  <p className=" font-semibold text-xl">CVE 2000</p>
-                  <button className="border-2 border-[#EE5128] text-[#EE5128] group-hover:border-0 group-hover:bg-[#EE5128] group-hover:text-white text-sm font-semibold px-4 py-2 rounded w-full mb-4 flex justify-center items-center">
-                    <span className="group-hover:block hidden">
-                      <Check />
-                    </span>{" "}
-                    Select
-                  </button>
-
-                  {/* {listedplans.Regular.map((r) => (
-                    <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                      {r.Value}
-                      <span>
-                        <Info className="h-4 w-4" />
-                      </span>{" "}
-                    </p>
-                  ))} */}
-
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Cancellation fee from CVE 500{" "}
-                    <span>
-                      <Info className="h-4 w-4" />
-                    </span>{" "}
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Date Change fee from CVE 500{" "}
-                    <span>
-                      <Info className="h-4 w-4" />
-                    </span>{" "}
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Paid Seat
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Paid Meal
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    7 kg Cabin{" "}
-                    <span className="text-black/50">( 1 Pc x 7 kg )</span>
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2">
-                    15 kg Check-in{" "}
-                    <span className="text-black/50">( 1 Pc x 15 kg )</span>
-                  </p>
-                </div>
-                <div className="border-2 border-gray-600 hover:border-orange-600 p-8 w-[300px] rounded-xl flex flex-col gap-2 group">
-                  <p className=" font-semibold">Regular</p>
-                  <p className=" font-semibold text-xl">CVE 2000</p>
-                  <button className="border-2 border-[#EE5128] text-[#EE5128] group-hover:border-0 group-hover:bg-[#EE5128] group-hover:text-white text-sm font-semibold px-4 py-2 rounded w-full mb-4 flex justify-center items-center">
-                    <span className="group-hover:block hidden">
-                      <Check />
-                    </span>{" "}
-                    Select
-                  </button>
-
-                  {/* {listedplans.Regular.map((r) => (
-                    <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                      {r.Value}
-                      <span>
-                        <Info className="h-4 w-4" />
-                      </span>{" "}
-                    </p>
-                  ))} */}
-
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Cancellation fee from CVE 500{" "}
-                    <span>
-                      <Info className="h-4 w-4" />
-                    </span>{" "}
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Date Change fee from CVE 500{" "}
-                    <span>
-                      <Info className="h-4 w-4" />
-                    </span>{" "}
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Paid Seat
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Paid Meal
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    7 kg Cabin{" "}
-                    <span className="text-black/50">( 1 Pc x 7 kg )</span>
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2">
-                    15 kg Check-in{" "}
-                    <span className="text-black/50">( 1 Pc x 15 kg )</span>
-                  </p>
-                </div>
-                <div className="border-2 border-gray-600 hover:border-orange-600 p-8 w-[300px] rounded-xl flex flex-col gap-2 group">
-                  <p className=" font-semibold">Regular</p>
-                  <p className=" font-semibold text-xl">CVE 2000</p>
-                  <button className="border-2 border-[#EE5128] text-[#EE5128] group-hover:border-0 group-hover:bg-[#EE5128] group-hover:text-white text-sm font-semibold px-4 py-2 rounded w-full mb-4 flex justify-center items-center">
-                    <span className="group-hover:block hidden">
-                      <Check />
-                    </span>{" "}
-                    Select
-                  </button>
-
-                  {/* {listedplans.Regular.map((r) => (
-                    <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                      {r.Value}
-                      <span>
-                        <Info className="h-4 w-4" />
-                      </span>{" "}
-                    </p>
-                  ))} */}
-
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Cancellation fee from CVE 500{" "}
-                    <span>
-                      <Info className="h-4 w-4" />
-                    </span>{" "}
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Date Change fee from CVE 500{" "}
-                    <span>
-                      <Info className="h-4 w-4" />
-                    </span>{" "}
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Paid Seat
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Paid Meal
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    7 kg Cabin{" "}
-                    <span className="text-black/50">( 1 Pc x 7 kg )</span>
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2">
-                    15 kg Check-in{" "}
-                    <span className="text-black/50">( 1 Pc x 15 kg )</span>
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div
-                className="w-full inline-flex gap-4 overflow-x-scroll text-nowrap
-			  "
-              >
-                <div className="border-2 border-gray-600 hover:border-orange-600 p-8 w-[300px] rounded-xl flex flex-col gap-2 group">
-                  <p className=" font-semibold">Value</p>
-                  <p className=" font-semibold text-xl">CVE 2000</p>
-                  <button className="border-2 border-[#EE5128] text-[#EE5128] group-hover:border-0 group-hover:bg-[#EE5128] group-hover:text-white text-sm font-semibold px-4 py-2 rounded w-full mb-4 flex justify-center items-center">
-                    <span className="group-hover:block hidden">
-                      <Check />
-                    </span>{" "}
-                    Select
-                  </button>
-
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Cancellation fee from CVE 500{" "}
-                    <span>
-                      <Info className="h-4 w-4" />
-                    </span>{" "}
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Date Change fee from CVE 500{" "}
-                    <span>
-                      <Info className="h-4 w-4" />
-                    </span>{" "}
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Paid Seat
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Paid Meal
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    7 kg Cabin{" "}
-                    <span className="text-black/50">( 1 Pc x 7 kg )</span>
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2">
-                    15 kg Check-in{" "}
-                    <span className="text-black/50">( 1 Pc x 15 kg )</span>
-                  </p>
-                  {/* <div className="bg-green-100 text-green-600 flex items-center gap-2 p-4 mt-4 font-bold text-xs">
-                    <PercentCircleIcon />{" "}
-                    <p>Additional Benefits worth CVE 1000</p>
-                  </div> */}
-                </div>
-                <div className="border-2 border-gray-600 hover:border-orange-600 p-8 w-[300px] rounded-xl flex flex-col gap-2 group">
-                  <p className=" font-semibold">Value</p>
-                  <p className=" font-semibold text-xl">CVE 2000</p>
-                  <button className="border-2 border-[#EE5128] text-[#EE5128] group-hover:border-0 group-hover:bg-[#EE5128] group-hover:text-white text-sm font-semibold px-4 py-2 rounded w-full mb-4 flex justify-center items-center">
-                    <span className="group-hover:block hidden">
-                      <Check />
-                    </span>{" "}
-                    Select
-                  </button>
-
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Cancellation fee from CVE 500{" "}
-                    <span>
-                      <Info className="h-4 w-4" />
-                    </span>{" "}
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Date Change fee from CVE 500{" "}
-                    <span>
-                      <Info className="h-4 w-4" />
-                    </span>{" "}
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Paid Seat
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    Paid Meal
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2 border-b-2 border-gray-300 border-dashed">
-                    7 kg Cabin{" "}
-                    <span className="text-black/50">( 1 Pc x 7 kg )</span>
-                  </p>
-                  <p className="flex items-center gap-2 text-sm py-2">
-                    15 kg Check-in{" "}
-                    <span className="text-black/50">( 1 Pc x 15 kg )</span>
-                  </p>
-                  {/* <div className="bg-green-100 text-green-600 flex items-center gap-2 p-4 mt-4 font-bold text-xs">
-                    <PercentCircleIcon />{" "}
-                    <p>Additional Benefits worth CVE 1000</p>
-                  </div> */}
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="flex justify-end items-center gap-6">
-          <h2 className="text-lg font-jakarta font-bold">CVE 2000</h2>
-          <button
-            className="bg-[#EE5128] text-white text-sm font-semibold px-4 py-2 rounded"
-            onClick={() => setSelectedTab("return")}
-          >
-            {selectedTab.includes("outward") ? (
-              " Select MAD - LHR"
-            ) : (
-              <p className="" onClick={() => handleNavigate()}>
-                Continue
-              </p>
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 import { ChevronDown, ChevronRight } from "lucide-react";
 
