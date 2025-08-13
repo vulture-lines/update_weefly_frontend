@@ -837,8 +837,8 @@ export default function SeatSelection() {
       ? outwardLuggageList
       : LuggageOptions
     : returnLuggageList?.length > 0
-    ? returnLuggageList
-    : LuggageOptions;
+      ? returnLuggageList
+      : LuggageOptions;
 
   console.log(typeof LuggageOptions);
 
@@ -876,9 +876,8 @@ export default function SeatSelection() {
                   <span
                     key={tab}
                     onClick={() => setActiveTab(tab)}
-                    className={`text-white font-semibold relative flex gap-2 cursor-pointer ${
-                      activeTab === tab ? "border-b-2 border-white" : ""
-                    }`}
+                    className={`text-white font-semibold relative flex gap-2 cursor-pointer ${activeTab === tab ? "border-b-2 border-white" : ""
+                      }`}
                   >
                     {tab}
                   </span>
@@ -987,11 +986,10 @@ export default function SeatSelection() {
                                 )
                               </span>
                               <div
-                                className={`flex flex-col ${
-                                  selectOutwardSeats.length > 3
-                                    ? "max-h-[120px] overflow-y-auto"
-                                    : ""
-                                }`}
+                                className={`flex flex-col ${selectOutwardSeats.length > 3
+                                  ? "max-h-[120px] overflow-y-auto"
+                                  : ""
+                                  }`}
                               >
                                 {selectOutwardSeats.map((s, i) => (
                                   <li
@@ -1040,11 +1038,10 @@ export default function SeatSelection() {
                                 )
                               </span>
                               <div
-                                className={`flex flex-col ${
-                                  selectReturnSeats.length > 3
-                                    ? "max-h-[120px] overflow-y-auto"
-                                    : ""
-                                }`}
+                                className={`flex flex-col ${selectReturnSeats.length > 3
+                                  ? "max-h-[120px] overflow-y-auto"
+                                  : ""
+                                  }`}
                               >
                                 {selectReturnSeats.map((s, i) => (
                                   <li
@@ -1185,11 +1182,10 @@ export default function SeatSelection() {
                             return (
                               <div
                                 key={index}
-                                className={`rounded-md w-full flex flex-col gap-1 justify-between p-4 shadow-sm hover:bg-orange-500 hover:text-white ${
-                                  isSelected
-                                    ? "bg-orange-600 text-white"
-                                    : "bg-white"
-                                }`}
+                                className={`rounded-md w-full flex flex-col gap-1 justify-between p-4 shadow-sm hover:bg-orange-500 hover:text-white ${isSelected
+                                  ? "bg-orange-600 text-white"
+                                  : "bg-white"
+                                  }`}
                                 onClick={() =>
                                   handleLuggageClick(Luggage, isSelected)
                                 }
@@ -1260,139 +1256,137 @@ export default function SeatSelection() {
                         </div>
                         {!isOutwardSeat
                           ? OutwardSortedRows.map(([rowNum, seats]) => (
-                              <div
-                                key={rowNum}
-                                className="seat-row flex gap-2 items-center"
-                              >
-                                <div className="w-8 text-right font-semibold">
-                                  {rowNum}
-                                </div>
-                                {seats
-                                  .sort((a, b) =>
-                                    a.column.localeCompare(b.column)
-                                  )
-                                  .map((seat) => {
-                                    const isSelected = selectOutwardSeats.some(
-                                      (s) => s.seat === seat.seat
-                                    );
+                            <div
+                              key={rowNum}
+                              className="seat-row flex gap-2 items-center"
+                            >
+                              <div className="w-8 text-right font-semibold">
+                                {rowNum}
+                              </div>
+                              {seats
+                                .sort((a, b) =>
+                                  a.column.localeCompare(b.column)
+                                )
+                                .map((seat) => {
+                                  const isSelected = selectOutwardSeats.some(
+                                    (s) => s.seat === seat.seat
+                                  );
 
-                                    return (
-                                      <div
-                                        key={seat.seat}
-                                        className={`seat size-6 m-0.5 my-1 rounded flex items-center justify-center text-xs font-medium cursor-pointer hover:text-white
-										${getSeatColor(seat.type)} ${
-                                          seat.type !== "Unavailable" &&
+                                  return (
+                                    <div
+                                      key={seat.seat}
+                                      className={`seat size-6 m-0.5 my-1 rounded flex items-center justify-center text-xs font-medium cursor-pointer hover:text-white
+										${getSeatColor(seat.type)} ${seat.type !== "Unavailable" &&
                                           !isSelected &&
                                           selectOutwardSeats.length >=
-                                            getTravelerCount()
-                                            ? "opacity-50 cursor-not-allowed"
-                                            : ""
+                                          getTravelerCount()
+                                          ? "opacity-50 cursor-not-allowed"
+                                          : ""
                                         }`}
-                                        title={
-                                          seat.seat +
-                                          " " +
-                                          seat.description.join(", ") +
-                                          "|" +
-                                          " " +
-                                          convertCurrency(seat.price, 127.18) +
-                                          " " +
-                                          "CVE"
-                                        }
-                                        onClick={() => {
-                                          if (seat.type === "Unavailable")
-                                            return;
-                                          if (
-                                            !isSelected &&
-                                            selectOutwardSeats.length >=
-                                              getTravelerCount()
-                                          )
-                                            return;
-                                          !isSelected
-                                            ? handleOutwardSeatSelect(seat)
-                                            : removeOutwardSeat(seat);
-                                        }}
-                                      >
-                                        {seat.type === "Unavailable" ? (
-                                          <div>
-                                            <X className="w-4 text-red-400" />
-                                          </div>
-                                        ) : isSelected ? (
-                                          <div className="w-full h-full bg-orange-600" />
-                                        ) : (
-                                          ""
-                                        )}
-                                      </div>
-                                    );
-                                  })}
-                              </div>
-                            ))
+                                      title={
+                                        seat.seat +
+                                        " " +
+                                        seat.description.join(", ") +
+                                        "|" +
+                                        " " +
+                                        convertCurrency(seat.price, 127.18) +
+                                        " " +
+                                        "CVE"
+                                      }
+                                      onClick={() => {
+                                        if (seat.type === "Unavailable")
+                                          return;
+                                        if (
+                                          !isSelected &&
+                                          selectOutwardSeats.length >=
+                                          getTravelerCount()
+                                        )
+                                          return;
+                                        !isSelected
+                                          ? handleOutwardSeatSelect(seat)
+                                          : removeOutwardSeat(seat);
+                                      }}
+                                    >
+                                      {seat.type === "Unavailable" ? (
+                                        <div>
+                                          <X className="w-4 text-red-400" />
+                                        </div>
+                                      ) : isSelected ? (
+                                        <div className="w-full h-full bg-orange-600" />
+                                      ) : (
+                                        ""
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                            </div>
+                          ))
                           : ReturnSortedRows.map(([rowNum, seats]) => (
-                              <div
-                                key={rowNum}
-                                className="seat-row flex gap-2 items-center"
-                              >
-                                <div className="w-8 text-right font-semibold">
-                                  {rowNum}
-                                </div>
-                                {seats
-                                  .sort((a, b) =>
-                                    a.column.localeCompare(b.column)
-                                  )
-                                  .map((seat) => {
-                                    const isSelected = selectReturnSeats.some(
-                                      (s) => s.seat === seat.seat
-                                    );
+                            <div
+                              key={rowNum}
+                              className="seat-row flex gap-2 items-center"
+                            >
+                              <div className="w-8 text-right font-semibold">
+                                {rowNum}
+                              </div>
+                              {seats
+                                .sort((a, b) =>
+                                  a.column.localeCompare(b.column)
+                                )
+                                .map((seat) => {
+                                  const isSelected = selectReturnSeats.some(
+                                    (s) => s.seat === seat.seat
+                                  );
 
-                                    return (
-                                      <div
-                                        key={seat.seat}
-                                        className={`seat size-6 m-0.5 my-1 rounded flex items-center justify-center text-xs font-medium cursor-pointer   hover:text-white
-${getSeatColor(seat.type)} ${
-                                          seat.type !== "Unavailable" &&
+                                  return (
+                                    <div
+                                      key={seat.seat}
+                                      className={`seat size-6 m-0.5 my-1 rounded flex items-center justify-center text-xs font-medium cursor-pointer   hover:text-white
+${getSeatColor(seat.type)} ${seat.type !== "Unavailable" &&
                                           !isSelected &&
                                           selectReturnSeats.length >=
-                                            getTravelerCount()
-                                            ? "opacity-50 cursor-not-allowed"
-                                            : ""
+                                          getTravelerCount()
+                                          ? "opacity-50 cursor-not-allowed"
+                                          : ""
                                         }`}
-                                        title={
-                                          seat.seat +
-                                          " " +
-                                          seat.description.join(", ") +
-                                          "|" +
-                                          " " +
-                                          convertCurrency(seat.price, 127.18) +
-                                          " " +
-                                          "CVE"
-                                        }
-                                        onClick={() => {
-                                          if (seat.type === "Unavailable")
-                                            return;
-                                          if (
-                                            !isSelected &&
-                                            selectReturnSeats.length >=
-                                              getTravelerCount()
-                                          )
-                                            return;
-                                          !isSelected
-                                            ? handleReturnSeatSelect(seat)
-                                            : removeReturnSeat(seat);
-                                        }}
-                                      >
-                                        {seat.type === "Unavailable" ? (
-                                          <div>
-                                            <X className="w-4 text-red-400" />
-                                          </div>
-                                        ) : isSelected ? (
-                                          <div className="w-full h-full bg-orange-600" />
-                                        ) : (
-                                          ""
-                                        )}
-                                      </div>
-                                    );
-                                  })}
-                              </div>
-                            ))}
+                                      title={
+                                        seat.seat +
+                                        " " +
+                                        seat.description.join(", ") +
+                                        "|" +
+                                        " " +
+                                        convertCurrency(seat.price, 127.18) +
+                                        " " +
+                                        "CVE"
+                                      }
+                                      onClick={() => {
+                                        if (seat.type === "Unavailable")
+                                          return;
+                                        if (
+                                          !isSelected &&
+                                          selectReturnSeats.length >=
+                                          getTravelerCount()
+                                        )
+                                          return;
+                                        !isSelected
+                                          ? handleReturnSeatSelect(seat)
+                                          : removeReturnSeat(seat);
+                                      }}
+                                    >
+                                      {seat.type === "Unavailable" ? (
+                                        <div>
+                                          <X className="w-4 text-red-400" />
+                                        </div>
+                                      ) : isSelected ? (
+                                        <div className="w-full h-full bg-orange-600" />
+                                      ) : (
+                                        ""
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                            </div>
+                          ))}
                       </div>
                     </div>
                   </div>
@@ -1744,7 +1738,8 @@ ${getSeatColor(seat.type)} ${
                     <span>CVE</span>{" "}
                     <span>
                       {/* FIXED: Include luggage in total calculation */}
-                      {(
+                      {/* {(
+                        OutwardTicket.price + returnTicket.price +
                         convertCurrency(
                           selectOutwardSeats.reduce(
                             (amt, acc) => amt + acc.price,
@@ -1767,7 +1762,34 @@ ${getSeatColor(seat.type)} ${
                           (total, luggage) => total + luggage.price,
                           0
                         )
-                      ).toFixed(2)}
+                      ).toFixed(2)} */}
+
+                      {
+                        (
+                          Number(OutwardTicket.price) +
+                          Number(returnTicket ? returnTicket?.price : 0) +
+                          Number(
+                            convertCurrency(
+                              selectOutwardSeats.reduce((total, seat) => total + Number(seat.price), 0),
+                              127.18
+                            )
+                          ) +
+                          Number(
+                            convertCurrency(
+                              selectReturnSeats.reduce((total, seat) => total + Number(seat.price), 0),
+                              127.18
+                            )
+                          ) +
+                          Number(
+                            selectedOutwardLuggage.reduce((total, luggage) => total + Number(luggage.price), 0)
+                          ) +
+                          Number(
+                            selectedReturnLuggage.reduce((total, luggage) => total + Number(luggage.price), 0)
+                          )
+                        ).toFixed(2)
+                      }
+
+
                     </span>
                   </span>
                 </div>
@@ -1780,20 +1802,20 @@ ${getSeatColor(seat.type)} ${
                   location.state.tripType === "One Way"
                     ? handleProcessTerm(e)
                     : location.state.tripType === "Round Trip"
-                    ? !isOutwardSeat
-                      ? handleNext()
-                      : handleProcessTerm(e)
-                    : null;
+                      ? !isOutwardSeat
+                        ? handleNext()
+                        : handleProcessTerm(e)
+                      : null;
                 }}
                 className="bg-[#EE5128] text-white px-6 py-2 lg:relative lg:left-5 rounded font-semibold font-['Plus Jakarta Sans'] w-full md:w-auto hover:bg-[#d64520] active:bg-[#b83b1c] transition-colors duration-200"
               >
                 {location.state.tripType === "One Way"
                   ? t("continue-booking")
                   : location.state.tripType === "Round Trip"
-                  ? !isOutwardSeat
-                    ? "Next"
-                    : t("continue-booking")
-                  : null}
+                    ? !isOutwardSeat
+                      ? "Next"
+                      : t("continue-booking")
+                    : null}
               </button>
               {/* <button className="text-[#EE5128] font-semibold text-sm lg:relative mt-2 md:mt-0 hover:underline px-10">
                 Skip Extra
