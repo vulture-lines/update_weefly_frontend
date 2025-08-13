@@ -55,9 +55,6 @@ import SupplierError from "./pages/FlightBooking/SupplierError";
 import TermsofService from "./pages/Home/TermsofService";
 import PrivacyPolicy from "./pages/Home/PrivacyPolicy";
 import RefundPolicy from "./pages/Home/RefundPolicy";
-import ExternalError from "./pages/FlightBooking/ExternalError";
-import InternalError from "./pages/FlightBooking/InternalError";
-import UserCancel from "./pages/FlightBooking/UserCancel";
 import cookies from "js-cookie";
 const App = () => {
   useEffect(() => {
