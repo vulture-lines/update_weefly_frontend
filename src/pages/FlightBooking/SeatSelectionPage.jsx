@@ -699,15 +699,10 @@ export default function SeatSelection() {
         lastResponse = response;
         break;
       } else if (response.status === 422) {
-        const error = await response.json();
-        if (error.error.ecode === 2-2460) {
-          formattedSeats = formattedSeats.map((seat) => seat + ";"); // update
-          console.log(formattedSeats);
-          attempt++;
-          console.warn(`Retry attempt for seat ${attempt} due to 422 error`);
-        } else if(error.error.ecode===2-2435){
-          console.log("Meal")
-        }
+        formattedSeats = formattedSeats.map((seat) => seat + ";"); // update
+        console.log(formattedSeats);
+        attempt++;
+        console.warn(`Retry attempt for seat ${attempt} due to 422 error`);
       } else {
         console.error(`Failed with status: ${response.status}`);
         alert("Could not fetch booking details.");
