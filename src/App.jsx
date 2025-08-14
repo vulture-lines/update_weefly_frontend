@@ -55,7 +55,7 @@ import SupplierError from "./pages/FlightBooking/SupplierError";
 import TermsofService from "./pages/Home/TermsofService";
 import PrivacyPolicy from "./pages/Home/PrivacyPolicy";
 import RefundPolicy from "./pages/Home/RefundPolicy";
-import cookies from "js-cookie";
+import { getCookie } from "./utils/Cookie";
 const App = () => {
   useEffect(() => {
     Aos.init({
@@ -77,10 +77,13 @@ const App = () => {
       console.log(error);
     }
   };
-
-  if (!cookies.get("token")) {
-    setToken();
-  }
+  useEffect(() => {
+    getCookie("token").then((token) => {
+      if (!token) {
+        setToken();
+      }
+    });
+  }, []);
 
   useEffect(() => {
     if ("geolocation" in navigator) {
@@ -113,8 +116,6 @@ const App = () => {
   //   console.debug = function () { };
   //   console.info = function () { };
   // }
-
-
 
   return (
     <>

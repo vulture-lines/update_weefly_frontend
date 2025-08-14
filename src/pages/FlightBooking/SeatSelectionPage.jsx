@@ -22,6 +22,7 @@ import {
   fetchExchangeRates,
   convertToRequestedCurrency,
 } from "../../utils/Currencyconverter";
+import { getCookie } from "../../utils/Cookie";
 
 export default function SeatSelection() {
   const { t } = useTranslation();
@@ -45,13 +46,20 @@ export default function SeatSelection() {
   const [userId, setuserId] = useState("");
   const USER_API_URL =
     import.meta.env.VITE_USER_SERVICE_URL || "http://localhost:3000/userapi";
-  let rate = 0;
+  const [rate, setRate] = useState(null);
+  const [rateset, setRateset] = useState(false);
   useEffect(() => {
     const fetchRate = async () => {
-      rate = await fetchExchangeRates();
+      const fetchedRate = await fetchExchangeRates("CVE");
+      setRate(fetchedRate);
     };
+
     fetchRate();
   }, []);
+  useEffect(() => {
+    setRateset(true);
+  }, [rate]);
+
   // Fetch user profile data from backend
   const fetchUserProfile = async () => {
     try {
@@ -71,16 +79,19 @@ export default function SeatSelection() {
 
       const data = await response.json();
       console.log(data);
-      setuserId(data.id);
+      setuserId(data._id);
     } catch (err) {
       console.log(err);
     }
   };
 
-  const userjwt = Cookies.get("userjwt");
-  if (userjwt) {
-    fetchUserProfile();
-  }
+  useEffect(() => {
+    getCookie("userjwt").then((userjwt) => {
+      if (userjwt) {
+        fetchUserProfile();
+      }
+    });
+  }, []);
 
   const OutwardTicket = location.state.flights[0];
   const returnTicket = location.state.flights[1];
@@ -312,6 +323,7 @@ export default function SeatSelection() {
     }
   };
 
+  console.log("sss", selectOutwardSeats);
   const removeOutwardSeat = (seat) => {
     setSelectOutwardSeats((prevSeats) =>
       prevSeats.filter((s) => s.seat !== seat.seat)
@@ -866,6 +878,20 @@ export default function SeatSelection() {
     }
   };
 
+  function getConvertedTotal(items, rate) {
+    console.log("Cal");
+    const totalPrice = items.reduce((sum, item) => sum + item.price, 0);
+    const totalCurrency = items.reduce((sum, item) => sum + item.currency, 0);
+    console.log(totalPrice)
+    return totalPrice > 0
+      ? Number(
+          convertToRequestedCurrency(totalPrice, totalCurrency, "CVE", rate)
+        )
+      : 0;
+
+  }
+  console.log("ratesfromseat", rate);
+
   return (
     <div className="font-sans flex justify-center">
       <div className="w-full max-w-[1140px] px-4">
@@ -1012,12 +1038,14 @@ export default function SeatSelection() {
                                       </span>
                                       <span className="flex-shrink-0 text-xs">
                                         <span className="text-xs">CVE</span>{" "}
-                                        {convertToRequestedCurrency(
-                                          s.price,
-                                          s.currency,
-                                          "CVE",
-                                          rate
-                                        ).toFixed(2)}
+                                        {s.price > 0
+                                          ? convertToRequestedCurrency(
+                                              s.price,
+                                              s.currency,
+                                              "CVE",
+                                              rate
+                                            ).toFixed(2)
+                                          : null}
                                       </span>
                                     </div>
                                   </li>
@@ -1028,18 +1056,22 @@ export default function SeatSelection() {
                               <span>{t("seats.totalFare")} :</span>
                               <span>
                                 CVE{" "}
-                                {convertToRequestedCurrency(
-                                  selectOutwardSeats.reduce(
-                                    (amt, acc) => amt + acc.price,
-                                    0
-                                  ),
-                                  selectOutwardSeats.reduce(
-                                    (amt, acc) => amt + acc.currency,
-                                    0
-                                  ),
-                                  "CVE",
-                                  rate
-                                ).toFixed(2)}
+                                {selectOutwardSeats.length > 0
+                                  ? selectOutwardSeats
+                                      .map((seat) =>
+                                        convertToRequestedCurrency(
+                                          Number(seat.price), // price as a number
+                                          seat.currency, // just the string, e.g., "EUR"
+                                          "CVE", // target currency
+                                          rate
+                                        )
+                                      )
+                                      .reduce(
+                                        (total, converted) => total + converted,
+                                        0
+                                      )
+                                      .toFixed(2)
+                                  : null}
                               </span>
                             </div>
                           </div>
@@ -1075,12 +1107,14 @@ export default function SeatSelection() {
                                       </span>
                                       <span className="flex-shrink-0 text-xs">
                                         <span className="text-xs">CVE</span>{" "}
-                                        {convertToRequestedCurrency(
-                                          s.price,
-                                          s.currency,
-                                          "CVE",
-                                          rate
-                                        ).toFixed(2)}
+                                        {s.price > 0
+                                          ? convertToRequestedCurrency(
+                                              s.price,
+                                              s.currency,
+                                              "CVE",
+                                              rate
+                                            ).toFixed(2)
+                                          : null}
                                       </span>
                                     </div>
                                   </li>
@@ -1091,18 +1125,26 @@ export default function SeatSelection() {
                               <span>{t("seats.totalFare")} :</span>
                               <span>
                                 CVE{" "}
-                                {convertToRequestedCurrency(
-                                  selectReturnSeats.reduce(
+                                {(() => {
+                                  const totalPrice = selectReturnSeats.reduce(
                                     (amt, acc) => amt + acc.price,
                                     0
-                                  ),
-                                  selectReturnSeats.reduce(
-                                    (amt, acc) => amt + acc.currency,
-                                    0
-                                  ),
-                                  "CVE",
-                                  rate
-                                ).toFixed(2)}
+                                  );
+                                  const totalCurrency =
+                                    selectReturnSeats.reduce(
+                                      (amt, acc) => amt + acc.currency,
+                                      0
+                                    );
+
+                                  return totalPrice > 0
+                                    ? convertToRequestedCurrency(
+                                        totalPrice,
+                                        totalCurrency,
+                                        "CVE",
+                                        rate
+                                      ).toFixed(2)
+                                    : "0.00";
+                                })()}
                               </span>
                             </div>
                           </div>
@@ -1320,12 +1362,14 @@ export default function SeatSelection() {
                                           seat.description.join(", ") +
                                           "|" +
                                           " " +
-                                          convertToRequestedCurrency(
-                                            seat.price,
-                                            seat.currency,
-                                            "CVE",
-                                            rate
-                                          ).toFixed(2) +
+                                          (rate
+                                            ? convertToRequestedCurrency(
+                                                seat.price,
+                                                seat.currency,
+                                                "CVE",
+                                                rate
+                                              ).toFixed(2)
+                                            : "0.00") +
                                           " " +
                                           "CVE"
                                         }
@@ -1392,12 +1436,14 @@ ${getSeatColor(seat.type)} ${
                                           seat.description.join(", ") +
                                           "|" +
                                           " " +
-                                          convertToRequestedCurrency(
-                                            seat.price,
-                                            seat.currency,
-                                            "CVE",
-                                            rate
-                                          ).toFixed(2) +
+                                          (rate
+                                            ? convertToRequestedCurrency(
+                                                seat.price,
+                                                seat.currency,
+                                                "CVE",
+                                                rate
+                                              ).toFixed(2)
+                                            : "0.00") +
                                           " " +
                                           "CVE"
                                         }
@@ -1715,18 +1761,25 @@ ${getSeatColor(seat.type)} ${
                   <span className="font-semibold flex gap-1">
                     <span>CVE</span>
                     <span>
-                      {convertToRequestedCurrency(
-                        selectOutwardSeats.reduce(
+                      {(() => {
+                        const totalPrice = selectOutwardSeats.reduce(
                           (amt, acc) => amt + acc.price,
                           0
-                        ),
-                        selectOutwardSeats.reduce(
+                        );
+                        const totalCurrency = selectOutwardSeats.reduce(
                           (amt, acc) => amt + acc.currency,
                           0
-                        ),
-                        "CVE",
-                        rate
-                      ).toFixed(2)}
+                        );
+
+                        return totalPrice > 0
+                          ? convertToRequestedCurrency(
+                              totalPrice,
+                              totalCurrency,
+                              "CVE",
+                              rate
+                            ).toFixed(2)
+                          : "0.00";
+                      })()}
                     </span>
                   </span>
                 </div>
@@ -1736,18 +1789,25 @@ ${getSeatColor(seat.type)} ${
                     <span className="font-semibold flex gap-1">
                       <span>CVE</span>
                       <span>
-                        {convertToRequestedCurrency(
-                          selectReturnSeats.reduce(
+                        {(() => {
+                          const totalPrice = selectReturnSeats.reduce(
                             (amt, acc) => amt + acc.price,
                             0
-                          ),
-                          selectReturnSeats.reduce(
+                          );
+                          const totalCurrency = selectReturnSeats.reduce(
                             (amt, acc) => amt + acc.currency,
                             0
-                          ),
-                          "CVE",
-                          rate
-                        ).toFixed(2)}
+                          );
+
+                          return totalPrice > 0
+                            ? convertToRequestedCurrency(
+                                totalPrice,
+                                totalCurrency,
+                                "CVE",
+                                rate
+                              ).toFixed(2)
+                            : "0.00";
+                        })()}
                       </span>
                     </span>
                   </div>
@@ -1791,63 +1851,11 @@ ${getSeatColor(seat.type)} ${
                     <span>
                       {(
                         Number(OutwardTicket.price) +
-                        Number(returnTicket ? returnTicket?.price : 0) +
-                        Number(
-                          convertToRequestedCurrency(
-                            selectOutwardSeats.reduce(
-                              (amt, acc) => amt + acc.price,
-                              0
-                            ),
-                            selectOutwardSeats.reduce(
-                              (amt, acc) => amt + acc.currency,
-                              0
-                            ),
-                            "CVE",
-                            rate
-                          ).toFixed(2)
-                        ) +
-                        Number(
-                          convertToRequestedCurrency(
-                            selectReturnSeats.reduce(
-                              (amt, acc) => amt + acc.price,
-                              0
-                            ),
-                            selectReturnSeats.reduce(
-                              (amt, acc) => amt + acc.currency,
-                              0
-                            ),
-                            "CVE",
-                            rate
-                          ).toFixed(2)
-                        ) +
-                        Number(
-                          convertToRequestedCurrency(
-                            selectedOutwardLuggage.reduce(
-                              (amt, acc) => amt + acc.price,
-                              0
-                            ),
-                            selectedOutwardLuggage.reduce(
-                              (amt, acc) => amt + acc.currency,
-                              0
-                            ),
-                            "CVE",
-                            rate
-                          ).toFixed(2)
-                        ) +
-                        Number(
-                          convertToRequestedCurrency(
-                            selectedReturnLuggage.reduce(
-                              (amt, acc) => amt + acc.price,
-                              0
-                            ),
-                            selectedReturnLuggage.reduce(
-                              (amt, acc) => amt + acc.currency,
-                              0
-                            ),
-                            "CVE",
-                            rate
-                          ).toFixed(2)
-                        )
+                        Number(returnTicket?.price || 0) +
+                        getConvertedTotal(selectOutwardSeats, rate) +
+                        getConvertedTotal(selectReturnSeats, rate) +
+                        getConvertedTotal(selectedOutwardLuggage, rate) +
+                        getConvertedTotal(selectedReturnLuggage, rate)
                       ).toFixed(2)}
                     </span>
                   </span>

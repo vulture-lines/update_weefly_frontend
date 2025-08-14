@@ -23,6 +23,11 @@ function convertToRequestedCurrency(
   baseCurrency,
   rates
 ) {
+  if (originalCurrency.startsWith("0")) {
+    originalCurrency = originalCurrency.substring(1); // remove first character
+    originalCurrency = originalCurrency.substring(0, 3);
+    console.log("originalCurrency after removing 0:", originalCurrency);
+  }
   if (originalCurrency === baseCurrency) return price;
   if (!rates || !rates[originalCurrency]) {
     throw new Error(

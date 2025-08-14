@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from "react-router";
 import Cookies from "js-cookie";
 import { decryptPayload } from "../../utils/Payload";
 import { HandleGoogleLogin } from "../../features/firebase";
+import { getCookie } from "../../utils/Cookie";
 // Country data with flags, names, and codes
 const countries = [
   { code: "CV", name: "Cape Verde", dialCode: "00238", flag: "🇨🇻" },
@@ -520,11 +521,11 @@ function TravelersDetails({ country = "" }) {
           NamePart: ["Dominik", "Luambo"],
         },
       },
-      Number: import.meta.env.VITE_CARD_NUMBER,
-      SecurityCode: import.meta.env.VITE_CARD_SECURITYCODE,
-      ExpiryDate: import.meta.env.VITE_CARD_EXPIRYDATE,
-      StartDate: import.meta.env.VITE_CARD_STARTDATE,
-      CardType: import.meta.env.VITE_CARD_CARDTYPE,
+      Number: "",
+      SecurityCode: "",
+      ExpiryDate: "",
+      StartDate: "",
+      CardType: "",
       IssueNumber: "0",
     },
   });
@@ -534,7 +535,17 @@ function TravelersDetails({ country = "" }) {
   const [validationErrors, setValidationErrors] = useState([]);
   const TRANSACTION_API_URL = import.meta.env.VITE_TRANSACTION_URL;
   const cardTypes = location.state.SupportedCardList.CardType;
-  const cardtoken = Cookies.get("token");
+  let cardtoken;
+
+  useEffect(() => {
+    getCookie("token").then((token) => {
+      if (token) {
+        console.log("traveller",token);
+        
+        cardtoken = token;
+      }
+    });
+  }, []);
 
   console.log("tfpay", location.state.TFPay);
   useEffect(() => {
@@ -804,11 +815,11 @@ function TravelersDetails({ country = "" }) {
     }
   };
   useEffect(() => {
-    const user = Cookies.get("userjwt");
-
-    if (user) {
-      fetchUserProfile();
-    }
+    getCookie("userjwt").then((userjwt) => {
+      if (userjwt) {
+        fetchUserProfile();
+      }
+    });
   }, []);
 
   // empty dependency array = run once after first render
@@ -1511,9 +1522,10 @@ function TravelersDetails({ country = "" }) {
       };
 
       console.log("Final booking data:", JSON.stringify(finalData, null, 2));
-      const user = Cookies.get("userjwt");
 
-      if (user) {
+      const userjwt = await getCookie("userjwt");
+
+      if (userjwt) {
         handleContinueAsGuest();
       } else {
         // Show popup directly
@@ -3864,7 +3876,7 @@ const SignUpFormPopup = ({
     if (enteredOtp.length !== 4) {
       setOtpError("Please enter all 4 digits");
       return;
-    };
+    }
     try {
       const USER_API_URL =
         import.meta.env.VITE_USER_SERVICE_URL ||

@@ -28,6 +28,7 @@ import { HandleGoogleLogout } from "../features/firebase";
 import TranslatorSwitch from "./TranslatorSwitch";
 import { useTranslation } from "react-i18next";
 import Cookies from "js-cookie";
+import { deleteCookie } from "../utils/Cookie";
 const Navbar = () => {
   const { t } = useTranslation();
   const Location = useLocation();
@@ -59,7 +60,7 @@ const Navbar = () => {
 
     Aos.init({
       once: true,
-    })
+    });
   }, []);
 
   useEffect(() => {
@@ -91,24 +92,27 @@ const Navbar = () => {
     fetchUserProfile();
   }, []);
 
-  const HandleLogout = () => {
+  const HandleLogout = async () => {
     // HandleGoogleLogout();
-    Cookies.remove("userjwt")
-    setProfileData();
-    navigate("/");
-
+    const cookiedelete = await deleteCookie("userjwt");
+    if (cookiedelete === "deleted") {
+      setProfileData();
+      navigate("/");
+    }
   };
   return (
     <>
       {location.pathname === "/" ? (
         <div
           data-aos="fade-down"
-          className={` fixed w-full z-50 top-0 px-10 xl:px-40 font-sans ${isScrolled ? "backdrop-blur-lg bg-white text-black" : "text-white"
-            }`}
+          className={` fixed w-full z-50 top-0 px-10 xl:px-40 font-sans ${
+            isScrolled ? "backdrop-blur-lg bg-white text-black" : "text-white"
+          }`}
         >
           <div
-            className={`flex justify-between items-center  ${isMenuOpen || isScrolled ? "h-20" : "h-30"
-              }
+            className={`flex justify-between items-center  ${
+              isMenuOpen || isScrolled ? "h-20" : "h-30"
+            }
  transition-all duration-300`}
           >
             {/* <div
@@ -304,8 +308,9 @@ const Navbar = () => {
             } transition-all duration-300`}
           > */}
           <div
-            className={`flex justify-between items-center  ${isMenuOpen || isScrolled ? "h-20" : "h-30"
-              }
+            className={`flex justify-between items-center  ${
+              isMenuOpen || isScrolled ? "h-20" : "h-30"
+            }
  transition-all duration-300`}
           >
             <div className="">
@@ -463,8 +468,9 @@ const Navbar = () => {
 
       {/* Mobile sidebar */}
       <div
-        className={`h-screen transition-all duration-300 origin-right fixed lg:hidden right-0 top-0 z-[999] overflow-hidden ${isMenuOpen ? "w-full" : "w-0"
-          }`}
+        className={`h-screen transition-all duration-300 origin-right fixed lg:hidden right-0 top-0 z-[999] overflow-hidden ${
+          isMenuOpen ? "w-full" : "w-0"
+        }`}
       >
         <div className="h-full bg-black/60 bg-opacity-50 backdrop-blur-md flex flex-col items-center">
           <div className="w-full z-50 top-0 px-10 xl:px-40 font-sans h-20 flex justify-between items-center text-white">

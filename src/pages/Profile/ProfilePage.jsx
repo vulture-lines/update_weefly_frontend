@@ -28,6 +28,7 @@ import {
 import { useTranslation } from "react-i18next";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router";
+import { deleteCookie } from "../../utils/Cookie";
 const LoggedIn = JSON.parse(localStorage.getItem("loggedIn") || "false");
 const LoginDetail = JSON.parse(localStorage.getItem("loginUserDetail"));
 
@@ -108,10 +109,12 @@ export default function ProfilePage({ country }) {
 
   const user = userDetails || {};
 
-  const handleLogout = () => {
-    Cookies.remove("userjwt");
-    // Optionally redirect to login page or home
-    window.location.href = "/login"; // or use a navigation hook if using react-router
+  const handleLogout = async () => {
+    const cookiedelete = await deleteCookie("userjwt");
+    if (cookiedelete === "deleted") {
+      // Optionally redirect to login page or home
+      window.location.href = "/login"; // or use a navigation hook if using react-router
+    }
   };
 
   // Components below preserved from your existing code
